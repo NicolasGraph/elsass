@@ -24,6 +24,86 @@ $layout: (
     )
 );
 
+@function missing-medias($media) {
+    $medias: map-keys($layout);
+    $from-index: 1;
+    $to-index: length($medias);
+
+    @if $media {
+        $from-index: index($medias, nth($media, 1)) + 1;
+
+        @if type-of($media) == list {
+            $to-index: index($medias, nth($media, 2)) - 1;
+        }
+    }
+
+    $missing-medias: null;
+    @if $to-index - $from-index >= 0 {
+        @for $index from $from-index through $to-index {
+            $missing-medias: nth($medias, $index);
+        }
+    }
+
+    @return $missing-medias;
+}
+
+@mixin container($media: null, $flex-flow: null, $use-max-width: null, $margin: null, $padding: null) {
+
+    // Get media related variables.
+    $medias: map-keys($layout);
+    $from-media: null;
+    $min-width: null;
+    $max-width: null;
+
+    @if $media {
+        $from-media: map-get($layout, nth($media, 1));
+        $min-width: if(map-has-key($from-media, device-min-width), map-get($from-media, device-min-width), null);
+        @if type-of($media) == list {
+            $to-media: map-get($layout, nth($media, 2));
+            $max-width: map-get($to-media, device-min-width);
+        }
+    } @else {
+        $from-media: map-get($layout, nth($medias, 1));
+    }
+
+    > * { box-sizing: border-box; }
+
+    // Generate CSS.
+    @include breakpoint($min-width, $max-width) {
+        display: flex;
+
+        @if $flex-flow {
+            flex-flow: $flex-flow;
+        }
+
+        @if $use-max-width {
+            $max-width: map-get($from-media, content-max-width);
+            max-width: $max-width;
+        }
+
+        @content;
+    }
+
+    // Add missing medias related values.
+    // Add missing medias.
+    @if ($media) {
+        $missing-medias: missing-medias($media);
+
+        @if $missing-medias {
+            @each $missing-media in $missing-medias {
+                $index: index($medias, $missing-media);
+                $media: map-get($layout, $missing-media);
+
+                @if $index != length($medias) {
+                    $missing-media: $missing-media nth($medias, $index + 1);
+                }
+
+                @include container($missing-media, false, $use-max-width, $margin, $padding);
+            }
+        }
+    }
+}
+
 @mixin breakpoint($min-width: null, $max-width: null) {
     @if $min-width and $max-width {
         @media screen and (min-width: $min-width) and (max-width: calc(#{$max-width} - 1px)) {
@@ -42,7 +122,18 @@ $layout: (
     }
 }
 
-@mixin oui($media: null, $col-width: null, $margin: null, $paddings: null, $is-container: null) {
+@mixin items($media: null, $col-width: null, $margin: null, $padding: null) {
+    $items: length($col-width);
+    @for $item from 1 through $items {
+        > :nth-child(#{$items}n+#{$item}) {
+            @include item($media, nth($col-width, $item), $margin, $padding) {
+                @content
+            };
+        }
+    }
+}
+
+@mixin item($media: null, $col-width: null, $margin: null, $padding: null) {
 
     // Get media related variables.
     $medias: map-keys($layout);
@@ -91,15 +182,6 @@ $layout: (
 
     @include breakpoint($min-width, $max-width) {
 
-        @if $is-container {
-            display: flex;
-            flex-wrap: wrap;
-            @if not $col-width {
-                $max-width: map-get($from-media, content-max-width);
-                max-width: $max-width;
-            }
-        }
-
         // Generate css width.
         @if $col-width {
             @if $margin {
@@ -126,52 +208,19 @@ $layout: (
     }
 
     // Add missing medias.
-    $from-index: 1;
-    $to-index: length($medias);
+    @if ($media) {
+        $missing-medias: missing-medias($media);
 
-    @if $media {
-        $from-index: index($medias, nth($media, 1)) + 1;
+        @if $missing-medias {
+            @each $missing-media in $missing-medias {
+                $index: index($medias, $missing-media);
+                $media: map-get($layout, $missing-media);
 
-        @if type-of($media) == list {
-            $to-index: index($medias, nth($media, 2)) - 1;
-        }
-    }
-
-    @if $to-index - $from-index >= 0 {
-        @for $index from $from-index through $to-index {
-            $media: map-get($layout, nth($medias, $index));
-            $min-width: map-get($media, device-min-width);
-            $horizontal-spacing: map-get($media, horizontal-spacing);
-            $vertical-spacing: map-get($media, vertical-spacing);
-            $content-max-width: map-get($media, content-max-width);
-
-            @if $index != length($medias) {
-                $to-media: map-get($layout, nth($medias, ($index + 1)));
-                $max-width: map-get($to-media, device-min-width);
-            } @else {
-                $max-width: null;
-            }
-
-            @include breakpoint($min-width, $max-width) {
-                // Generate css margin.
-                @if $is-container {
-                    @if not $col-width {
-                        max-width: $content-max-width;
-                    }
+                @if $index != length($medias) {
+                    $missing-media: $missing-media nth($medias, $index + 1);
                 }
-                @if $margin {
-                    // Generate css margin.
-                    $index: 1;
-                    @each $value in $margin {
-                        @if $value == true {
-                            $value: if($index == 2 or $index == 4, $horizontal-spacing, $vertical-spacing);
-                            margin-#{nth($values-order, $index)}: $value;
-                        } @else if $value == auto {
-                            margin-#{nth($values-order, $index)}: $value;
-                        }
-                        $index: $index + 1;
-                    }
-                }
+
+                @include item($missing-media, false, $margin, $padding);
             }
         }
     }
