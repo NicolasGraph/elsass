@@ -1,0 +1,138 @@
+/**
+ *
+ */
+@function spacing-value($base, $value) {
+    $spacing-value: null;
+
+    @if $value == true {
+        // Spacing uses the base value.
+        $spacing-value: $base;
+    } @else if $value == "nested" {
+        // Spacing uses the base value as a negative value.
+        $spacing-value: (-$base);
+    } @else if type-of($value) == number and unitless($value) {
+        // Spacing uses a factor to multiply the base value.
+        $spacing-value: $value * $base;
+    } @else {
+        // Spacing uses custom spacing value.
+        $spacing-value: $value;
+    }
+
+    @return $spacing-value;
+}
+
+/**
+ * Generate spacing values
+ */
+@function spacing($horizontal-spacing, $vertical-spacing, $spacing: null, $position: null) {
+    $values-order: "top", "right", "bottom", "left";
+
+    $spacing-values: ();
+    $add-spacing-values: ();
+
+    @for $index from 1 through length($spacing) {
+        $value: nth($spacing, $index);
+
+        $base: null;
+        @if $index == 1 or $index == 3 {
+            $base: $vertical-spacing;
+        } @else {
+            $base: $horizontal-spacing;
+        }
+
+        @if $value != false {
+            $spacing-value: spacing-value($base, $value);
+
+            @if type-of($spacing) == list {
+                @if length($spacing) == 2 {
+                    $global: null;
+                    @if map-has-key($spacing-values, "global") {
+                        $global: map-get($spacing-values, "global");
+                        $global: if($global == $spacing-value, $spacing-value, $global $spacing-value);
+                    } @else {
+                        $global: $spacing-value;
+                    }
+                    $add-spacing-values: (
+                        #{nth($values-order, $index)}: $spacing-value,
+                        #{nth($values-order, $index + 2)}: $spacing-value,
+                        "global": $global
+                    );
+                } @else {
+                    $add-spacing-values: (
+                        #{nth($values-order, $index)}: $spacing-value
+                    );
+                }
+
+                $spacing-values: map-merge($spacing-values, $add-spacing-values);
+
+            } @else {
+                @each $side in $values-order {
+                    @if $side == "top" or $side == "bottom" {
+                        $base: $vertical-spacing;
+                    } @else {
+                        $base: $horizontal-spacing;
+                    }
+
+                    $global: null;
+                    @if spacing-value($vertical-spacing, $value) == spacing-value($horizontal-spacing, $value) {
+                        $global: spacing-value($vertical-spacing, $value);
+                    } @else {
+                        $global: spacing-value($vertical-spacing, $value) spacing-value($horizontal-spacing, $value);
+                    }
+
+                    $add-spacing-values: (
+                        $side: spacing-value($base, $value),
+                        "global": $global
+                    );
+
+                    $spacing-values: map-merge($spacing-values, $add-spacing-values);
+                }
+            }
+        }
+    }
+
+    @if $position {
+        $position-direction: str-slice($position, 1, 4);
+        $position-value: str-slice($position, -3, -1);
+
+        @if $position-direction == "pull" {
+            $add-spacing-values: (
+                "left": calc(#{map-get($spacing-values, "left")} - #{$position-value} * 100%),
+            );
+            $spacing-values: map-remove($spacing-values, "global", "left");
+
+        } @else {
+            $add-spacing-values: (
+                "left": calc(#{map-get($spacing-values, "left")} + #{$position-value} * 100%),
+            );
+            $spacing-values: map-remove($spacing-values, "global", "left");
+
+        }
+        $spacing-values: map-merge($spacing-values, $add-spacing-values);
+    }
+
+    @return $spacing-values;
+}
+
+/**
+ * Get missing media-queries
+ */
+@function missing-medias($media: null) {
+    $medias: map-keys($layout);
+    $from-index: 1;
+    $to-index: length($medias);
+
+    @if $media {
+        $from-index: index($medias, nth($media, 1)) + 1;
+        $to-index: if(type-of($media) == list, index($medias, nth($media, 2)) - 1, length($medias));
+    }
+
+    $missing-medias: null;
+    @if $to-index - $from-index >= 0 {
+        @for $index from $from-index through $to-index {
+            $missing-medias: if($missing-medias, append($missing-medias, nth($medias, $index)), nth($medias, $index));
+        }
+    }
+
+    @return $missing-medias;
+}

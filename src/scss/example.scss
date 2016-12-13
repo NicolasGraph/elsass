@@ -1,0 +1,24 @@
+.my-grid {
+    @include container(false, row wrap, true, 10px 11px, 22) {
+        background: #e9edf5;
+    };
+
+    @include items("s" "m", 1, true, true);
+    @include items("m" "l", 1/4, true, true);
+    @include items("l", 1/4 1/8 repeat-last, true, true);
+    @include items() {
+        background: #d7dfed;
+    }
+
+    .item--half {
+        @include item("m" "l", 3/4, true nest true false);
+        @include item("l", 1/2, false nest nest true);
+        background: #c5d1e5;
+    }
+
+    .item--last {
+        @include item("l", false, true false true auto) {
+            background: #b3c3dd;
+        };
+    }
+}

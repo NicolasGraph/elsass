@@ -1,0 +1,25 @@
+$layout: (
+    s: (
+        content-max-width : 480px,
+        horizontal-spacing: 15px,
+        vertical-spacing  : 10px
+    ),
+    m: (
+        device-min-width  : 640px,
+        content-max-width : 690px,
+        horizontal-spacing: 20px,
+        vertical-spacing  : 15px
+    ),
+    l: (
+        device-min-width  : 1024px,
+        content-max-width : 1000px,
+        horizontal-spacing: 25px,
+        vertical-spacing  : 20px
+    ),
+    xl: (
+        device-min-width  : 1366px,
+        content-max-width : 1280px,
+        horizontal-spacing: 30px,
+        vertical-spacing  : 25px
+    )
+);
