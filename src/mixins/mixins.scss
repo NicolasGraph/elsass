@@ -74,7 +74,6 @@
 
     // Get media query min and max widths.
     $from-media: null;
-    $to-media: null;
     $min-width: null;
     $max-width: null;
 
@@ -129,12 +128,13 @@
         // Generate width calculation.
         @if $width {
           $property: null;
+          $value: null;
           @if $width == true {
             $property: max-width;
-            $width: map-get($to-media, device-min-width);
+            $value: map-get($from-media, content-max-width);
           } @else {
             $property: width;
-            $width: #{$width} * 100%;
+            $value: #{$width} * 100%;
           }
             @if $margin {
                 $spacing: spacing($horizontal-spacing, $vertical-spacing, $margin);
@@ -145,9 +145,9 @@
                 @if map-get($spacing, "left") {
                     $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
                 }
-                #{$property}: calc(#{$width} - #{$margin-factor});
+                #{$property}: calc(#{$value} - #{$margin-factor});
             } @else {
-                #{$property}: $width;
+                #{$property}: $value;
             }
         }
 
