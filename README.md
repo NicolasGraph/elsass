@@ -7,9 +7,9 @@ A sass powered css grid using flex-boxes and calc().
 ## Features
 
 * Unlimited columns width;
-* Unlimited breakpoints;
+* unlimited breakpoints;
 * responsive gutters;
-* gutter as margin and/or padding;
+* gutters as margin and/or padding;
 * etc.
 
 ## Support
@@ -25,7 +25,7 @@ See `src/settings/variables.scss`.
 ### item
 
 ```scss
-@include item($media, $width, $margin, $padding, $position, $padding);
+@include item($media, $width, $margin, $padding, $position, $flow);
 ```
 
 #### item arguments
