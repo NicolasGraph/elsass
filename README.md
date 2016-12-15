@@ -28,6 +28,8 @@ See `src/settings/variables.scss`.
 @include item($media, $width, $margin, $padding, $position, $padding);
 ```
 
+#### item arguments
+
 - `$media` (`null`): min-width and/or max-width as `$layout` map keys.
 ```scss
 @include item(s) { … };
@@ -64,6 +66,8 @@ See `src/settings/variables.scss`.
 ```
 
 ### children
+
+#### children specific changes
 
 - `$width` (`null`): factor (.5) or fraction (1/2) of the container width.
 ```scss
