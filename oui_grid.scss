@@ -32,7 +32,7 @@ $layout: (
     @if $value == true {
         // Spacing uses the base value.
         $spacing-value: $base;
-    } @else if $value == nest {
+    } @else if $value == "nested" {
         // Spacing uses the base value as a negative value.
         $spacing-value: (-$base);
     } @else if type-of($value) == number and unitless($value) {
@@ -155,15 +155,6 @@ $layout: (
         $from-media: map-get($layout, nth($medias, 1));
     }
 
-    // Build margin related variables.
-    $horizontal-spacing: null;
-    $vertical-spacing: null;
-
-    @if $margin or $padding {
-        $horizontal-spacing: map-get($from-media, horizontal-spacing);
-        $vertical-spacing: map-get($from-media, vertical-spacing);
-    }
-
     > * { box-sizing: border-box; }
 
     // Generate CSS.
@@ -174,15 +165,19 @@ $layout: (
             flex-flow: $flex-flow;
         }
 
-        // Generate css margin.
+        // Generate spacings
         $spacings: (
             padding: $padding,
             margin : $margin
         );
-$spacing: null;
+
+        $spacing: null;
+
         @each $property in map-keys($spacings) {
             $value: map-get($spacings, $property);
             @if $value {
+                $horizontal-spacing: map-get($from-media, horizontal-spacing);
+                $vertical-spacing: map-get($from-media, vertical-spacing);
                 $spacing: spacing($horizontal-spacing, $vertical-spacing, $value);
 
                 @if map-has-key($spacing, "global") {
@@ -195,20 +190,20 @@ $spacing: null;
             }
         }
 
-        // Generate css width.
+        // Generate width calculation.
         @if $use-max-width {
             $max-width: map-get($from-media, content-max-width);
             @if $margin {
-              $margin-factor: null;
-              @if map-get($spacing, "right") {
-                $margin-factor: map-get($spacing, "right");
-              }
+                $margin-factor: null;
+                @if map-get($spacing, "right") {
+                    $margin-factor: map-get($spacing, "right");
+                }
                 @if map-get($spacing, "left") {
-                $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
-              }
-                max-width: calc(#{$max-width} * 100% - #{$margin-factor});
+                    $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
+                }
+                max-width: calc(#{$max-width} - #{$margin-factor});
             } @else {
-                max-width: $max-width * 100%;
+                max-width: $max-width;
             }
         }
 
@@ -303,8 +298,9 @@ $spacing: null;
 
 @mixin item($media: null, $col-width: null, $margin: null, $padding: null) {
 
-    // Get media related variables.
     $medias: map-keys($layout);
+
+    // Get media query min and max widths.
     $from-media: null;
     $min-width: null;
     $max-width: null;
@@ -320,29 +316,22 @@ $spacing: null;
         $from-media: map-get($layout, nth($medias, 1));
     }
 
-    // Build margin related variables.
-    $horizontal-spacing: null;
-    $vertical-spacing: null;
-
-    @if $margin or $padding {
-        $horizontal-spacing: map-get($from-media, horizontal-spacing);
-        $vertical-spacing: map-get($from-media, vertical-spacing);
-    }
-
-    // Generate css
+    // Media query wrapper
     @include breakpoint($min-width, $max-width) {
 
-
-
-        // Generate css margin.
+        // Generate spacings
         $spacings: (
             padding: $padding,
             margin : $margin
         );
-$spacing: null;
+
+        $spacing: null;
+
         @each $property in map-keys($spacings) {
             $value: map-get($spacings, $property);
             @if $value {
+                $horizontal-spacing: map-get($from-media, horizontal-spacing);
+                $vertical-spacing: map-get($from-media, vertical-spacing);
                 $spacing: spacing($horizontal-spacing, $vertical-spacing, $value);
 
                 @if map-has-key($spacing, "global") {
@@ -355,16 +344,16 @@ $spacing: null;
             }
         }
 
-        // Generate css width.
+        // Generate width calculation.
         @if $col-width {
             @if $margin {
-              $margin-factor: null;
-              @if map-get($spacing, "right") {
-                $margin-factor: map-get($spacing, "right");
-              }
+                $margin-factor: null;
+                @if map-get($spacing, "right") {
+                    $margin-factor: map-get($spacing, "right");
+                }
                 @if map-get($spacing, "left") {
-                $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
-              }
+                    $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
+                }
                 width: calc(#{$col-width} * 100% - #{$margin-factor});
             } @else {
                 width: $col-width * 100%;
@@ -374,7 +363,7 @@ $spacing: null;
         @content;
     }
 
-    // Add missing medias.
+    // Add needed media queries related values for missing non explicit queries.
     $media: if($media, $media, nth($medias, 1));
     $missing-medias: missing-medias($media);
 
