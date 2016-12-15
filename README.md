@@ -6,12 +6,21 @@ A sass powered css grid using flex-boxes and calc().
 
 ## Features
 
+* Unlimited columns width;
 * Unlimited breakpoints;
 * responsive gutters;
-* gutter value is applied to margin but can also be used as padding;
+* gutter as margin and/or padding;
 * etc.
 
-## mixins
+## Support
+
+Main *concerns* should be about [flexbox](http://caniuse.com/#feat=flexbox) and [calc()](http://caniuse.com/#search=calc).
+
+## Variables settings
+
+See `src/settings/variables.scss`.
+
+## Mixins
 
 ### item
 
@@ -46,7 +55,13 @@ A sass powered css grid using flex-boxes and calc().
 @include grid-items(s l, 1/2, true, 1px 2px 3px 4px) { … };
 ```
 - `$position` (`null`): …
+```scss
+@include grid-items(s l, 1/2, true, true, pull-1/2) { … };
+```
 - `flow` (`null`): …
+```scss
+@include grid-items(s l, 1/2, true, true, pull-1/2, grid) { … };
+```
 
 ### children
 
