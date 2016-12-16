@@ -26,8 +26,8 @@ $layout: (
         vertical-spacing  : 12px,
         horizontal-spacing: 8px
     ),
-    m: (                           // Each $layout key is used as a breakpoint.
-        device-min-width  : 640px, // Media-query min-width; also generates the max-width of the previous breakpoint.
+    m: (                           // Each key is used as a breakpoint.
+        device-min-width  : 640px, // Media-query min-width (also generates the max-width of the previous breakpoint).
         content-max-width : 800px, // Max-width to optionally apply to containers
         vertical-spacing  : 16px,  // Top and bottom gutters
         horizontal-spacing: 12px   // Right and left gutters
