@@ -15,7 +15,7 @@ Click these features for support informations via [caniuse.com](http://caniuse.c
 
 ## Variables settings
 
-See `src/settings/variables.scss`.
+See `src/settings/_variables.scss`.
 
 ### $layout
 
@@ -37,6 +37,8 @@ $layout: (
 ```
 
 ## Mixins
+
+See `src/mixins/_mixins.scss`.
 
 ### item
 

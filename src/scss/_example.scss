@@ -1,12 +1,12 @@
 .my-grid {
-    @include container(false, row wrap, true, 10px 11px, 22) {
+    @include item(false, true, true, true, false, grid) {
         background: #e9edf5;
     };
 
-    @include items("s" "m", 1, true, true);
-    @include items("m" "l", 1/4, true, true);
-    @include items("l", 1/4 1/8 repeat-last, true, true);
-    @include items() {
+    @include children("s" "m", 1, true, true);
+    @include children("m" "l", 1/4, true, true);
+    @include children("l", 1/4 1/8 repeat-last, true, true);
+    @include children() {
         background: #d7dfed;
     }
 

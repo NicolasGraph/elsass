@@ -3,8 +3,8 @@
 /* © Nicolas Morand, ouisource.com.
    --------------------------------------------------------------------------- */
 
-@import "settings/variables";
-@import "functions/functions";
-@import "mixins/mixins";
+@import "settings/_variables";
+@import "functions/_core";
+@import "mixins/_mixins";
 
-@import "scss/example";
+@import "scss/_example";

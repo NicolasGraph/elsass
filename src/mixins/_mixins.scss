@@ -16,7 +16,7 @@
     }
 }
 
-@mixin children($media: null, $widths: null, $margin: null, $position: null, $flow: null) {
+@mixin children($media: null, $widths: null, $margin: null, $padding: null, $position: null, $flow: null) {
 
     $repeat: null;
     $valid-widths: null;
@@ -24,7 +24,7 @@
     @for $item from 1 through length($widths) {
         $width: nth($widths, $item);
         @if type-of($width) == string {
-            $repeat: $widths;
+            $repeat: $width;
         } @else {
             $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
         }
@@ -36,7 +36,7 @@
     @if $repeat == "no-repeat" {
         @for $item from 1 through $items {
             > :nth-child(#{$item}) {
-                @include item($media, nth($widths, $item), $margin, $position, $flow) {
+                @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
                     @content
                 }
             }
@@ -45,13 +45,13 @@
          @for $item from 1 through $items {
             @if $item != $items {
                 > :nth-child(#{$item}) {
-                    @include item($media, nth($widths, $item), $margin, $position, $flow) {
+                    @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
                         @content
                     }
                 }
             } @else {
                 > :nth-child(n+#{$item}) {
-                    @include item($media, nth($widths, $item), $margin, $position, $flow) {
+                    @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
                         @content
                     }
                 }
@@ -60,7 +60,7 @@
     } @else {
         @for $item from 1 through $items {
             > :nth-child(#{$items}n+#{$item}) {
-                @include item($media, nth($widths, $item), $margin, $position, $flow) {
+                @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
                     @content
                 }
             }
@@ -68,7 +68,7 @@
     }
 }
 
-@mixin item($media: null, $width: null, $margin: null, $position: null, $flow: null) {
+@mixin item($media: null, $width: null, $margin: null, $padding: null, $position: null, $flow: null) {
 
     $medias: map-keys($layout);
 
@@ -102,7 +102,8 @@
 
         // Generate spacings
         $spacings: (
-            margin: $margin,
+            padding: $padding,
+            margin: $margin
         );
 
         $horizontal-spacing: null;
@@ -147,7 +148,7 @@
                 }
                 #{$property}: calc(#{$value} - #{$margin-factor});
             } @else {
-                #{$property}: $value;
+                #{$property}: calc(#{$value});
             }
         }
 
