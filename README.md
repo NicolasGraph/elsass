@@ -57,15 +57,15 @@ See `src/mixins/_mixins.scss`.
 - `$media` (`null`): media-query min-width and/or max-width as `$layout` map keys.
 
     ```scss
-    @include item(s) { … };
-    @include item(s l) { … };
+    @include item(s) { … }; // or…
+    @include item(s l) { … }; // or…
     @include item(false l) { … };
     ```
 
 - `$width` (`null`): fraction of factor of the container width.
 You can also use `true` to apply a width of 100% and a max-width of the `$max-content-width` responsive value.
     ```scss
-    @include item(s l, 1/2) { … };
+    @include item(s l, 1/2) { … }; // or…
     @include item(s l, .5) { … };
     ```
 
@@ -76,16 +76,16 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
   - a usual margin value followed by its unit will be used as it.
 
     ```scss
-    @include item(s l, 1/2, true) { … };
-    @include item(s l, 1/2, 2 -1) { … };
+    @include item(s l, 1/2, true) { … }; // or…
+    @include item(s l, 1/2, 2 -1) { … }; // or…
     @include item(s l, 1/2, 1px 2px 3px 4px) { … };
     ```
 
 - `$padding` (`null`): see `margin`.
 
     ```scss
-    @include item(s l, 1/2, true, true) { … };
-    @include item(s l, 1/2, true, 1 -1) { … };
+    @include item(s l, 1/2, true, true) { … }; // or…
+    @include item(s l, 1/2, true, 1 -1) { … }; // or…
     @include item(s l, 1/2, true, 1px 2px 3px 4px) { … };
     ```
 
@@ -112,7 +112,7 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
 - `$width` (`null`): factor (.5) or fraction (1/2) of the parent width.
 
     ```scss
-    @include children(s l, 1/2) { … };
+    @include children(s l, 1/2) { … }; // or…
     @include children(s l, 1/2 1/4) { … };
     ```
 
