@@ -1,6 +1,4 @@
-/**
- *
- */
+//
 @function spacing-value($base, $value) {
     $spacing-value: null;
 
@@ -21,14 +19,19 @@
     @return $spacing-value;
 }
 
-/**
- * Generate spacing values
- */
+// Generate spacing values
 @function spacing($horizontal-spacing, $vertical-spacing, $spacing: null, $position: null) {
     $values-order: "top", "right", "bottom", "left";
 
     $spacing-values: ();
     $add-spacing-values: ();
+
+    @if type-of($spacing) == list {
+        @if length($spacing) == 2 and nth($spacing, 1) and nth($spacing, 2) {
+        } @else {
+            $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2)
+        }
+    }
 
     @for $index from 1 through length($spacing) {
         $value: nth($spacing, $index);
@@ -114,9 +117,7 @@
     @return $spacing-values;
 }
 
-/**
- * Get missing media-queries
- */
+// Get missing media-queries
 @function missing-medias($media: null) {
     $medias: map-keys($layout);
     $from-index: 1;

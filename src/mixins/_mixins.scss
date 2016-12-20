@@ -16,7 +16,7 @@
     }
 }
 
-@mixin children($media: null, $widths: null, $margin: null, $padding: null, $position: null, $flow: null) {
+@mixin children($media: null, $flow: null, $widths: null, $margin: null, $position: null, $padding: null) {
 
     $repeat: null;
     $valid-widths: null;
@@ -36,7 +36,7 @@
     @if $repeat == "no-repeat" {
         @for $item from 1 through $items {
             > :nth-child(#{$item}) {
-                @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
+                @include item($media, $flow, nth($widths, $item), $margin, $position, $padding) {
                     @content
                 }
             }
@@ -45,13 +45,13 @@
          @for $item from 1 through $items {
             @if $item != $items {
                 > :nth-child(#{$item}) {
-                    @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
+                    @include item($media, $flow, nth($widths, $item), $margin, $position, $padding) {
                         @content
                     }
                 }
             } @else {
                 > :nth-child(n+#{$item}) {
-                    @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
+                    @include item($media, $flow, nth($widths, $item), $margin, $position, $padding) {
                         @content
                     }
                 }
@@ -60,7 +60,7 @@
     } @else {
         @for $item from 1 through $items {
             > :nth-child(#{$items}n+#{$item}) {
-                @include item($media, nth($widths, $item), $margin, $padding, $position, $flow) {
+                @include item($media, $flow, nth($widths, $item), $margin, $position, $padding) {
                     @content
                 }
             }
@@ -68,7 +68,7 @@
     }
 }
 
-@mixin item($media: null, $width: null, $margin: null, $padding: null, $position: null, $flow: null) {
+@mixin item($media: null, $flow: null, $width: null, $margin: null, $position: null, $padding: null) {
 
     $medias: map-keys($layout);
 
@@ -76,6 +76,7 @@
     $from-media: null;
     $min-width: null;
     $max-width: null;
+    $content-max-width: null;
 
     @if $media {
         $from-media: map-get($layout, nth($media, 1));
@@ -86,6 +87,7 @@
         }
     } @else {
         $from-media: map-get($layout, nth($medias, 1));
+        $content-max-width: map-get($from-media, content-max-width);
     }
 
     // Media query wrapper
@@ -114,8 +116,13 @@
             @if $value {
                 $horizontal-spacing: map-get($from-media, horizontal-spacing);
                 $vertical-spacing: map-get($from-media, vertical-spacing);
-                $spacing: spacing($horizontal-spacing, $vertical-spacing, $value, $position);
+                $spacing: null;
+                @if $property == padding {
+                $spacing: spacing($horizontal-spacing, $vertical-spacing, $value);
+} @else {
+                  $spacing: spacing($horizontal-spacing, $vertical-spacing, $value, $position);
 
+}
                 @if map-has-key($spacing, "global") {
                     #{$property}: map-get($spacing, "global");
                 } @else {
@@ -128,15 +135,10 @@
 
         // Generate width calculation.
         @if $width {
-          $property: null;
-          $value: null;
-          @if $width == true {
-            $property: max-width;
-            $value: map-get($from-media, content-max-width);
-          } @else {
-            $property: width;
-            $value: #{$width} * 100%;
-          }
+            @if $width == true {
+              $width: 1;
+              $max-width: $content-max-width;
+            }
             @if $margin {
                 $spacing: spacing($horizontal-spacing, $vertical-spacing, $margin);
                 $margin-factor: null;
@@ -146,9 +148,15 @@
                 @if map-get($spacing, "left") {
                     $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
                 }
-                #{$property}: calc(#{$value} - #{$margin-factor});
+                width: calc(#{$width} * 100% - #{$margin-factor});
+                @if $max-width {
+                  max-width: $max-width;
+                }
             } @else {
-                #{$property}: calc(#{$value});
+                width: calc(#{$width} * 100%);
+               @if $max-width {
+                  max-width: $max-width;
+                }
             }
         }
 
@@ -167,7 +175,7 @@
                 $missing-media: $missing-media nth($medias, $index + 1);
             }
 
-            @include item($missing-media, $width, $margin, $position);
+            @include item($missing-media, null, $width, $margin, $position, $padding);
         }
     }
 }

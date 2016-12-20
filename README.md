@@ -49,24 +49,33 @@ See `src/mixins/_mixins.scss`.
 ### item
 
 ```scss
-@include item($media, $width, $margin, $padding, $position, $flow);
+@include item($media, $flow, $width, $margin, $position, $padding);
 ```
 
 #### item arguments
 
+- Quotes around string values are optional;
+- use `null` or `false` to ignore an argument.
+
 - `$media` (`null`): media-query min-width and/or max-width as `$layout` map keys.
 
     ```scss
-    @include item(s) { … }; // or…
-    @include item(s l) { … }; // or…
-    @include item(false l) { … };
+    @include item("s") { … }; // or…
+    @include item("s" "l") { … }; // or…
+    @include item(false "l") { … };
+    ```
+
+- `flow` (`null`): …
+
+    ```scss
+    @include item("s" "l", "grid") { … };
     ```
 
 - `$width` (`null`): fraction of factor of the container width.
 You can also use `true` to apply a width of 100% and a max-width of the `$max-content-width` responsive value.
     ```scss
-    @include item(s l, 1/2) { … }; // or…
-    @include item(s l, .5) { … };
+    @include item("s" "l", "grid", 1/2) { … }; // or…
+    @include item("s" "l", "grid", .5) { … };
     ```
 
 - `$margin` (`null`): value or list of two or four values.
@@ -75,36 +84,31 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
   - a unitless value will be read as a factor of the responsive gutter;
   - a usual margin value followed by its unit will be used as it.
 
-    ```scss
-    @include item(s l, 1/2, true) { … }; // or…
-    @include item(s l, 1/2, 2 -1) { … }; // or…
-    @include item(s l, 1/2, 1px 2px 3px 4px) { … };
-    ```
-
-- `$padding` (`null`): see `margin`.
 
     ```scss
-    @include item(s l, 1/2, true, true) { … }; // or…
-    @include item(s l, 1/2, true, 1 -1) { … }; // or…
-    @include item(s l, 1/2, true, 1px 2px 3px 4px) { … };
+    @include item("s" "l", "grid", 1/2, true) { … }; // or…
+    @include item("s" "l", "grid", 1/2, 2 -1) { … }; // or…
+    @include item("s" "l", "grid", 1/2, 1px 2px 3px 4px) { … };
     ```
 
 - `$position` (`null`): `pull-` or `push-` followed by a fraction of the container width.
 
     ```scss
-    @include item(s l, 1/2, true, true, push-1/2) { … };
+    @include item("s" "l", "grid", 1/2, true, "push-1/2") { … };
     ```
 
-- `flow` (`null`): …
+- `$padding` (`null`): see `margin`.
 
     ```scss
-    @include item(s l, 1/2, true, true, push-1/2, grid) { … };
+    @include item("s" "l", "grid", 1/2, true, "push-1/2", true) { … }; // or…
+    @include item("s" "l", "grid", 1/2, true, "push-1/2", 1 -1) { … }; // or…
+    @include item("s" "l", "grid", 1/2, true, "push-1/2", 1px 2px 3px 4px) { … };
     ```
 
 ### children
 
 ```scss
-@include children($media, $width, $margin, $padding, $position, $padding);
+@include children($media, $flow, $width, $margin, $position, $padding);
 ```
 
 #### children specific changes
@@ -112,14 +116,14 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
 - `$width` (`null`): factor (.5) or fraction (1/2) of the parent width.
 
     ```scss
-    @include children(s l, 1/2) { … }; // or…
-    @include children(s l, 1/2 1/4) { … };
+    @include children("s" "l", 1/2) { … }; // or…
+    @include children("s" "l", 1/2 1/4) { … };
     ```
 
 - `$repeat` (`null`): extra value for `$width` to define the repeat scheme to use.
 
     ```scss
-    @include children(s l, 1/2 1/4 repeat-last) { … };
+    @include children("s" "l", 1/2 1/4 "repeat-last") { … };
     ```
 
 ## Author
