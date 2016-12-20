@@ -76,7 +76,6 @@
     $from-media: null;
     $min-width: null;
     $max-width: null;
-    $content-max-width: null;
 
     @if $media {
         $from-media: map-get($layout, nth($media, 1));
@@ -87,7 +86,6 @@
         }
     } @else {
         $from-media: map-get($layout, nth($medias, 1));
-        $content-max-width: map-get($from-media, content-max-width);
     }
 
     // Media query wrapper
@@ -135,29 +133,34 @@
 
         // Generate width calculation.
         @if $width {
-            @if $width == true {
-              $width: 1;
-              $max-width: $content-max-width;
-            }
+
+            $margin-factor: null;
             @if $margin {
                 $spacing: spacing($horizontal-spacing, $vertical-spacing, $margin);
-                $margin-factor: null;
                 @if map-get($spacing, "right") {
                     $margin-factor: map-get($spacing, "right");
                 }
                 @if map-get($spacing, "left") {
                     $margin-factor: if($margin-factor, $margin-factor + map-get($spacing, "left"), map-get($spacing, "left"));
                 }
+            }
+
+            $content-max-width: null;
+            @if $width == true {
+                $value: 1;
+                $content-max-width: map-get($from-media, content-max-width);
+            } @else {
+                $value: $width;
+            }
+
+            @if $margin-factor {
                 width: calc(#{$width} * 100% - #{$margin-factor});
-                @if $max-width {
-                  max-width: $max-width;
-                }
             } @else {
                 width: calc(#{$width} * 100%);
-               @if $max-width {
-                  max-width: $max-width;
-                }
             }
+
+            max-width: $content-max-width;
+
         }
 
         @content;

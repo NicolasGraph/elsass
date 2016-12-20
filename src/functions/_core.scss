@@ -1,4 +1,6 @@
-//
+/**
+ *
+ */
 @function spacing-value($base, $value) {
     $spacing-value: null;
 
@@ -19,7 +21,9 @@
     @return $spacing-value;
 }
 
-// Generate spacing values
+/**
+ * Generate spacing values
+ */
 @function spacing($horizontal-spacing, $vertical-spacing, $spacing: null, $position: null) {
     $values-order: "top", "right", "bottom", "left";
 
@@ -117,7 +121,9 @@
     @return $spacing-values;
 }
 
-// Get missing media-queries
+/**
+ * Get missing media-queries
+ */
 @function missing-medias($media: null) {
     $medias: map-keys($layout);
     $from-index: 1;

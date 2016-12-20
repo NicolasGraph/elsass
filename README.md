@@ -52,10 +52,7 @@ See `src/mixins/_mixins.scss`.
 @include item($media, $flow, $width, $margin, $position, $padding);
 ```
 
-#### item arguments
-
-- Quotes around string values are optional;
-- use `null` or `false` to ignore an argument.
+#### arguments
 
 - `$media` (`null`): media-query min-width and/or max-width as `$layout` map keys.
 
@@ -83,7 +80,6 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
   - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list item);
   - a unitless value will be read as a factor of the responsive gutter;
   - a usual margin value followed by its unit will be used as it.
-
 
     ```scss
     @include item("s" "l", "grid", 1/2, true) { … }; // or…
