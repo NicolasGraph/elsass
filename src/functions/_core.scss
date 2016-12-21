@@ -99,24 +99,27 @@
     }
 
     @if $position {
-        $position-direction: str-slice($position, 1, 4);
-        $position-value: str-slice($position, -3, -1);
+        $position-side: null;
 
-        @if $position-direction == "pull" {
-            $add-spacing-values: (
-                "left": calc(#{map-get($spacing-values, "left")} - #{$position-value} * 100%),
-            );
-            $spacing-values: map-remove($spacing-values, "global", "left");
-
+        $value: null;
+        @if type-of($position) == list {
+          $position-side: left;
+          $position-direction: nth($position, 1);
+          $margin-value: map-get($spacing-values, "left");
+          $position-value: nth($position, 2) * 100%;
+          $operator: if($position-direction == pull, "-", "+");
+          $value: if($margin-value, calc(#{$margin-value} #{$operator} #{$position-value}), $position-value);
         } @else {
-            $add-spacing-values: (
-                "left": calc(#{map-get($spacing-values, "left")} + #{$position-value} * 100%),
-            );
-            $spacing-values: map-remove($spacing-values, "global", "left");
-
+          $position-side: if($position == "push", left, right);
+          $value: auto;
         }
+
+        $add-spacing-values: (#{$position-side}: #{$value});
+        $spacing-values: map-remove($spacing-values, "global", "left");
+
         $spacing-values: map-merge($spacing-values, $add-spacing-values);
     }
+
 
     @return $spacing-values;
 }

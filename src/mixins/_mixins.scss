@@ -111,7 +111,6 @@
 
         @each $property in map-keys($spacings) {
             $value: map-get($spacings, $property);
-            @if $value {
                 $horizontal-spacing: map-get($from-media, horizontal-spacing);
                 $vertical-spacing: map-get($from-media, vertical-spacing);
                 $spacing: null;
@@ -128,7 +127,7 @@
                         #{$property}-#{$side}: map-get($spacing, $side);
                     }
                 }
-            }
+
         }
 
         // Generate width calculation.
@@ -146,6 +145,7 @@
             }
 
             $content-max-width: null;
+            $value: null;
             @if $width == true {
                 $value: 1;
                 $content-max-width: map-get($from-media, content-max-width);
@@ -154,9 +154,9 @@
             }
 
             @if $margin-factor {
-                width: calc(#{$width} * 100% - #{$margin-factor});
+                width: calc(#{$value} * 100% - #{$margin-factor});
             } @else {
-                width: calc(#{$width} * 100%);
+                width: calc(#{$value} * 100%);
             }
 
             max-width: $content-max-width;
