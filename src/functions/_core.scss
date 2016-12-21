@@ -102,12 +102,11 @@
         $position-side: null;
 
         $value: null;
-        @if type-of($position) == list {
+        @if type-of($position) == number {
           $position-side: left;
-          $position-direction: nth($position, 1);
           $margin-value: map-get($spacing-values, "left");
-          $position-value: nth($position, 2) * 100%;
-          $operator: if($position-direction == pull, "-", "+");
+          $operator: if($position > 0, "+", "-");
+          $position-value: if($position > 0, $position * 100%, (-$position) * 100%);
           $value: if($margin-value, calc(#{$margin-value} #{$operator} #{$position-value}), $position-value);
         } @else {
           $position-side: if($position == "push", left, right);
