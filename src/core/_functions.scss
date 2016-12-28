@@ -1,0 +1,197 @@
+// -----------------------------------------------------------------------------
+// Copyright 2016 Nicolas Morand (https://github.com/NicolasGraph)
+// -----------------------------------------------------------------------------
+// This file is part of oui_grid,
+// a software distributed under the MIT licence
+// See https://opensource.org/licenses/MIT for more informations.
+// -----------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// -----------------------------------------------------------------------------
+// Return a map of spacing values from the $spacing mixin argument
+// to be used as margins and/or paddings.
+// @param     $spacing-y   The default value for vertival spacings;
+// @param     $spacing-x   The default value for horizontal spacings;
+// @param     $spacing     Mixin argument;
+// @return    $spacings    Map of spacing values:
+//                         $spacings: (
+//                             "global": …, <- optional key for shorthand
+//                             "top": …,
+//                             "right": …,
+//                             "bottom": …,
+//                             "left": …
+//                          );
+// @see       _mixins.scss.
+// -----------------------------------------------------------------------------
+@function spacing($spacing-y, $spacing-x, $spacing: null) {
+
+    @if type-of($spacing) == list and length($spacing) == 2 and (not nth($spacing, 1) or not nth($spacing, 2)) {
+        // A list of two values can't be used as is if one of the value is false.
+        $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
+    }
+
+    $sides: "top", "right", "bottom", "left";
+    $spacings: ();
+    $new-spacings: ();
+
+    // Iterate over $spacing values.
+    @for $index from 1 through length($spacing) {
+        $value: nth($spacing, $index);
+
+        @if $value != false {
+
+            // Get the CSS $spacing-value.
+            $base: if($index == 1 or $index == 3, $spacing-y, $spacing-x);
+            $spacing-value: spacing-value($base, $value);
+
+            // Build the map.
+            @if type-of($spacing) == list {
+
+                @if length($spacing) == 2 {
+                    $global: null;
+                    @if not map-has-key($spacings, "global") {
+                        // Set the first shorthand value…
+                        $global: $spacing-value;
+                    } @else {
+                        // …or append the second shorthand value.
+                        $global: map-get($spacings, "global");
+                        $global: if($global == $spacing-value, $spacing-value, $global $spacing-value);
+                    }
+                    $new-spacings: (
+                        #{nth($sides, $index)}: $spacing-value,
+                        #{nth($sides, $index + 2)}: $spacing-value,
+                        "global": $global
+                    );
+                } @else {
+                    $new-spacings: (
+                        #{nth($sides, $index)}: $spacing-value
+                    );
+                }
+                // Merge existing values with new ones.
+                $spacings: map-merge($spacings, $new-spacings);
+
+            } @else {
+                @each $side in $sides {
+                    $base: if($side == "top" or $side == "bottom", $spacing-y, $spacing-x);
+                    $value-y: spacing-value($spacing-y, $value);
+                    $value-x: spacing-value($spacing-x, $value);
+                    $global: if($value-y == $value-x, $value-y, $value-y $value-x);
+                    $new-spacings: (
+                        $side: spacing-value($base, $value),
+                        "global": $global
+                    );
+                    // Merge existing values with new ones.
+                    $spacings: map-merge($spacings, $new-spacings);
+                }
+            }
+        }
+    }
+
+    @return $spacings;
+}
+
+// -----------------------------------------------------------------------------
+// Return a css value from a $spacing mixin argument
+// value to be used as a margin and/or padding value.
+// @param     $base             A CSS value used a calculation base when needed;
+// @param     $value            A $spacing value
+// @return    $spacing-value    A CSS margin/padding value;
+// @see       spacing().
+// -----------------------------------------------------------------------------
+@function spacing-value($base, $value) {
+    $spacing-value: null;
+
+    @if $value == true {
+        // Use the $base value.
+        $spacing-value: $base;
+    } @else if $value == "nested" {
+        // Use $base as a negative value.
+        $spacing-value: (-$base);
+    } @else if type-of($value) == number and unitless($value) {
+        // Use a factor to multiply the $base value.
+        $spacing-value: if($value == 0, $value, $value * $base);
+    } @else {
+        // Ignore $base; use a custom spacing value.
+        $spacing-value: $value;
+    }
+
+    @return $spacing-value;
+}
+
+// -----------------------------------------------------------------------------
+// Atlterate margins depending of the $position value.
+// @param     $spacings    Map returned by spacing(),
+// @param     $position    Mixin argument
+// @return    $spacings    Alterated map
+// -----------------------------------------------------------------------------
+@function position($spacings, $position) {
+    $position-side: null;
+    $value: null;
+
+    @if type-of($position) == number {
+        // Use the $position value (fraction or factor) to reset the margin.
+        $position-side: "left";
+        $margin: map-get($spacings, "left");
+        // Push (add) or pull (soustract) depending on the $position $value (positive or negative).
+        $operator: if($position > 0, "+", "-");
+        $position-value: if($position > 0, $position * 100%, (-$position) * 100%);
+        $value: if($margin and $margin != 0, calc(#{$margin} #{$operator} #{$position-value}), #{$operator}$position-value);
+    } @else {
+        // Use 'auto' to push, pull or center.
+        @if $position == "pull" {
+            $position-side: "right";
+        } @else if $position == "push" {
+            $position-side: "left";
+        } @else {
+            $position-side: "right" "left";
+        }
+        $value: auto;
+    }
+
+    @each $side in $position-side {
+        $new-spacings: (#{$side}: #{$value});
+        $spacings: map-remove($spacings, $side);
+        $spacings: map-merge($spacings, $new-spacings);
+    }
+
+    $global: map-get($spacings, "global");
+    @if $global {
+        // Remove the global spacing value(s).
+        $spacings: map-remove($spacings, "global");
+        @if type-of($position-side) == list {
+            // Reset the global spacing value(s) using 'auto' for right and left.
+            $new-spacings: if(type-of($global) == list, ("global": nth($global, 1) #{$value}), ("global": #{$value}));
+            $spacings: map-merge($spacings, $new-spacings);
+        }
+    }
+
+    @return $spacings;
+}
+
+// -----------------------------------------------------------------------------
+// Return a list of implicit media-queries as $layout keys.
+// @param     $from-media        $layout key used as the min-width screen size;
+// @param     $from-media        $layout key used as the max-width screen size;
+// @return    $missing-medias    A list of implicitly set screen sizes
+// @see       _mixins.scss
+// -----------------------------------------------------------------------------
+@function missing-medias($from-media: null, $to-media: null) {
+    $medias: map-keys($layout);
+    $from-index: if($from-media, index($medias, $from-media) + 1, 2);;
+    $to-index: if($to-media, index($medias, $to-media) - 1, length($medias));
+
+    $missing-medias: null;
+    @if $to-index - $from-index >= 0 {
+        @for $index from $from-index through $to-index {
+            $missing-medias: if($missing-medias, append($missing-medias, nth($medias, $index)), nth($medias, $index));
+        }
+    }
+
+    @return $missing-medias;
+}

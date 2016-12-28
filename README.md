@@ -58,7 +58,7 @@ See `src/mixins/_mixins.scss`.
 
     ```scss
     @include item("s") { … }; // or…
-    @include item("s" "l") { … }; // or…
+    @include item("m" "l") { … }; // or…
     @include item(false "l") { … };
     ```
 
@@ -87,18 +87,19 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
     @include item("s" "l", "grid", 1/2, 1px 2px 3px 4px) { … };
     ```
 
-- `$position` (`null`): `pull-` or `push-` followed by a fraction of the container width.
+- `$position` (`null`): a positive (to push) or a negative (to pull) fraction of the container width.
 
     ```scss
-    @include item("s" "l", "grid", 1/2, true, "push-1/2") { … };
+    @include item("s" "l", "grid", 1/2, true, 1/2) { … }; // or…
+    @include item("s" "l", "grid", 1/2, true, -1/2) { … };
     ```
 
 - `$padding` (`null`): see `margin`.
 
     ```scss
-    @include item("s" "l", "grid", 1/2, true, "push-1/2", true) { … }; // or…
-    @include item("s" "l", "grid", 1/2, true, "push-1/2", 1 -1) { … }; // or…
-    @include item("s" "l", "grid", 1/2, true, "push-1/2", 1px 2px 3px 4px) { … };
+    @include item("s" "l", "grid", 1/2, true, 1/2, true) { … }; // or…
+    @include item("s" "l", "grid", 1/2, true, 1/2, 1 -1) { … }; // or…
+    @include item("s" "l", "grid", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
     ```
 
 ### children
