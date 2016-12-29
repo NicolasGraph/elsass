@@ -157,8 +157,7 @@ html * { box-sizing: inherit; }
             margin: $margin
         );
 
-        @each $property in map-keys($spacings) {
-            $value: map-get($spacings, $property);
+        @each $property, $value in $spacings {
             $spacing: spacing($spacing-y, $spacing-x, $value);
 
             @if $position and $property == "margin" {
