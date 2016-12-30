@@ -140,6 +140,8 @@ html * { box-sizing: inherit; }
 
     $spacing-x: map-get($min-media, "horizontal-spacing");
     $spacing-y: map-get($min-media, "vertical-spacing");
+    $margins: null;
+    $paddings: null;
 
     // Generate the media-query.
     @include breakpoint($min-width, $max-width) {
@@ -152,23 +154,27 @@ html * { box-sizing: inherit; }
         }
 
         // Generate spacings
-        $spacings: (
-            padding: $padding,
-            margin: $margin
-        );
-
-        @each $property, $value in $spacings {
-            $spacing: spacing($spacing-y, $spacing-x, $value);
-
-            @if $position and $property == "margin" {
-                $spacing: position($spacing, $position);
+        @if $margin {
+            $margins: spacing($spacing-y, $spacing-x, $margin);
+            @if $position {
+                $margins: position($margins, $position);
             }
-
-            @if map-has-key($spacing, "global") {
-                #{$property}: map-get($spacing, "global");
+            @if map-has-key($margins, "global") {
+                margin: map-get($margins, "global");
             } @else {
-                @each $side in map-keys($spacing) {
-                    #{$property}-#{$side}: map-get($spacing, $side);
+                @each $side, $value in $margins {
+                    margin-#{$side}: $value;
+                }
+            }
+        }
+
+        @if $padding {
+            $paddings: spacing($spacing-y, $spacing-x, $padding);
+            @if map-has-key($paddings, "global") {
+                margin: map-get($paddings, "global");
+            } @else {
+                @each $side, $value in $paddings {
+                    margin-#{$side}: $value;
                 }
             }
         }
@@ -210,16 +216,33 @@ html * { box-sizing: inherit; }
 
     // Add needed media queries related values for missing non explicit queries.
     $medias: map-keys($settings);
-    $media: if($media, $media, nth($medias, 1));
     $missing-medias: missing-medias($min-width, $max-width);
 
     @if $missing-medias {
         @each $missing-media in $missing-medias {
+            $media-settings: map-get($settings, $missing-media);
+            $next-spacing-y: map-get($media-settings, "vertical-spacing");
+            $next-spacing-x: map-get($media-settings, "horizontal-spacing");
+            $next-margins: spacing($next-spacing-y, $next-spacing-x, $margin);
+            $new-margins: null;
+            @each $side in ("top", "right", "bottom", "left") {
+                @if map-has-key($next-margins, $side) {
+                    $value: map-get($next-margins, $side);
+                    @if $value == map-get($margins, $side) {
+                        $new-margins: if($new-margins != null, append($new-margins, false), false);
+                    } @else {
+                        $new-margins: if($new-margins != null, append($new-margins, $value), $value);
+                    }
+                } @else {
+                    $new-margins: if($new-margins != null, append($new-margins, false), false);
+                }
+            }
+            $new-width: if(nth($new-margins, 2) == false or nth($new-margins, 4) == false , false, $width);
             $index: index($medias, $missing-media);
             @if $index != length($medias) {
                 $missing-media: $missing-media nth($medias, $index + 1);
             }
-            @include item($missing-media, null, $width, $margin, $position, $padding);
+            @include item($missing-media, null, $new-width, $new-margins, $position, $padding);
         }
     }
 }
