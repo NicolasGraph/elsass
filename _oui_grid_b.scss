@@ -140,6 +140,7 @@ html * { box-sizing: inherit; }
 
     $spacing-x: map-get($min-media, "horizontal-spacing");
     $spacing-y: map-get($min-media, "vertical-spacing");
+    $raw-margins: null;
     $margins: null;
     $paddings: null;
 
@@ -155,7 +156,8 @@ html * { box-sizing: inherit; }
 
         // Generate spacings
         @if $margin {
-            $margins: spacing($spacing-y, $spacing-x, $margin);
+            $raw-margins: spacing($spacing-y, $spacing-x, $margin);
+            $margins: $raw-margins;
             @if $position {
                 $margins: position($margins, $position);
             }
@@ -183,15 +185,14 @@ html * { box-sizing: inherit; }
         @if $width {
             $margin-factor: null;
             @if $margin {
-                $spacing: spacing($spacing-x, $spacing-y, $margin);
-                @if map-get($spacing, "right") and map-get($spacing, "right") != 0 {
-                    $margin-factor: map-get($spacing, "right");
+                @if map-get($raw-margins, "right") and map-get($raw-margins, "right") != 0 {
+                    $margin-factor: map-get($raw-margins, "right");
                 }
-                @if map-get($spacing, "left") and map-get($spacing, "left") != 0 {
+                @if map-get($raw-margins, "left") and map-get($raw-margins, "left") != 0 {
                     @if $margin-factor {
-                        $margin-factor: $margin-factor + map-get($spacing, "left");
+                        $margin-factor: $margin-factor + map-get($raw-margins, "left");
                     } @else {
-                        $margin-factor: map-get($spacing, "left");
+                        $margin-factor: map-get($raw-margins, "left");
                     }
                 }
             }
@@ -223,12 +224,13 @@ html * { box-sizing: inherit; }
             $media-settings: map-get($settings, $missing-media);
             $next-spacing-y: map-get($media-settings, "vertical-spacing");
             $next-spacing-x: map-get($media-settings, "horizontal-spacing");
-            $next-margins: spacing($next-spacing-y, $next-spacing-x, $margin);
+            $next-raw-margins: spacing($next-spacing-y, $next-spacing-x, $margin);
+            $next-margins: if($position, position($next-raw-margins, $position), $next-raw-margins);
             $new-margins: null;
             @each $side in ("top", "right", "bottom", "left") {
                 @if map-has-key($next-margins, $side) {
-                    $value: map-get($next-margins, $side);
-                    @if $value == map-get($margins, $side) {
+                    $value: map-get($next-raw-margins, $side);
+                    @if map-get($next-margins, $side) == map-get($margins, $side) {
                         $new-margins: if($new-margins != null, append($new-margins, false), false);
                     } @else {
                         $new-margins: if($new-margins != null, append($new-margins, $value), $value);
@@ -237,12 +239,22 @@ html * { box-sizing: inherit; }
                     $new-margins: if($new-margins != null, append($new-margins, false), false);
                 }
             }
-            $new-width: if(nth($new-margins, 2) == false or nth($new-margins, 4) == false , false, $width);
+
+            $new-position: null;
+            @if $position {
+                @if (nth($new-margins, 4) and (type-of($position) == number or $position == "push"))
+                 or (nth($new-margins, 2) and $position == "pull")
+                 or (nth($new-margins, 2) and nth($new-margins, 4) and $position == "center") {
+                    $new-position: $position;
+                }
+            }
+            $new-width: if(nth($new-margins, 2) or nth($new-margins, 4) and $new-position == null, $width, false);
+
             $index: index($medias, $missing-media);
             @if $index != length($medias) {
                 $missing-media: $missing-media nth($medias, $index + 1);
             }
-            @include item($missing-media, null, $new-width, $new-margins, $position, $padding);
+            @include item($missing-media, null, $new-width, $new-margins, $new-position, $padding);
         }
     }
 }
