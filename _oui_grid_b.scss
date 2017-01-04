@@ -13,8 +13,9 @@
 // -----------------------------------------------------------------------------
 // 1. Settings
 // 2. CSS base
-// 3. Mixins
-// 4. Functions
+// 3. Variables
+// 4. Mixins
+// 5. Functions
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -56,7 +57,13 @@ html { box-sizing: border-box; }
 html * { box-sizing: inherit; }
 
 // -----------------------------------------------------------------------------
-// 3. Mixins
+// 3. Variables
+// -----------------------------------------------------------------------------
+
+$breakpoints: map-keys($settings);
+
+// -----------------------------------------------------------------------------
+// 4. Mixins
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -65,15 +72,14 @@ html * { box-sizing: inherit; }
 // @param    $max-width    A $settings key or a CSS max-width value;
 // -----------------------------------------------------------------------------
 @mixin breakpoint($min-width: null, $max-width: null) {
-    $medias: map-keys($settings);
     $media-query: null;
 
     @if $min-width {
         // If $min-width is a $settings key; get the related value if it exists.
         @if map-has-key($settings, $min-width) {
-            $min-media: map-get($settings, $min-width);
-            @if map-has-key($min-media, "device-min-width") {
-                $min-width: map-get($min-media, "device-min-width");
+            $min-settings: map-get($settings, $min-width);
+            @if map-has-key($min-settings, "device-min-width") {
+                $min-width: map-get($min-settings, "device-min-width");
             } @else {
                 $min-width: null;
             }
@@ -85,8 +91,8 @@ html * { box-sizing: inherit; }
     @if $max-width {
         // If $max-width is a $settings key; get the related value.
         @if map-has-key($settings, $max-width) {
-            $max-media: map-get($settings, $max-width);
-            $max-width: map-get($max-media, "device-min-width") - 1;
+            $max-settings: map-get($settings, $max-width);
+            $max-width: map-get($max-settings, "device-min-width") - 1;
         }
         // Add or set the media-query max-width.
         @if $min-width {
@@ -120,29 +126,29 @@ html * { box-sizing: inherit; }
 @mixin item($media: null, $flow: null, $width: null, $margin: null, $position: null, $padding: null) {
 
     // Get the media-query related values.
-    $min-media: null;
+    $min-settings: null;
     $min-width: null;
     $max-width: null;
 
     @if $media {
         @if nth($media, 1) {
-            $min-media: map-get($settings, nth($media, 1));
+            $min-settings: map-get($settings, nth($media, 1));
             $min-width: nth($media, 1);
         } @else {
-            $min-media: map-get($settings, "s");
+            $min-settings: map-get($settings, "s");
         }
         @if type-of($media) == list {
             $max-width: nth($media, 2);
         }
     } @else {
-        $min-media: map-get($settings, "s");
+        $min-settings: map-get($settings, "s");
     }
 
-    $spacing-x: map-get($min-media, "horizontal-spacing");
-    $spacing-y: map-get($min-media, "vertical-spacing");
-    $raw-margins: null;
-    $margins: null;
-    $paddings: null;
+    $spacing-x: map-get($min-settings, "horizontal-spacing");
+    $spacing-y: map-get($min-settings, "vertical-spacing");
+    $css-margins: null;
+    $css-positions: null;
+    $css-paddings: null;
 
     // Generate the media-query.
     @include breakpoint($min-width, $max-width) {
@@ -156,27 +162,27 @@ html * { box-sizing: inherit; }
 
         // Generate spacings
         @if $margin {
-            $raw-margins: spacing($spacing-y, $spacing-x, $margin);
-            $margins: $raw-margins;
+            $css-margins: spacing($spacing-y, $spacing-x, $margin);
+            $css-positions: $css-margins;
             @if $position {
-                $margins: position($margins, $position);
+                $css-positions: position($css-positions, $position);
             }
-            @if map-has-key($margins, "global") {
-                margin: map-get($margins, "global");
+            @if map-has-key($css-positions, "global") {
+                margin: map-get($css-positions, "global");
             } @else {
-                @each $side, $value in $margins {
+                @each $side, $value in $css-positions {
                     margin-#{$side}: $value;
                 }
             }
         }
 
         @if $padding {
-            $paddings: spacing($spacing-y, $spacing-x, $padding);
-            @if map-has-key($paddings, "global") {
-                margin: map-get($paddings, "global");
+            $css-paddings: spacing($spacing-y, $spacing-x, $padding);
+            @if map-has-key($css-paddings, "global") {
+                padding: map-get($css-paddings, "global");
             } @else {
-                @each $side, $value in $paddings {
-                    margin-#{$side}: $value;
+                @each $side, $value in $css-paddings {
+                    padding-#{$side}: $value;
                 }
             }
         }
@@ -185,14 +191,14 @@ html * { box-sizing: inherit; }
         @if $width {
             $margin-factor: null;
             @if $margin {
-                @if map-get($raw-margins, "right") and map-get($raw-margins, "right") != 0 {
-                    $margin-factor: map-get($raw-margins, "right");
+                @if map-get($css-margins, "right") and map-get($css-margins, "right") != 0 {
+                    $margin-factor: map-get($css-margins, "right");
                 }
-                @if map-get($raw-margins, "left") and map-get($raw-margins, "left") != 0 {
+                @if map-get($css-margins, "left") and map-get($css-margins, "left") != 0 {
                     @if $margin-factor {
-                        $margin-factor: $margin-factor + map-get($raw-margins, "left");
+                        $margin-factor: $margin-factor + map-get($css-margins, "left");
                     } @else {
-                        $margin-factor: map-get($raw-margins, "left");
+                        $margin-factor: map-get($css-margins, "left");
                     }
                 }
             }
@@ -201,9 +207,9 @@ html * { box-sizing: inherit; }
             $value: null;
             @if $width == "max-width" {
                 $value: 100%;
-                $content-max-width: map-get($min-media, "content-max-width");
+                $content-max-width: map-get($min-settings, "content-max-width");
             } @else if $width == "max-width-only" {
-                $content-max-width: map-get($min-media, "content-max-width");
+                $content-max-width: map-get($min-settings, "content-max-width");
             } @else {
                 $value: if($width == 1, 100%, $width * 100%);
             }
@@ -216,45 +222,48 @@ html * { box-sizing: inherit; }
     }
 
     // Add needed media queries related values for missing non explicit queries.
-    $medias: map-keys($settings);
-    $missing-medias: missing-medias($min-width, $max-width);
+    $missing-breakpoints: missing-breakpoints($min-width, $max-width);
 
-    @if $missing-medias {
-        @each $missing-media in $missing-medias {
-            $media-settings: map-get($settings, $missing-media);
-            $next-spacing-y: map-get($media-settings, "vertical-spacing");
-            $next-spacing-x: map-get($media-settings, "horizontal-spacing");
-            $next-raw-margins: spacing($next-spacing-y, $next-spacing-x, $margin);
-            $next-margins: if($position, position($next-raw-margins, $position), $next-raw-margins);
-            $new-margins: null;
+    @if $missing-breakpoints {
+        @each $breakpoint in $missing-breakpoints {
+            $miss-settings: map-get($settings, $breakpoint);
+            $miss-spacing-y: map-get($miss-settings, "vertical-spacing");
+            $miss-spacing-x: map-get($miss-settings, "horizontal-spacing");
+            $miss-css-paddings: spacing($miss-spacing-y, $miss-spacing-x, $padding);
+            $miss-css-margins: spacing($miss-spacing-y, $miss-spacing-x, $margin);
+            $miss-css-positions: if($position, position($miss-css-margins, $position), $miss-css-margins);
+            $margin: null;
             @each $side in ("top", "right", "bottom", "left") {
-                @if map-has-key($next-margins, $side) {
-                    $value: map-get($next-raw-margins, $side);
-                    @if map-get($next-margins, $side) == map-get($margins, $side) {
-                        $new-margins: if($new-margins != null, append($new-margins, false), false);
+                @if map-has-key($miss-css-positions, $side) {
+                    $value: map-get($miss-css-margins, $side);
+                    @if map-get($miss-css-positions, $side) == map-get($css-positions, $side) {
+                        $margin: if($margin != null, append($margin, false), false);
                     } @else {
-                        $new-margins: if($new-margins != null, append($new-margins, $value), $value);
+                        $margin: if($margin != null, append($margin, $value), $value);
                     }
                 } @else {
-                    $new-margins: if($new-margins != null, append($new-margins, false), false);
+                    $margin: if($margin != null, append($margin, false), false);
                 }
             }
 
-            $new-position: null;
             @if $position {
-                @if (nth($new-margins, 4) and (type-of($position) == number or $position == "push"))
-                 or (nth($new-margins, 2) and $position == "pull")
-                 or (nth($new-margins, 2) and nth($new-margins, 4) and $position == "center") {
-                    $new-position: $position;
+                @if (nth($margin, 4) and (type-of($position) == number or $position == "push"))
+                 or (nth($margin, 2) and $position == "pull")
+                 or (nth($margin, 2) and nth($margin, 4) and $position == "center") {
+                } @else {
+                    $position: null;
                 }
             }
-            $new-width: if(nth($new-margins, 2) or nth($new-margins, 4) and $new-position == null, $width, false);
 
-            $index: index($medias, $missing-media);
-            @if $index != length($medias) {
-                $missing-media: $missing-media nth($medias, $index + 1);
+            @if $width {
+                $width: if(nth($margin, 2) or nth($margin, 4) and $position == null, $width, false);
             }
-            @include item($missing-media, null, $new-width, $new-margins, $new-position, $padding);
+
+            $index: index($breakpoints, $breakpoint);
+            @if $index != length($breakpoints) {
+                $breakpoint: $breakpoint nth($breakpoints, $index + 1);
+            }
+            @include item($breakpoint, null, $width, $margin, $position, $padding);
         }
     }
 }
@@ -300,7 +309,7 @@ html * { box-sizing: inherit; }
 }
 
 // -----------------------------------------------------------------------------
-// 4. Functions
+// 5. Functions
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -487,28 +496,26 @@ html * { box-sizing: inherit; }
 
 // -----------------------------------------------------------------------------
 // Return a list of implicit media-queries as $settings keys.
-// @param     $min-media        $settings key used as the min-width screen size;
-// @param     $min-media        $settings key used as the max-width screen size;
-// @return    $missing-medias    A list of implicitly set screen sizes
+// @param     $min-settings        $settings key used as the min-width screen size;
+// @param     $min-settings        $settings key used as the max-width screen size;
+// @return    $missing-breakpoints    A list of implicitly set screen sizes
 // @see       _mixins.scss
 // -----------------------------------------------------------------------------
-@function missing-medias($min-media: null, $max-media: null) {
-    $medias: map-keys($settings);
+@function missing-breakpoints($min-settings: null, $max-settings: null) {
+    $from-index: if($min-settings, index($breakpoints, $min-settings) + 1, 2);
+    $to-index: if($max-settings, index($breakpoints, $max-settings) - 1, length($breakpoints));
 
-    $from-index: if($min-media, index($medias, $min-media) + 1, 2);
-    $to-index: if($max-media, index($medias, $max-media) - 1, length($medias));
-
-    $missing-medias: null;
+    $missing-breakpoints: null;
     @if $to-index - $from-index >= 0 {
         @for $index from $from-index through $to-index {
-            $missing-media: nth($medias, $index);
-            @if $missing-medias {
-                $missing-medias: append($missing-medias, $missing-media);
+            $breakpoint: nth($breakpoints, $index);
+            @if $missing-breakpoints {
+                $missing-breakpoints: append($missing-breakpoints, $breakpoint);
             } @else {
-                $missing-medias: $missing-media;
+                $missing-breakpoints: $breakpoint;
             }
         }
     }
 
-    @return $missing-medias;
+    @return $missing-breakpoints;
 }
