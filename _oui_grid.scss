@@ -13,8 +13,9 @@
 // -----------------------------------------------------------------------------
 // 1. Settings
 // 2. CSS base
-// 3. Mixins
-// 4. Functions
+// 3. Variables
+// 4. Mixins
+// 5. Functions
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -22,28 +23,28 @@
 // -----------------------------------------------------------------------------
 
 $settings: (
-    "s": (                           // Each key is used as a breakpoint.
+    "s": (                           // Each key is used as a bpt.
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
-        "vertical-spacing"  : 12px,  // Top and bottom gutters.
-        "horizontal-spacing": 8px    // Right and left gutters.
+        "vertical-gap"  : 12px,  // Top and bottom gutters.
+        "horizontal-gap": 8px    // Right and left gutters.
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width.
         "content-max-width" : 800px,
-        "vertical-spacing"  : 16px,
-        "horizontal-spacing": 12px
+        "vertical-gap"  : 16px,
+        "horizontal-gap": 12px
     ),
     "l": (
         "device-min-width"  : 1024px,
         "content-max-width" : 1000px,
-        "vertical-spacing"  : 24px,
-        "horizontal-spacing": 16px
+        "vertical-gap"  : 24px,
+        "horizontal-gap": 16px
     ),
     "xl": (
         "device-min-width"  : 1440px,
         "content-max-width" : 1280px,
-        "vertical-spacing"  : 32px,
-        "horizontal-spacing": 24px
+        "vertical-gap"  : 32px,
+        "horizontal-gap": 24px
     )
 );
 
@@ -56,43 +57,48 @@ html { box-sizing: border-box; }
 html * { box-sizing: inherit; }
 
 // -----------------------------------------------------------------------------
-// 3. Mixins
+// 3. Variables
+// -----------------------------------------------------------------------------
+
+$bpts: map-keys($settings);
+
+// -----------------------------------------------------------------------------
+// 4. Mixins
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Generate a media-query.
-// @param    $min-width    A $settings key or a CSS min-width value;
-// @param    $max-width    A $settings key or a CSS max-width value;
+// @param    $min    A $settings key or a CSS min-width val;
+// @param    $max    A $settings key or a CSS max-width val;
 // -----------------------------------------------------------------------------
-@mixin breakpoint($min-width: null, $max-width: null) {
-    $medias: map-keys($settings);
+@mixin bpt($min: null, $max: null) {
     $media-query: null;
 
-    @if $min-width {
-        // If $min-width is a $settings key; get the related value if it exists.
-        @if map-has-key($settings, $min-width) {
-            $min-media: map-get($settings, $min-width);
-            @if map-has-key($min-media, "device-min-width") {
-                $min-width: map-get($min-media, "device-min-width");
+    @if $min {
+        // If $min is a $settings key; get the related val if it exists.
+        @if map-has-key($settings, $min) {
+            $min-settings: map-get($settings, $min);
+            @if map-has-key($min-settings, "device-min-width") {
+                $min: map-get($min-settings, "device-min-width");
             } @else {
-                $min-width: null;
+                $min: null;
             }
         }
         // Set the media-query min-width if defined.
-        $media-query: if($min-width, "(min-width: #{$min-width})", null);
+        $media-query: if($min, "(min-width: #{$min})", null);
     }
 
-    @if $max-width {
-        // If $max-width is a $settings key; get the related value.
-        @if map-has-key($settings, $max-width) {
-            $max-media: map-get($settings, $max-width);
-            $max-width: map-get($max-media, "device-min-width") - 1;
+    @if $max {
+        // If $max is a $settings key; get the related val.
+        @if map-has-key($settings, $max) {
+            $max-settings: map-get($settings, $max);
+            $max: map-get($max-settings, "device-min-width") - 1;
         }
         // Add or set the media-query max-width.
-        @if $min-width {
-            $media-query: $media-query " and (max-width: #{$max-width})";
+        @if $min {
+            $media-query: $media-query " and (max-width: #{$max})";
         } @else {
-            $media-query: "(max-width: #{$max-width})";
+            $media-query: "(max-width: #{$max})";
         }
     }
 
@@ -119,115 +125,182 @@ html * { box-sizing: inherit; }
 // -----------------------------------------------------------------------------
 @mixin item($media: null, $flow: null, $width: null, $margin: null, $position: null, $padding: null) {
 
-    // Get the media-query related values.
-    $min-media: null;
+    // List in use breakpoints from $media.
+    $min-bpt: null;
+    $max-bpt: null;
+
+    @if $media {
+        $min-bpt: if(nth($media, 1), nth($media, 1), null);
+        $max-bpt: if(type-of($media) == list, nth($media, 2), null);
+    }
+
+    $bpts: bpts($min-bpt, $max-bpt);
+
+    @if $bpts {
+
+        $css: ();
+        $first: true;
+
+        @each $bpt in $bpts {
+            // Get CSS properties and their vals.
+            $bpt-css: item($bpt, $flow, $width, $margin, $position, $padding);
+            // Remove useless repeated vals.
+            @each $bpt-prop, $bpt-val in $bpt-css {
+                @each $stored-bpt, $stored-css in $css {
+                    @if map-has-key($stored-css, $bpt-prop) {
+                        @if map-get($stored-css, $bpt-prop) == $bpt-val {
+                            $bpt-css: map-remove($bpt-css, $bpt-prop);
+                        } @else {
+                            $bpt-css: map-merge($bpt-css, ($bpt-prop: $bpt-val));
+                        }
+                    }
+                }
+            }
+            // Store CSS properties and their vals.
+            $css: map-merge($css, ($bpt: $bpt-css));
+        }
+        // Generate CSS.
+        @each $stored-bpt, $stored-css in $css {
+            @if $stored-bpt == nth($bpts, 1) {
+            @include bpt($stored-bpt, nth($bpts, length($bpts))) {
+                @each $prop, $val in map-get($css, $stored-bpt) {
+                    #{$prop}: $val;
+                }
+                    @content;
+                }
+            } @else {
+                @include bpt($stored-bpt) {
+                    @each $prop, $val in map-get($css, $stored-bpt) {
+                        #{$prop}: $val;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@function item($media: null, $flow: null, $width: null, $margin: null, $position: null, $padding: null) {
+
+    // Set a map to store the generated css properties and their vals.
+    $css : ();
+
+    // Get the media-query related vals.
+    $min-settings: null;
     $min-width: null;
     $max-width: null;
 
     @if $media {
         @if nth($media, 1) {
-            $min-media: map-get($settings, nth($media, 1));
-            $min-width: nth($media, 1);
+            $min-settings: map-get($settings, nth($media, 1));
         } @else {
-            $min-media: map-get($settings, "s");
-        }
-        @if type-of($media) == list {
-            $max-width: nth($media, 2);
+            $min-settings: map-get($settings, "s");
         }
     } @else {
-        $min-media: map-get($settings, "s");
+        $min-settings: map-get($settings, "s");
     }
 
-    $spacing-x: map-get($min-media, "horizontal-spacing");
-    $spacing-y: map-get($min-media, "vertical-spacing");
+    // Set the display and flex-wrap properties from $flow.
+    @if $flow {
+        $css: map-merge($css, (display: flex));
+        @if $flow == "flex-grid" {
+            $css: map-merge($css, (flex-wrap: wrap));
+        }
+    }
 
-    // Generate the media-query.
-    @include breakpoint($min-width, $max-width) {
+    // Set the margins properties from $margin and $position.
+    $gap-x: map-get($min-settings, "horizontal-gap");
+    $gap-y: map-get($min-settings, "vertical-gap");
 
-        @if $flow {
-            display: flex;
-            @if $flow == "grid" {
-                flex-wrap: wrap;
+    $css-margins: null;
+    $css-positions: null;
+
+    @if $margin {
+        // Make $margin a four items list.
+        @if type-of($margin) == list {
+            @if length($margin) == 2 {
+                $margin: nth($margin, 1) nth($margin, 2) nth($margin, 1) nth($margin, 2);
+            }
+        } @else {
+            $margin: $margin $margin $margin $margin;
+        }
+        // Get the a map of CSS margins.
+        $css-margins: gap($gap-y, $gap-x, $margin);
+        $css-positions: $css-margins;
+        @if $position {
+            // Alterate margins width $position.
+            $css-positions: position($css-positions, $position);
+        }
+        // Use the margin shorthand or store each side val.
+        @if map-has-key($css-positions, "global") {
+            $css: map-merge($css, (margin: map-get($css-positions, "global")));
+        } @else {
+            @each $side, $val in $css-positions {
+                $css: map-merge($css, (margin-#{$side}: $val));
             }
         }
+    }
 
-        // Generate spacings
-        $spacings: (
-            padding: $padding,
-            margin: $margin
-        );
-
-        @each $property, $value in $spacings {
-            $spacing: spacing($spacing-y, $spacing-x, $value);
-
-            @if $position and $property == "margin" {
-                $spacing: position($spacing, $position);
+    // Set the paddings properties from $padding.
+    @if $padding {
+        $css-paddings: null;
+        // Make $padding a four items list.
+        @if type-of($padding) == list {
+            @if length($padding) == 2 {
+                $padding: nth($padding, 1) nth($padding, 2) nth($padding, 1) nth($padding, 2);
             }
+        } @else {
+            $padding: $padding $padding $padding $padding;
+        }
+        // Get the a map of CSS paddings.
+        $css-paddings: gap($gap-y, $gap-x, $padding);
+        // Use the padding shorthand or store each side val.
+        @if map-has-key($css-paddings, "global") {
+            $css: map-merge($css, (padding: map-get($css-paddings, "global")));
+        } @else {
+            @each $side, $val in $css-paddings {
+                $css: map-merge($css, (padding-#{$side}: $val));
+            }
+        }
+    }
 
-            @if map-has-key($spacing, "global") {
-                #{$property}: map-get($spacing, "global");
-            } @else {
-                @each $side in map-keys($spacing) {
-                    #{$property}-#{$side}: map-get($spacing, $side);
+    // Set the width and max-width properties from $width and $margin.
+    @if $width {
+        // Set the margin val to soustract from the width.
+        $margin-factor: null;
+        @if $margin {
+            @if map-get($css-margins, "right") and map-get($css-margins, "right") != 0 {
+                $margin-factor: map-get($css-margins, "right");
+            }
+            @if map-get($css-margins, "left") and map-get($css-margins, "left") != 0 {
+                @if $margin-factor {
+                    $margin-factor: $margin-factor + map-get($css-margins, "left");
+                } @else {
+                    $margin-factor: map-get($css-margins, "left");
                 }
             }
         }
 
-        // Generate width calculation.
-        @if $width {
-            $margin-factor: null;
-            @if $margin {
-                $spacing: spacing($spacing-x, $spacing-y, $margin);
-                @if map-get($spacing, "right") and map-get($spacing, "right") != 0 {
-                    $margin-factor: map-get($spacing, "right");
-                }
-                @if map-get($spacing, "left") and map-get($spacing, "left") != 0 {
-                    @if $margin-factor {
-                        $margin-factor: $margin-factor + map-get($spacing, "left");
-                    } @else {
-                        $margin-factor: map-get($spacing, "left");
-                    }
-                }
-            }
-
-            $content-max-width: null;
-            $value: null;
-            @if $width == "max-width" {
-                $value: 100%;
-                $content-max-width: map-get($min-media, "content-max-width");
-            } @else if $width == "max-width-only" {
-                $content-max-width: map-get($min-media, "content-max-width");
-            } @else {
-                $value: if($width == 1, 100%, $width * 100%);
-            }
-
-            width: if($margin-factor, calc(#{$value} - #{$margin-factor}), #{$value});
-            max-width: $content-max-width;
+        // Set the max-width val.
+        $content-max-width: null;
+        $val: null;
+        @if $width == "max-width" {
+            $val: 100%;
+            $content-max-width: map-get($min-settings, "content-max-width");
+        } @else {
+            $val: $width * 100%;
         }
 
-        @content;
+        $css: map-merge($css, (width: if($margin-factor, calc(#{$val} - #{$margin-factor}), #{$val})));
+        $css: map-merge($css, (max-width: $content-max-width));
     }
 
-    // Add needed media queries related values for missing non explicit queries.
-    $medias: map-keys($settings);
-    $media: if($media, $media, nth($medias, 1));
-    $missing-medias: missing-medias($min-width, $max-width);
-
-    @if $missing-medias {
-        @each $missing-media in $missing-medias {
-            $index: index($medias, $missing-media);
-            @if $index != length($medias) {
-                $missing-media: $missing-media nth($medias, $index + 1);
-            }
-            @include item($missing-media, null, $width, $margin, $position, $padding);
-        }
-    }
+    @return $css;
 }
 
 // -----------------------------------------------------------------------------
 // Generate a media-query.
-// @param    $min-width    A $settings key or a CSS min-width value;
-// @param    …    A $settings key or a CSS max-width value;
+// @param    $min-width    A $settings key or a CSS min-width val;
+// @param    …    A $settings key or a CSS max-width val;
 // -----------------------------------------------------------------------------
 @mixin children($media: null, $flow: null, $widths: null, $margin: null, $position: null, $padding: null) {
 
@@ -265,17 +338,17 @@ html * { box-sizing: inherit; }
 }
 
 // -----------------------------------------------------------------------------
-// 4. Functions
+// 5. Functions
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// Return a map of spacing values from the $spacing mixin argument
+// Return a map of gap vals from the $gap mixin argument
 // to be used as margins and/or paddings.
-// @param     $spacing-y   The default value for vertival spacings;
-// @param     $spacing-x   The default value for horizontal spacings;
-// @param     $spacing     Mixin argument;
-// @return    $spacings    Map of spacing values:
-//                         $spacings: (
+// @param     $base-y   The default val for vertival gaps;
+// @param     $base-x   The default val for horizontal gaps;
+// @param     $val     Mixin argument;
+// @return    $vals    Map of gap vals:
+//                         $vals: (
 //                             "global": …, <- optional key for shorthand
 //                             "top": …,
 //                             "right": …,
@@ -284,134 +357,144 @@ html * { box-sizing: inherit; }
 //                          );
 // @see       _mixins.scss.
 // -----------------------------------------------------------------------------
-@function spacing($spacing-y, $spacing-x, $spacing: null) {
+@function gap($base-y, $base-x, $gap: null) {
 
-    @if type-of($spacing) == list and length($spacing) == 2
-        and (not nth($spacing, 1) or not nth($spacing, 2)) {
-        // A list of two values can't be used as is if one of the value is false.
-        $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
+    // Shorten $gap list if possible.
+    @if type-of($gap) == list {
+        @if length($gap) == 4 {
+            @if nth($gap, 1) == nth($gap, 3) and nth($gap, 2) == nth($gap, 4)  {
+                @if nth($gap, 1) == nth($gap, 2) {
+                    $gap: nth($gap, 1);
+                } @else {
+                    $gap: nth($gap, 1) nth($gap, 2);
+                }
+            }
+        }
+        @if length($gap) == 2 {
+            @if not nth($gap, 1) or not nth($gap, 2) {
+            // A list of two vals can't be used as is if one of the val is false.
+                $gap: nth($gap, 1) nth($gap, 2) nth($gap, 1) nth($gap, 2);
+            }
+        }
     }
 
     $sides: "top", "right", "bottom", "left";
-    $spacings: ();
-    $new-spacings: ();
+    $gaps: ();
+    $new-gaps: ();
 
-    // Iterate over $spacing values.
-    @for $index from 1 through length($spacing) {
-        $value: nth($spacing, $index);
+    // Iterate over $gap vals.
+    @for $index from 1 through length($gap) {
+        $val: nth($gap, $index);
 
-        @if $value != false {
+        @if $val != false {
 
-            // Get the CSS $spacing-value.
-            $base: if($index == 1 or $index == 3, $spacing-y, $spacing-x);
-            $spacing-value: spacing-value($base, $value);
+            // Get the CSS $gap-val.
+            $base: if($index == 1 or $index == 3, $base-y, $base-x);
+            $gap-val: gap-val($base, $val);
 
             // Build the map.
-            @if type-of($spacing) == list {
+            @if type-of($gap) == list {
 
-                @if length($spacing) == 2 {
+                @if length($gap) == 2 {
                     $global: null;
-                    @if not map-has-key($spacings, "global") {
-                        // Set the first shorthand value…
-                        $global: $spacing-value;
+                    @if not map-has-key($gaps, "global") {
+                        // Set the first shorthand val…
+                        $global: $gap-val;
                     } @else {
-                        // …or append the second shorthand value.
-                        $global: map-get($spacings, "global");
-                        @if $global == $spacing-value {
-                            $global: $spacing-value;
+                        // …or append the second shorthand val.
+                        $global: map-get($gaps, "global");
+                        @if $global == $gap-val {
+                            $global: $gap-val;
                         } @else {
-                            $global: $global $spacing-value;
+                            $global: $global $gap-val;
                         }
                     }
-                    $new-spacings: (
-                        #{nth($sides, $index)}: $spacing-value,
-                        #{nth($sides, $index + 2)}: $spacing-value,
+                    $new-gaps: (
+                        #{nth($sides, $index)}: $gap-val,
+                        #{nth($sides, $index + 2)}: $gap-val,
                         "global": $global
                     );
                 } @else {
-                    $new-spacings: (
-                        #{nth($sides, $index)}: $spacing-value
+                    $new-gaps: (
+                        #{nth($sides, $index)}: $gap-val
                     );
                 }
-                // Merge existing values with new ones.
-                $spacings: map-merge($spacings, $new-spacings);
+                // Merge existing vals with new ones.
+                $gaps: map-merge($gaps, $new-gaps);
 
             } @else {
                 @each $side in $sides {
-                    $base: if($side == "top" or $side == "bottom", $spacing-y, $spacing-x);
-                    $value-y: spacing-value($spacing-y, $value);
-                    $value-x: spacing-value($spacing-x, $value);
-                    $global: if($value-y == $value-x, $value-y, $value-y $value-x);
-                    $new-spacings: (
-                        $side: spacing-value($base, $value),
+                    $base: if($side == "top" or $side == "bottom", $base-y, $base-x);
+                    $val-y: gap-val($base-y, $val);
+                    $val-x: gap-val($base-x, $val);
+                    $global: if($val-y == $val-x, $val-y, $val-y $val-x);
+                    $new-gaps: (
+                        #{$side}: gap-val($base, $val),
                         "global": $global
                     );
-                    // Merge existing values with new ones.
-                    $spacings: map-merge($spacings, $new-spacings);
+                    // Merge existing vals with new ones.
+                    $gaps: map-merge($gaps, $new-gaps);
                 }
             }
         }
     }
 
-    @return $spacings;
+    @return $gaps;
 }
 
 // -----------------------------------------------------------------------------
-// Return a css value from a $spacing mixin argument
-// value to be used as a margin and/or padding value.
-// @param     $base             A CSS value used a calculation base when needed;
-// @param     $value            A $spacing value
-// @return    $spacing-value    A CSS margin/padding value;
-// @see       spacing().
+// Return a css val from a $gap mixin argument
+// val to be used as a margin and/or padding val.
+// @param     $base       A CSS val used a calculation base when needed;
+// @param     $val        A $gap val;
+// @return    $gap        A CSS margin/padding val.
+// @see       @function gap()
 // -----------------------------------------------------------------------------
-@function spacing-value($base, $value) {
-    $spacing-value: null;
+@function gap-val($base, $val) {
+    $gap: null;
 
-    @if $value == true {
-        // Use the $base value.
-        $spacing-value: $base;
-    } @else if $value == "nested" {
-        // Use $base as a negative value.
-        $spacing-value: (-$base);
-    } @else if type-of($value) == number and unitless($value) {
-        // Use a factor to multiply the $base value.
-        $spacing-value: if($value == 0, $value, $value * $base);
+    @if $val == true {
+        // Use the $base val.
+        $gap: $base;
+    } @else if $val == "nested" {
+        // Use $base as a negative val.
+        $gap: (-$base);
+    } @else if type-of($val) == number and unitless($val) {
+        // Use a factor to multiply the $base val.
+        $gap: if($val == 0, $val, $val * $base);
     } @else {
-        // Ignore $base; use a custom spacing value.
-        $spacing-value: $value;
+        // Ignore $base; use a custom gap val.
+        $gap: $val;
     }
 
-    @return $spacing-value;
+    @return $gap;
 }
 
 // -----------------------------------------------------------------------------
-// Atlterate margins depending of the $position value.
-// @param     $spacings    Map returned by spacing(),
+// Atlterate margins depending of the $position val.
+// @param     $gaps        Map returned by gap(),
 // @param     $position    Mixin argument
-// @return    $spacings    Alterated map
+// @return    $gaps        Alterated map
+// @see       @function item()
 // -----------------------------------------------------------------------------
-@function position($spacings, $position) {
+@function position($gaps, $position) {
     $position-side: null;
-    $value: null;
+    $val: null;
+    $new-gaps: null;
 
     @if type-of($position) == number {
     // $position is a number; use it to alterate the left margin.
-        $operator: null;
+
         // Prepare $position to be added, or soustracted if negative.
-        @if $position > 0 {
-            $operator: "+";
-            $position: $position * 100%;
-        } @else {
-            $operator: "-";
-            $position: (-$position) * 100%;
-        }
+        $operator: if($position == abs($position), "+", "-");
+        $position: percentage(abs($position));
         $position-side: "left";
-        $margin: map-get($spacings, "left");
+        $margin: map-get($gaps, "left");
 
         @if $margin and $margin != 0 {
-            $value: calc(#{$margin} #{$operator} #{$position});
+            $val: calc(#{$margin} #{$operator} #{$position});
         } @else {
-            $value: #{$operator}$position;
+            $val: #{$operator}$position;
         }
 
     } @else {
@@ -420,60 +503,58 @@ html * { box-sizing: inherit; }
             $position-side: "right";
         } @else if $position == "push" {
             $position-side: "left";
-        } @else {
+        } @else if $position == "center" {
             $position-side: "right" "left";
         }
-        $value: auto;
+        $val: auto;
     }
 
     @each $side in $position-side {
-        $new-spacings: (#{$side}: #{$value});
-        $spacings: map-remove($spacings, $side);
-        $spacings: map-merge($spacings, $new-spacings);
+        $new-gaps: (#{$side}: #{$val});
+        $gaps: map-remove($gaps, $side);
+        $gaps: map-merge($gaps, $new-gaps);
     }
 
-    $global: map-get($spacings, "global");
-    @if $global {
-        // Remove the global spacing value(s).
-        $spacings: map-remove($spacings, "global");
-        @if type-of($position-side) == list {
-            // Reset the global $spacings key using 'auto' for right and left margins.
+    @if map-has-key($gaps, "global") {
+        // Remove the global gap val(s).
+        $global: map-get($gaps, "global");
+        $gaps: map-remove($gaps, "global");
+        @if $position == "center" {
+            // Reset the global $gaps key using 'auto' for right and left margins.
             @if type-of($global) == list {
-                $new-spacings: ("global": nth($global, 1) #{$value});
+                $new-gaps: ("global": nth($global, 1) #{$val});
             } @else {
-                $new-spacings: ("global": #{$value});
+                $new-gaps: ("global": #{$val});
             }
-            $spacings: map-merge($spacings, $new-spacings);
+            $gaps: map-merge($gaps, $new-gaps);
         }
     }
 
-    @return $spacings;
+    @return $gaps;
 }
 
 // -----------------------------------------------------------------------------
-// Return a list of implicit media-queries as $settings keys.
-// @param     $min-media        $settings key used as the min-width screen size;
-// @param     $min-media        $settings key used as the max-width screen size;
-// @return    $missing-medias    A list of implicitly set screen sizes
-// @see       _mixins.scss
+// Return a list of media-queries in use in for item mixin as $settings keys.
+// @param     $from            $settings key used as the min-width screen size;
+// @param     $to              $settings key used as the max-width screen size;
+// @return    $missing-bpts    A list brekpoints as set in the $settings map.
+// @see       @mixin item()
 // -----------------------------------------------------------------------------
-@function missing-medias($min-media: null, $max-media: null) {
-    $medias: map-keys($settings);
+@function bpts($from: null, $to: null) {
+    $from-index: if($from, index($bpts, $from), 1);
+    $to-index: if($to, index($bpts, $to) - 1, length($bpts));
 
-    $from-index: if($min-media, index($medias, $min-media) + 1, 2);
-    $to-index: if($max-media, index($medias, $max-media) - 1, length($medias));
-
-    $missing-medias: null;
+    $missing-bpts: null;
     @if $to-index - $from-index >= 0 {
         @for $index from $from-index through $to-index {
-            $missing-media: nth($medias, $index);
-            @if $missing-medias {
-                $missing-medias: append($missing-medias, $missing-media);
+            $bpt: nth($bpts, $index);
+            @if $missing-bpts {
+                $missing-bpts: append($missing-bpts, $bpt);
             } @else {
-                $missing-medias: $missing-media;
+                $missing-bpts: $bpt;
             }
         }
     }
 
-    @return $missing-medias;
+    @return $missing-bpts;
 }
