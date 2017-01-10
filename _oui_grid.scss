@@ -170,12 +170,14 @@ $bpts: map-keys($settings);
     // -------------
     @each $stored-bpt, $stored-css in $css {
         @if $stored-bpt == nth($bpts, 1) {
-            @include bpt($stored-bpt, nth($bpts, length($bpts))) {
+            $to-bpt: nth($bpts, length($bpts));
+            @include bpt($stored-bpt, if($max-bpt, $to-bpt, false)) {
                 @each $prop, $val in map-get($css, $stored-bpt) {
                     #{$prop}: $val;
                 }
                 @content;
             }
+            $css: if($max-bpt, map-remove($css, $to-bpt), $css);
         } @else {
             @include bpt($stored-bpt) {
                 @each $prop, $val in map-get($css, $stored-bpt) {
@@ -509,35 +511,31 @@ $bpts: map-keys($settings);
             $val: #{$operator}$position;
         }
     } @else {
-        @if $position == "pull" {
-            $side: "right";
-        } @else if $position == "push" {
-            $side: "left";
-        } @else if $position == "center" {
-            $side: "right" "left";
-        }
         $val: auto;
+        @if $position == "center" {
+            $side: "right" "left";
+            // Add a "global" margin if needed.
+            $margin-top: map-get($margins, "top");
+            @if $margin-top and $margin-top == map-get($margins, "bottom") {
+                $global: if($margin-top == "auto", $val, $margin-top $val);
+                $new-margins: ("global": $global);
+                $margins: map-merge($margins, $new-margins);
+            }
+        } @else {
+            @if map-has-key($margins, "global") {
+                $margins: map-remove($margins, "global");
+            }
+            @if $position == "pull" {
+                $side: "right";
+            } @else if $position == "push" {
+                $side: "left";
+            }
+        }
     }
 
     @each $s in $side {
-        $new-margins: (#{$side}: #{$val});
-        $margins: map-remove($margins, $side);
+        $new-margins: (#{$s}: #{$val});
         $margins: map-merge($margins, $new-margins);
-    }
-
-    @if map-has-key($margins, "global") {
-        // Remove the global margin value(s).
-        $global: map-get($margins, "global");
-        $margins: map-remove($margins, "global");
-        @if $position == "center" {
-            // Reset the global $spacings key using 'auto' for right and left margins.
-            @if type-of($global) == list {
-                $new-margins: ("global": nth($global, 1) #{$val});
-            } @else {
-                $new-margins: ("global": #{$val});
-            }
-            $margins: map-merge($margins, $new-margins);
-        }
     }
 
     @return $margins;
@@ -556,19 +554,17 @@ $bpts: map-keys($settings);
     // Get the position of $from as a $settings key or start from the first one.
     $from: if($from, index($bpts, $from), 1);
     // Get the position of $to as a $settings key or stop at the last one.
-    $to: if($to, index($bpts, $to) - 1, length($bpts));
+    $to: if($to, index($bpts, $to), length($bpts));
 
     // List breakpoints from $from to $to.
     // -----------------------------------
     $bpts-set: null;
-    @if $to - $from >= 0 {
-        @for $i from $from through $to {
-            $bpt: nth($bpts, $i);
-            @if $bpts-set {
-                $bpts-set: append($bpts-set, $bpt);
-            } @else {
-                $bpts-set: $bpt;
-            }
+    @for $i from $from through $to {
+        $bpt: nth($bpts, $i);
+        @if $bpts-set {
+            $bpts-set: append($bpts-set, $bpt);
+        } @else {
+            $bpts-set: $bpt;
         }
     }
 
