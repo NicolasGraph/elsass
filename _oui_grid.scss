@@ -11,19 +11,18 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // -----------------------------------------------------------------------------
-// 1. Settings
-// 2. CSS base
-// 3. Variables
-// 4. Mixins
-// 4.1 bpt
+// 1. Settings (where you can easily customize things!)
+// 2. CSS base (Don't you already set that?)
+// 3. Mixins
+// 3.1 bpt
+// 3.1 this
+// 3.2 children
+// 4. Functions
 // 4.1 this
-// 4.2 children
-// 5. Functions
-// 5.1 this
-// 5.2 spacing
-// 5.3 spacing-val
-// 5.4 position
-// 5.5 bpts
+// 4.2 spacing
+// 4.3 spacing-val
+// 4.4 position
+// 4.5 bpts
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -65,17 +64,11 @@ html { box-sizing: border-box; }
 html * { box-sizing: inherit; }
 
 // -----------------------------------------------------------------------------
-// 3. Variables
-// -----------------------------------------------------------------------------
-
-$bpts: map-keys($settings);
-
-// -----------------------------------------------------------------------------
-// 4. Mixins
+// 3. Mixins
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// 4.1 bpt
+// 3.1 bpt
 // -----------------------------------------------------------------------------
 // Generate a media-query.
 // @param    $min             Breakpoint as a $settings key or a CSS value;
@@ -125,7 +118,7 @@ $bpts: map-keys($settings);
 }
 
 // -----------------------------------------------------------------------------
-// 4.2 this
+// 3.2 this
 // -----------------------------------------------------------------------------
 // Generate a responsive this.
 // @param    $media    Breakpoint(s) used as media-query min-width and/or max-width;
@@ -140,18 +133,15 @@ $bpts: map-keys($settings);
 @mixin this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
 
     // List breakpoints explicitly or implicitly set.
-    // ----------------------------------------------
     $min-bpt: if(nth($media, 1), nth($media, 1), false);
     $max-bpt: if(type-of($media) == list, nth($media, 2), false);
     $bpts: bpts($min-bpt, $max-bpt);
 
     // Store each breakpoint CSS properties and values in a map.
-    // ---------------------------------------------------------
     $css: ();
     @each $bpt in $bpts {
         $bpt-css: this($bpt, $flow, $width, $gutter, $position, $padding);
         // Remove useless repeated values through media-queries.
-        // -----------------------------------------------------
         @each $bpt-prop, $bpt-val in $bpt-css {
             @each $stored-bpt, $stored-css in $css {
                 @if map-has-key($stored-css, $bpt-prop) {
@@ -167,7 +157,6 @@ $bpts: map-keys($settings);
     }
 
     // Generate CSS.
-    // -------------
     @each $stored-bpt, $stored-css in $css {
         @if $stored-bpt == nth($bpts, 1) {
             $to-bpt: nth($bpts, length($bpts));
@@ -188,13 +177,69 @@ $bpts: map-keys($settings);
     }
 }
 
+// -----------------------------------------------------------------------------
+// 3.3 children
+// -----------------------------------------------------------------------------
+// Generate a media-query.
+// @param    $min-width    A $settings key or a CSS min-width val;
+// @param    …             A $settings key or a CSS max-width val;
+// -----------------------------------------------------------------------------
+@mixin children($media: null, $flow: null, $widths: null, $gutter: null, $position: null, $padding: null) {
+
+    // Separate valid widths from the optional repeat scheme.
+    $repeat: null;
+    $valid-widths: null;
+
+    @each $width in $widths {
+        @if type-of($width) == string {
+            $repeat: $width;
+        } @else {
+            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
+        }
+    }
+
+    $widths: $valid-widths;
+
+    // Iterate over $widths to call $this mixin on defined children.
+    $thiss: length($widths);
+
+    @for $this from 1 through $thiss {
+        // Define the default targeted child.
+        $child: #{$thiss}n+#{$this};
+        @if $repeat == "no-repeat" {
+            $child: #{$this};
+        } @else if $repeat == "repeat-last" {
+            $child: if($this != $thiss, #{$this}, n+#{$this});
+        }
+
+        > :nth-child(#{$child}) {
+            @include this($media, $flow, nth($widths, $this), $gutter, $position, $padding) {
+                @content;
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 4. Functions
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// 4.1 this
+// -----------------------------------------------------------------------------
+// Return a css val from a $spacing mixin argument
+// val to be used as a margin and/or padding value.
+// @param     $base                  A CSS value used as a calculation base;
+// @param     $val                   A $spacing value;
+// @return    $spacing               A CSS margin/padding value.
+// @see       @function spacing()
+// -----------------------------------------------------------------------------
 @function this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
 
     // Set a map to store the generated css properties and their vals.
     $css : ();
 
     // Get the media-query related vals.
-    // ---------------------------------
     $min-settings: null;
     $min-width: null;
     $max-width: null;
@@ -210,7 +255,6 @@ $bpts: map-keys($settings);
     }
 
     // Set the display and flex-wrap properties from $flow.
-    // ----------------------------------------------------
     @if $flow {
         $css: map-merge($css, (display: flex));
         @if $flow == "flex-grid" {
@@ -219,7 +263,6 @@ $bpts: map-keys($settings);
     }
 
     // Set the margins properties from $gutter and $position.
-    // ------------------------------------------------------
     $spacing-x: map-get($min-settings, "horizontal-spacing");
     $spacing-y: map-get($min-settings, "vertical-spacing");
 
@@ -245,7 +288,6 @@ $bpts: map-keys($settings);
     }
 
     // Set the paddings properties from $padding.
-    // ------------------------------------------
     @if $padding {
         // Get a map of CSS paddings.
         $css-paddings: spacing($spacing-y, $spacing-x, $padding);
@@ -260,7 +302,6 @@ $bpts: map-keys($settings);
     }
 
     // Set the width and max-width properties from $width and $gutter.
-    // ---------------------------------------------------------------
     @if $width {
         // Set the margin val to soustract from the width.
         $gutter-factor: null;
@@ -280,7 +321,6 @@ $bpts: map-keys($settings);
         }
 
         // Set the width and max-width values.
-        // -----------------------------------
         $css-width: null;
         $css-max-width: null;
         @if $width == "max-width" {
@@ -302,55 +342,7 @@ $bpts: map-keys($settings);
 }
 
 // -----------------------------------------------------------------------------
-// 4.3 children
-// -----------------------------------------------------------------------------
-// Generate a media-query.
-// @param    $min-width    A $settings key or a CSS min-width val;
-// @param    …             A $settings key or a CSS max-width val;
-// -----------------------------------------------------------------------------
-@mixin children($media: null, $flow: null, $widths: null, $gutter: null, $position: null, $padding: null) {
-
-    // Extract the repeat scheme.
-    // --------------------------
-    $repeat: null;
-    $valid-widths: null;
-
-    @each $width in $widths {
-        @if type-of($width) == string {
-            $repeat: $width;
-        } @else {
-            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
-        }
-    }
-    $widths: $valid-widths;
-
-    // Iterate over $widths to call $this mixin on defined children.
-    // -------------------------------------------------------------
-    $thiss: length($widths);
-
-    @for $this from 1 through $thiss {
-        // Define the default targeted child.
-        $child: #{$thiss}n+#{$this};
-        @if $repeat == "no-repeat" {
-            $child: #{$this};
-        } @else if $repeat == "repeat-last" {
-            $child: if($this != $thiss, #{$this}, n+#{$this});
-        }
-
-        > :nth-child(#{$child}) {
-            @include this($media, $flow, nth($widths, $this), $gutter, $position, $padding) {
-                @content;
-            }
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// 5. Functions
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// 5.1 spacing
+// 4.2 spacing
 // -----------------------------------------------------------------------------
 // Return a map of spacing vals from the $spacing mixin argument
 // to be used as margins and/or paddings.
@@ -370,7 +362,6 @@ $bpts: map-keys($settings);
 @function spacing($base-y, $base-x, $spacing: null) {
 
     // Shorten $spacing list if possible.
-    // ----------------------------------
     @if type-of($spacing) == list {
         @if length($spacing) == 4 {
             @if nth($spacing, 1) == nth($spacing, 3) and nth($spacing, 2) == nth($spacing, 4)  {
@@ -394,7 +385,6 @@ $bpts: map-keys($settings);
     $new-spacings: ();
 
     // Iterate over $spacing vals.
-    // ---------------------------
     @for $i from 1 through length($spacing) {
         $val: nth($spacing, $i);
 
@@ -453,7 +443,7 @@ $bpts: map-keys($settings);
 }
 
 // -----------------------------------------------------------------------------
-// 5.2 spacing-val
+// 4.3 spacing-val
 // -----------------------------------------------------------------------------
 // Return a css val from a $spacing mixin argument
 // val to be used as a margin and/or padding value.
@@ -483,7 +473,7 @@ $bpts: map-keys($settings);
 }
 
 // -----------------------------------------------------------------------------
-// 5.3 position
+// 4.4 position
 // -----------------------------------------------------------------------------
 // Atlterate margins depending of the $position value.
 // @param     $spacings           Map returned by spacing(),
@@ -494,55 +484,45 @@ $bpts: map-keys($settings);
 @function position($margins, $position) {
     $side: null;
     $val: null;
-    $new-margins: null;
 
-    // $position is a number; use it to alterate the left margin,
-    // else, use 'auto' to push, pull or center.
-    // ----------------------------------------------------------
-    @if type-of($position) == number {
-        // Prepare $position to be added, or soustracted if negative.
-        $operator: if($position == abs($position), "+", "-");
-        $position: percentage(abs($position));
-        $side: "left";
-        $gutter: map-get($margins, "left");
-        @if $gutter and $gutter != 0 {
-            $val: calc(#{$gutter} #{$operator} #{$position});
-        } @else {
-            $val: #{$operator}$position;
+    @if $position == "center" {
+        $margins: map-merge($margins, ("right": auto, "left": auto));
+        // Add a margin shorthand if possible.
+        $margin-top: map-get($margins, "top");
+        @if $margin-top and $margin-top == map-get($margins, "bottom") {
+            $global: if($margin-top == "auto", auto, $margin-top auto);
+            $new-margins: ("global": $global);
+            $margins: map-merge($margins, $new-margins);
         }
     } @else {
-        $val: auto;
-        @if $position == "center" {
-            $side: "right" "left";
-            // Add a "global" margin if needed.
-            $margin-top: map-get($margins, "top");
-            @if $margin-top and $margin-top == map-get($margins, "bottom") {
-                $global: if($margin-top == "auto", $val, $margin-top $val);
-                $new-margins: ("global": $global);
-                $margins: map-merge($margins, $new-margins);
-            }
-        } @else {
-            @if map-has-key($margins, "global") {
-                $margins: map-remove($margins, "global");
-            }
-            @if $position == "pull" {
-                $side: "right";
-            } @else if $position == "push" {
-                $side: "left";
-            }
+        // Margin shorthand won't be useful anymore.
+        @if map-has-key($margins, "global") {
+            $margins: map-remove($margins, "global");
         }
-    }
-
-    @each $s in $side {
-        $new-margins: (#{$s}: #{$val});
-        $margins: map-merge($margins, $new-margins);
+        @if $position == "pull" {
+            $margins: map-merge($margins, ("right": auto));
+        } @else if $position == "push" {
+            $margins: map-merge($margins, ("left": auto));
+        } @else if type-of($position) == number {
+            // Prepare $position to be added, or soustracted if negative.
+            $operator: if($position == abs($position), "+", "-");
+            $position: percentage(abs($position));
+            // Set the margin-left value.
+            $gutter: map-get($margins, "left");
+            @if $gutter and $gutter != 0 {
+                $val: calc(#{$gutter} #{$operator} #{$position});
+            } @else {
+                $val: #{$operator}$position;
+            }
+            $margins: map-merge($margins, ("left": #{$val}));
+        }
     }
 
     @return $margins;
 }
 
 // -----------------------------------------------------------------------------
-// 5.4 bpts
+// 4.5 bpts
 // -----------------------------------------------------------------------------
 // Get a list of breakpoints explicitly or implicitly set in the this mixin.
 // @param     $from            $settings key used as the media-query min-width;
@@ -551,21 +531,15 @@ $bpts: map-keys($settings);
 // @see       @mixin this()
 // -----------------------------------------------------------------------------
 @function bpts($from: null, $to: null) {
-    // Get the position of $from as a $settings key or start from the first one.
+    $bpts: map-keys($settings);
     $from: if($from, index($bpts, $from), 1);
-    // Get the position of $to as a $settings key or stop at the last one.
     $to: if($to, index($bpts, $to), length($bpts));
 
-    // List breakpoints from $from to $to.
-    // -----------------------------------
     $bpts-set: null;
+
     @for $i from $from through $to {
         $bpt: nth($bpts, $i);
-        @if $bpts-set {
-            $bpts-set: append($bpts-set, $bpt);
-        } @else {
-            $bpts-set: $bpt;
-        }
+        $bpts-set: if($bpts-set, append($bpts-set, $bpt), $bpt);
     }
 
     @return $bpts-set;
