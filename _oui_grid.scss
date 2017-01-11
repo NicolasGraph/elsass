@@ -1,5 +1,4 @@
-// -----------------------------------------------------------------------------
-// Copyright (c) 2016 Nicolas Morand (https://github.com/NicolasGraph)
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // -----------------------------------------------------------------------------
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -10,14 +9,13 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// -----------------------------------------------------------------------------
-// 1. Settings (where you can easily customize things!)
-// 2. CSS base (Don't you already set that?)
+// 1. Settings     Where you can easily customize things!
+// 2. CSS base     Don't you already set that?
 // 3. Mixins
-// 3.1 bpt
-// 3.1 this
-// 3.2 children
-// 4. Functions
+// 3.1 bpt         Mainly used by other mixins.
+// 3.1 this        Generic mixin.
+// 3.2 children    Apply "this" mixin to defined children elements.
+// 4. Functions    Exclusively used by mixins.
 // 4.1 this
 // 4.2 spacing
 // 4.3 spacing-val
@@ -30,13 +28,13 @@
 // -----------------------------------------------------------------------------
 
 $settings: (
-    "s": (                           // Each key is used as a custom breakpoint.
+    "s": (                           // Each $settings key is used as a custom breakpoint.
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
-        "vertical-spacing"  : 12px,  // Top and bottom margins/paddings.
-        "horizontal-spacing": 8px    // Right and left margins/paddings.
+        "vertical-spacing"  : 12px,  // Top and bottom gutters.
+        "horizontal-spacing": 8px    // Right and left gutters.
     ),
     "m": (
-        "device-min-width"  : 640px, // Media-query min-width.
+        "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
         "vertical-spacing"  : 16px,
         "horizontal-spacing": 12px
@@ -67,7 +65,6 @@ html * { box-sizing: inherit; }
 // 3. Mixins
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
 // 3.1 bpt
 // -----------------------------------------------------------------------------
 // Generate a media-query.
@@ -79,17 +76,13 @@ html * { box-sizing: inherit; }
     $media-query: null;
 
     @if $min {
-        // If $min is a $settings key; get the related value if it exists.
         @if map-has-key($settings, $min) {
+            // $min is a custom breakpoint; get the related value if it exists.
             $min-settings: map-get($settings, $min);
-            @if map-has-key($min-settings, "device-min-width") {
-                $min: map-get($min-settings, "device-min-width");
-            } @else {
-                $min: null;
-            }
+            $min: map-get($min-settings, "device-min-width");
         }
-        // Set the media-query min-width if defined.
-        $media-query: if($min, "(min-width: #{$min})", false);
+        // Set the media-query min-width.
+        $media-query: "(min-width: #{$min})";
     }
 
     @if $max {
@@ -107,7 +100,6 @@ html * { box-sizing: inherit; }
     }
 
     // Generate the CSS media-query if it exists.
-    // ------------------------------------------
     @if $media-query {
         @media screen and #{$media-query} {
             @content;
@@ -117,7 +109,6 @@ html * { box-sizing: inherit; }
     }
 }
 
-// -----------------------------------------------------------------------------
 // 3.2 this
 // -----------------------------------------------------------------------------
 // Generate a responsive this.
@@ -137,9 +128,10 @@ html * { box-sizing: inherit; }
     $max-bpt: if(type-of($media) == list, nth($media, 2), false);
     $bpts: bpts($min-bpt, $max-bpt);
 
-    // Store each breakpoint CSS properties and values in a map.
+    // Store each breakpoint CSS properties and values.
     $css: ();
     @each $bpt in $bpts {
+        // Get each breakpoint CSS properties and values.
         $bpt-css: this($bpt, $flow, $width, $gutter, $position, $padding);
         // Remove useless repeated values through media-queries.
         @each $bpt-prop, $bpt-val in $bpt-css {
@@ -177,7 +169,6 @@ html * { box-sizing: inherit; }
     }
 }
 
-// -----------------------------------------------------------------------------
 // 3.3 children
 // -----------------------------------------------------------------------------
 // Generate a media-query.
@@ -200,20 +191,19 @@ html * { box-sizing: inherit; }
 
     $widths: $valid-widths;
 
-    // Iterate over $widths to call $this mixin on defined children.
-    $thiss: length($widths);
+    // Iterate over $widths to call "this" mixin on defined children.
+    $children: length($widths);
 
-    @for $this from 1 through $thiss {
-        // Define the default targeted child.
-        $child: #{$thiss}n+#{$this};
+    @for $child from 1 through $children {
+        $nth: #{$children}n+#{$child}; // Default targeted child.
         @if $repeat == "no-repeat" {
-            $child: #{$this};
+            $nth: #{$child};
         } @else if $repeat == "repeat-last" {
-            $child: if($this != $thiss, #{$this}, n+#{$this});
+            $nth: if($child != $children, #{$child}, n+#{$child});
         }
 
-        > :nth-child(#{$child}) {
-            @include this($media, $flow, nth($widths, $this), $gutter, $position, $padding) {
+        > :nth-child(#{$nth}) {
+            @include this($media, $flow, nth($widths, $child), $gutter, $position, $padding) {
                 @content;
             }
         }
@@ -224,7 +214,6 @@ html * { box-sizing: inherit; }
 // 4. Functions
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
 // 4.1 this
 // -----------------------------------------------------------------------------
 // Return a css val from a $spacing mixin argument
@@ -236,10 +225,10 @@ html * { box-sizing: inherit; }
 // -----------------------------------------------------------------------------
 @function this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
 
-    // Set a map to store the generated css properties and their vals.
+    // Set a map to store the generated css properties and their values.
     $css : ();
 
-    // Get the media-query related vals.
+    // Get the media-query related values.
     $min-settings: null;
     $min-width: null;
     $max-width: null;
@@ -262,60 +251,63 @@ html * { box-sizing: inherit; }
         }
     }
 
-    // Set the margins properties from $gutter and $position.
-    $spacing-x: map-get($min-settings, "horizontal-spacing");
-    $spacing-y: map-get($min-settings, "vertical-spacing");
-
+    // Get margin and padding values.
     $css-margins: null;
     $css-positions: null;
 
-    @if $gutter {
-        // Get a map of CSS margins.
-        $css-margins: spacing($spacing-y, $spacing-x, $gutter);
-        $css-positions: $css-margins;
-        @if $position {
-            // Alterate margins width $position.
-            $css-positions: position($css-positions, $position);
-        }
-        // Use the margin shorthand or store each side value.
-        @if map-has-key($css-positions, "global") {
-            $css: map-merge($css, (margin: map-get($css-positions, "global")));
-        } @else {
-            @each $side, $val in $css-positions {
-                $css: map-merge($css, (margin-#{$side}: $val));
+    @if $gutter or $position or $padding {
+        $spacing-x: map-get($min-settings, "horizontal-spacing");
+        $spacing-y: map-get($min-settings, "vertical-spacing");
+
+        // Set the margins properties from $gutter and $position.
+        @if $gutter or $position {
+            // Get a map of CSS margins.
+            $css-margins: spacing($spacing-y, $spacing-x, $gutter);
+            $css-positions: $css-margins;
+            @if $position {
+                // Alterate margins width $position.
+                $css-positions: position($css-positions, $position);
+            }
+            // Get the margin shorthand or each side value.
+            @if map-has-key($css-positions, "global") {
+                $css: map-merge($css, (margin: map-get($css-positions, "global")));
+            } @else {
+                @each $side, $val in $css-positions {
+                    $css: map-merge($css, (margin-#{$side}: $val));
+                }
             }
         }
-    }
 
-    // Set the paddings properties from $padding.
-    @if $padding {
-        // Get a map of CSS paddings.
-        $css-paddings: spacing($spacing-y, $spacing-x, $padding);
-        // Use the padding shorthand or store each side value.
-        @if map-has-key($css-paddings, "global") {
-            $css: map-merge($css, (padding: map-get($css-paddings, "global")));
-        } @else {
-            @each $side, $val in $css-paddings {
-                $css: map-merge($css, (padding-#{$side}: $val));
+        // Set the paddings properties from $padding.
+        @if $padding {
+            // Get a map of CSS paddings.
+            $css-paddings: spacing($spacing-y, $spacing-x, $padding);
+            // Get the padding shorthand or each side value.
+            @if map-has-key($css-paddings, "global") {
+                $css: map-merge($css, (padding: map-get($css-paddings, "global")));
+            } @else {
+                @each $side, $val in $css-paddings {
+                    $css: map-merge($css, (padding-#{$side}: $val));
+                }
             }
         }
     }
 
     // Set the width and max-width properties from $width and $gutter.
     @if $width {
-        // Set the margin val to soustract from the width.
+        // Get the margin value to soustract from the width (right and left).
         $gutter-factor: null;
         @if $gutter {
-            $margin-right: map-get($css-margins, "right");
-            @if $margin-right and $margin-right != 0 {
-                $gutter-factor: $margin-right;
+            $right: map-get($css-margins, "right");
+            @if $right and $right != 0 {
+                $gutter-factor: $right;
             }
-            $margin-left: map-get($css-margins, "left");
-            @if $margin-left and $margin-left != 0 {
+            $left: map-get($css-margins, "left");
+            @if $left and $left != 0 {
                 @if $gutter-factor {
-                    $gutter-factor: $gutter-factor + $margin-left;
+                    $gutter-factor: $gutter-factor + $left;
                 } @else {
-                    $gutter-factor: $margin-left;
+                    $gutter-factor: $left;
                 }
             }
         }
@@ -326,22 +318,24 @@ html * { box-sizing: inherit; }
         @if $width == "max-width" {
             $css-width: 100%;
             $css-max-width: map-get($min-settings, "content-max-width");
-            $css: map-merge($css, (max-width: $css-max-width));
         } @else {
             $css-width: $width * 100%;
         }
 
+        // Soustract gutters from CSS width and max-width if needed.
         @if $gutter-factor {
             $css-width: calc(#{$css-width} - #{$gutter-factor});
+            @if $css-max-width {
+                $css-max-width: calc(#{$css-max-width} - #{$gutter-factor});
+            }
         }
 
-        $css: map-merge($css, (width: #{$css-width}));
+        $css: map-merge($css, (width: $css-width, max-width: $css-max-width));
     }
 
     @return $css;
 }
 
-// -----------------------------------------------------------------------------
 // 4.2 spacing
 // -----------------------------------------------------------------------------
 // Return a map of spacing vals from the $spacing mixin argument
@@ -349,100 +343,50 @@ html * { box-sizing: inherit; }
 // @param     $base-y   The default val for vertival spacings;
 // @param     $base-x   The default val for horizontal spacings;
 // @param     $val     Mixin argument;
-// @return    $vals    Map of spacing vals:
-//                         $vals: (
-//                             "global": …, <- optional key for shorthand
-//                             "top": …,
-//                             "right": …,
-//                             "bottom": …,
-//                             "left": …
-//                          );
+// @return    $vals    Map of spacing values par side (+ global key for shorthand)
 // @see       _mixins.scss.
 // -----------------------------------------------------------------------------
 @function spacing($base-y, $base-x, $spacing: null) {
 
-    // Shorten $spacing list if possible.
-    @if type-of($spacing) == list {
-        @if length($spacing) == 4 {
-            @if nth($spacing, 1) == nth($spacing, 3) and nth($spacing, 2) == nth($spacing, 4)  {
-                @if nth($spacing, 1) == nth($spacing, 2) {
-                    $spacing: nth($spacing, 1);
-                } @else {
-                    $spacing: nth($spacing, 1) nth($spacing, 2);
-                }
-            }
-        }
-        @if length($spacing) == 2 {
-            @if not nth($spacing, 1) or not nth($spacing, 2) {
-            // A list of two vals can't be used as is if one of the val is false.
-                $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
-            }
+    // Make $spacing a four items list.
+    @if type-of($spacing) == list and length($spacing) == 2 {
+        $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
+    } @else if not type-of($spacing) == list {
+        $spacing: $spacing $spacing $spacing $spacing;
+    }
+
+    // Set each side margin.
+    $sides: "top", "right", "bottom", "left";
+    $spacings: ();
+
+    @for $i from 1 through length($spacing) {
+        $val: nth($spacing, $i);
+        @if $val != false {
+            // Get the CSS value.
+            $base: if($i == 1 or $i == 3, $base-y, $base-x);
+            $spacing-val: spacing-val($base, $val);
+            // Build the map.
+            $spacings: map-merge($spacings, (#{nth($sides, $i)}: $spacing-val));
         }
     }
 
-    $sides: "top", "right", "bottom", "left";
-    $spacings: ();
-    $new-spacings: ();
+    // Set a margin shorthand if possible.
+    $top: map-get($spacings, "top");
+    $right: map-get($spacings, "right");
+    $bottom: map-get($spacings, "bottom");
+    $left: map-get($spacings, "left");
 
-    // Iterate over $spacing vals.
-    @for $i from 1 through length($spacing) {
-        $val: nth($spacing, $i);
-
-        @if $val != false {
-
-            // Get the CSS $spacing-val.
-            $base: if($i == 1 or $i == 3, $base-y, $base-x);
-            $spacing-val: spacing-val($base, $val);
-
-            // Build the map.
-            @if type-of($spacing) == list {
-                @if length($spacing) == 2 {
-                    $global: null;
-                    @if not map-has-key($spacings, "global") {
-                        // Set the first shorthand val…
-                        $global: $spacing-val;
-                    } @else {
-                        // …or append the second shorthand val.
-                        $global: map-get($spacings, "global");
-                        @if $global == $spacing-val {
-                            $global: $spacing-val;
-                        } @else {
-                            $global: $global $spacing-val;
-                        }
-                    }
-                    $new-spacings: (
-                        #{nth($sides, $i)}: $spacing-val,
-                        #{nth($sides, $i + 2)}: $spacing-val,
-                        "global": $global
-                    );
-                } @else {
-                    $new-spacings: (
-                        #{nth($sides, $i)}: $spacing-val
-                    );
-                }
-                // Merge existing vals with new ones.
-                $spacings: map-merge($spacings, $new-spacings);
-            } @else {
-                @each $side in $sides {
-                    $base: if($side == "top" or $side == "bottom", $base-y, $base-x);
-                    $val-y: spacing-val($base-y, $val);
-                    $val-x: spacing-val($base-x, $val);
-                    $global: if($val-y == $val-x, $val-y, $val-y $val-x);
-                    $new-spacings: (
-                        #{$side}: spacing-val($base, $val),
-                        "global": $global
-                    );
-                    // Merge existing vals with new ones.
-                    $spacings: map-merge($spacings, $new-spacings);
-                }
-            }
+    @if $top and $top == $bottom and $right and $right == $left {
+        @if $top == $right {
+            $spacings: map-merge($spacings, ("global": $top));
+        } @else {
+            $spacings: map-merge($spacings, ("global": $top $right));
         }
     }
 
     @return $spacings;
 }
 
-// -----------------------------------------------------------------------------
 // 4.3 spacing-val
 // -----------------------------------------------------------------------------
 // Return a css val from a $spacing mixin argument
@@ -456,23 +400,18 @@ html * { box-sizing: inherit; }
     $spacing: null;
 
     @if $val == true {
-        // Use the $base val.
-        $spacing: $base;
+        $spacing: $base; // Use the $base val.
     } @else if $val == "nested" {
-        // Use $base as a negative val.
-        $spacing: (-$base);
+        $spacing: (-$base); // Use $base as a negative val.
     } @else if type-of($val) == number and unitless($val) {
-        // Use a factor to multiply the $base val.
-        $spacing: if($val == 0, $val, $val * $base);
+        $spacing: if($val == 0, $val, $val * $base); // Multiply the $base val.
     } @else {
-        // Ignore $base; use a custom spacing val.
-        $spacing: $val;
+        $spacing: $val; // Use a custom spacing value.
     }
 
     @return $spacing;
 }
 
-// -----------------------------------------------------------------------------
 // 4.4 position
 // -----------------------------------------------------------------------------
 // Atlterate margins depending of the $position value.
@@ -487,7 +426,7 @@ html * { box-sizing: inherit; }
 
     @if $position == "center" {
         $margins: map-merge($margins, ("right": auto, "left": auto));
-        // Add a margin shorthand if possible.
+        // Add a margin shorthand if top and bottom values are equal.
         $margin-top: map-get($margins, "top");
         @if $margin-top and $margin-top == map-get($margins, "bottom") {
             $global: if($margin-top == "auto", auto, $margin-top auto);
@@ -521,13 +460,12 @@ html * { box-sizing: inherit; }
     @return $margins;
 }
 
-// -----------------------------------------------------------------------------
 // 4.5 bpts
 // -----------------------------------------------------------------------------
 // Get a list of breakpoints explicitly or implicitly set in the this mixin.
 // @param     $from            $settings key used as the media-query min-width;
 // @param     $to              $settings key used as the media-query max-width;
-// @return    $bpts-set    A list of breakpoints as $settings map keys.
+// @return    $bpts-set        A list of breakpoints as $settings map keys.
 // @see       @mixin this()
 // -----------------------------------------------------------------------------
 @function bpts($from: null, $to: null) {
