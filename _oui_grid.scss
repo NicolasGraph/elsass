@@ -18,7 +18,7 @@
 // 2. CSS base     Don't you already set that?
 // 3. Mixins
 // 3.1 bpt         Mainly used by other mixins.
-// 3.1 this        Generic mixin.
+// 3.1 this        Generic resposive mixin.
 // 3.2 children    Apply "this" mixin to defined children elements.
 // 4. Functions    Exclusively used by mixins.
 // 4.1 this
@@ -79,7 +79,7 @@ html * { box-sizing: inherit; }
 @mixin bpt($from: null, $to: null) {
     $mq: null;
 
-    @if $from {
+    @if $from and $from != nth(map-keys($settings), 1) {
         @if map-has-key($settings, $from) {
             // $from is a custom breakpoint; get the related value if it exists.
             $from-settings: map-get($settings, $from);
@@ -96,7 +96,7 @@ html * { box-sizing: inherit; }
             $to: map-get($to-settings, "device-min-width") - 1;
         }
         // Add or set the media-query max-width.
-        @if $from {
+        @if $from and $from != nth(map-keys($settings), 1) {
             $mq: $mq " and (max-width: #{$to})";
         } @else {
             $mq: "(max-width: #{$to})";
@@ -178,7 +178,7 @@ html * { box-sizing: inherit; }
 // -----------------------------------------------------------------------------
 // Generate a responsive flex row/grid or item.
 // @param    $media       Custom Breakpoint(s) used as media-query values;
-// @param    $flow        "flex-row", "flex-grid" or false;
+// @param    $flow        flex-flow;
 // @param    $widths      Fractions/factors of the container width,
 //                        A repeat scheme can be defined at last (see doc.);
 // @param    $gutter      Up to four values (see doc.);
@@ -250,11 +250,22 @@ html * { box-sizing: inherit; }
         $min-settings: map-get($settings, "s");
     }
 
-    // Set the display and flex-wrap properties from $flow.
+    // Set the flex properties from $flow.
     @if $flow {
         $css: map-merge($css, (display: flex));
-        @if $flow == "flex-grid" {
-            $css: map-merge($css, (flex-wrap: wrap));
+        $direction: nth($flow, 1);
+        $wrap: null;
+        @if type-of($flow) == list and nth($flow, 2) != nowrap {
+            $wrap: nth($flow, 2);
+        }
+        @if $direction and $direction != row {
+            @if $wrap {
+                $css: map-merge($css, (flex-flow: #{$direction $wrap}));
+            } @else {
+                $css: map-merge($css, (flex-direction: #{$direction}));
+            }
+        } @else {
+            $css: map-merge($css, (flex-wrap: #{$wrap}));
         }
     }
 
