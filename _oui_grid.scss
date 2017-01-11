@@ -1,4 +1,7 @@
+// -----------------------------------------------------------------------------
 // Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+// -----------------------------------------------------------------------------
+
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // -----------------------------------------------------------------------------
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
@@ -9,6 +12,8 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// Table of contents
+// -----------------------------------------------------------------------------
 // 1. Settings     Where you can easily customize things!
 // 2. CSS base     Don't you already set that?
 // 3. Mixins
@@ -21,7 +26,6 @@
 // 4.3 spacing-val
 // 4.4 position
 // 4.5 bpts
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // 1. Settings
@@ -68,40 +72,40 @@ html * { box-sizing: inherit; }
 // 3.1 bpt
 // -----------------------------------------------------------------------------
 // Generate a media-query.
-// @param    $min             Breakpoint as a $settings key or a CSS value;
-// @param    $max             Breakpoint as a $settings key or a CSS value.
-// @see      @mixin this()
+// @param    $from    min-width as a custom breakpoint or CSS value;
+// @param    $to      max-width as a custom breakpoint or CSS value.
+// @see      3.1 this
 // -----------------------------------------------------------------------------
-@mixin bpt($min: null, $max: null) {
-    $media-query: null;
+@mixin bpt($from: null, $to: null) {
+    $mq: null;
 
-    @if $min {
-        @if map-has-key($settings, $min) {
-            // $min is a custom breakpoint; get the related value if it exists.
-            $min-settings: map-get($settings, $min);
-            $min: map-get($min-settings, "device-min-width");
+    @if $from {
+        @if map-has-key($settings, $from) {
+            // $from is a custom breakpoint; get the related value if it exists.
+            $from-settings: map-get($settings, $from);
+            $from: map-get($from-settings, "device-min-width");
         }
         // Set the media-query min-width.
-        $media-query: "(min-width: #{$min})";
+        $mq: "(min-width: #{$from})";
     }
 
-    @if $max {
-        // If $max is a $settings key; get the related value.
-        @if map-has-key($settings, $max) {
-            $max-settings: map-get($settings, $max);
-            $max: map-get($max-settings, "device-min-width") - 1;
+    @if $to {
+        // If $to is a $settings key; get the related value.
+        @if map-has-key($settings, $to) {
+            $to-settings: map-get($settings, $to);
+            $to: map-get($to-settings, "device-min-width") - 1;
         }
         // Add or set the media-query max-width.
-        @if $min {
-            $media-query: $media-query " and (max-width: #{$max})";
+        @if $from {
+            $mq: $mq " and (max-width: #{$to})";
         } @else {
-            $media-query: "(max-width: #{$max})";
+            $mq: "(max-width: #{$to})";
         }
     }
 
     // Generate the CSS media-query if it exists.
-    @if $media-query {
-        @media screen and #{$media-query} {
+    @if $mq {
+        @media screen and #{$mq} {
             @content;
         }
     } @else {
@@ -111,15 +115,16 @@ html * { box-sizing: inherit; }
 
 // 3.2 this
 // -----------------------------------------------------------------------------
-// Generate a responsive this.
-// @param    $media    Breakpoint(s) used as media-query min-width and/or max-width;
-// @param    $flow     "flex-row" or "flex-grid";
-// @param    $width    Fraction/factor of the container width,
-//                     "max-width" can also be used to generate a width of 100%
-//                     following by a responsive max-width as provided in $settings.
-// @param    $gutter   ;
-// @param    $position "pull", "push", "center" or a fraction/factor of the container width;
-// @param    $padding  ;
+// Generate a responsive flex row/grid or item.
+// @param    $media       Custom Breakpoint(s) used as media-query values;
+// @param    $flow        "flex-row", "flex-grid" or false;
+// @param    $width       Fraction/factor of the container width,
+//                        "max-width" can also be used to generate a width of 100%
+//                        followed by the responsive max-width provided in $settings.
+// @param    $gutter      Up to four values (see doc.);
+// @param    $position    "pull", "push", "center" or fraction/factor
+//                        of the container width;
+// @param    $padding     Up to four values (see doc.);
 // -----------------------------------------------------------------------------
 @mixin this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
 
@@ -171,9 +176,15 @@ html * { box-sizing: inherit; }
 
 // 3.3 children
 // -----------------------------------------------------------------------------
-// Generate a media-query.
-// @param    $min-width    A $settings key or a CSS min-width val;
-// @param    …             A $settings key or a CSS max-width val;
+// Generate a responsive flex row/grid or item.
+// @param    $media       Custom Breakpoint(s) used as media-query values;
+// @param    $flow        "flex-row", "flex-grid" or false;
+// @param    $widths      Fractions/factors of the container width,
+//                        A repeat scheme can be defined at last (see doc.);
+// @param    $gutter      Up to four values (see doc.);
+// @param    $position    "pull", "push", "center" or fraction/factor
+//                        of the container width;
+// @param    $padding     Up to four values (see doc.);
 // -----------------------------------------------------------------------------
 @mixin children($media: null, $flow: null, $widths: null, $gutter: null, $position: null, $padding: null) {
 
@@ -216,12 +227,8 @@ html * { box-sizing: inherit; }
 
 // 4.1 this
 // -----------------------------------------------------------------------------
-// Return a css val from a $spacing mixin argument
-// val to be used as a margin and/or padding value.
-// @param     $base                  A CSS value used as a calculation base;
-// @param     $val                   A $spacing value;
-// @return    $spacing               A CSS margin/padding value.
-// @see       @function spacing()
+// Return CSS properties and values for "this" mixin.
+// @see    3.1 this
 // -----------------------------------------------------------------------------
 @function this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
 
@@ -256,13 +263,12 @@ html * { box-sizing: inherit; }
     $css-positions: null;
 
     @if $gutter or $position or $padding {
-        $spacing-x: map-get($min-settings, "horizontal-spacing");
-        $spacing-y: map-get($min-settings, "vertical-spacing");
+        $spacing: map-get($min-settings, "vertical-spacing") map-get($min-settings, "horizontal-spacing");
 
         // Set the margins properties from $gutter and $position.
         @if $gutter or $position {
             // Get a map of CSS margins.
-            $css-margins: spacing($spacing-y, $spacing-x, $gutter);
+            $css-margins: spacing($spacing, $gutter);
             $css-positions: $css-margins;
             @if $position {
                 // Alterate margins width $position.
@@ -281,7 +287,7 @@ html * { box-sizing: inherit; }
         // Set the paddings properties from $padding.
         @if $padding {
             // Get a map of CSS paddings.
-            $css-paddings: spacing($spacing-y, $spacing-x, $padding);
+            $css-paddings: spacing($spacing, $padding);
             // Get the padding shorthand or each side value.
             @if map-has-key($css-paddings, "global") {
                 $css: map-merge($css, (padding: map-get($css-paddings, "global")));
@@ -338,20 +344,18 @@ html * { box-sizing: inherit; }
 
 // 4.2 spacing
 // -----------------------------------------------------------------------------
-// Return a map of spacing vals from the $spacing mixin argument
-// to be used as margins and/or paddings.
-// @param     $base-y   The default val for vertival spacings;
-// @param     $base-x   The default val for horizontal spacings;
-// @param     $val     Mixin argument;
-// @return    $vals    Map of spacing values par side (+ global key for shorthand)
-// @see       _mixins.scss.
+// Return a map of spacing values from $spacing.
+// @param     $base        Default values for vertical and horizontal spacings;
+// @param     $spacing     $gutter or $padding mixin argument (see Mixins);
+// @return    $spacings    Map of spacing values par side (+"global" as shorthand).
+// @see       @mixin this
 // -----------------------------------------------------------------------------
-@function spacing($base-y, $base-x, $spacing: null) {
+@function spacing($base: null, $spacing: null) {
 
     // Make $spacing a four items list.
     @if type-of($spacing) == list and length($spacing) == 2 {
         $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
-    } @else if not type-of($spacing) == list {
+    } @else if type-of($spacing) != list {
         $spacing: $spacing $spacing $spacing $spacing;
     }
 
@@ -363,8 +367,8 @@ html * { box-sizing: inherit; }
         $val: nth($spacing, $i);
         @if $val != false {
             // Get the CSS value.
-            $base: if($i == 1 or $i == 3, $base-y, $base-x);
-            $spacing-val: spacing-val($base, $val);
+            $base-i: if($i == 1 or $i == 3, nth($base, 1), nth($base, 2));
+            $spacing-val: spacing-val($base-i, $val);
             // Build the map.
             $spacings: map-merge($spacings, (#{nth($sides, $i)}: $spacing-val));
         }
@@ -389,12 +393,11 @@ html * { box-sizing: inherit; }
 
 // 4.3 spacing-val
 // -----------------------------------------------------------------------------
-// Return a css val from a $spacing mixin argument
-// val to be used as a margin and/or padding value.
-// @param     $base                  A CSS value used as a calculation base;
-// @param     $val                   A $spacing value;
-// @return    $spacing               A CSS margin/padding value.
-// @see       @function spacing()
+// Return a css value.
+// @param     $base       A CSS value used as a calculation base;
+// @param     $val        A $spacing value;
+// @return    $spacing    A CSS margin/padding value.
+// @see       4.2 spacing
 // -----------------------------------------------------------------------------
 @function spacing-val($base: null, $val: null) {
     $spacing: null;
@@ -415,10 +418,10 @@ html * { box-sizing: inherit; }
 // 4.4 position
 // -----------------------------------------------------------------------------
 // Atlterate margins depending of the $position value.
-// @param     $spacings           Map returned by spacing(),
-// @param     $position           Mixin argument
-// @return    $spacings           Alterated map
-// @see       @function this()
+// @param     $spacings    Map returned by spacing(),
+// @param     $position    Mixin argument
+// @return    $spacings    Alterated map
+// @see       4.2 spacing + 4.1 this
 // -----------------------------------------------------------------------------
 @function position($margins, $position) {
     $side: null;
@@ -463,10 +466,10 @@ html * { box-sizing: inherit; }
 // 4.5 bpts
 // -----------------------------------------------------------------------------
 // Get a list of breakpoints explicitly or implicitly set in the this mixin.
-// @param     $from            $settings key used as the media-query min-width;
-// @param     $to              $settings key used as the media-query max-width;
-// @return    $bpts-set        A list of breakpoints as $settings map keys.
-// @see       @mixin this()
+// @param     $from        Custom breakpoint used as the min-width;
+// @param     $to          Custom breakpoint used as the max-width;
+// @return    $bpts-set    A list of breakpoints as $settings map keys.
+// @see       3.1 this
 // -----------------------------------------------------------------------------
 @function bpts($from: null, $to: null) {
     $bpts: map-keys($settings);
