@@ -1,6 +1,6 @@
-# Oui_grid_children
+# Oui_grid CSS extension
 
-Extend oui_grid by adding a CSS grid.
+Extend oui_grid by adding an old school CSS grid with defined classes or placeholders.
 
 * [Usage](#usage)
 * [Settings](#settings)
@@ -18,11 +18,23 @@ Import `_oui_grid_css_grid.scss` after `_oui_grid.scss` in your main `.scss` fil
 
 ## Settings
 
-…
+* $max-col-number: 12;
+* $use-placeholders: false;
+Change it to true to use @extend.
+* $irreducible: false;
+If true, the generated CSS grid will make each irreducible fraction from 1/1 to $max-col-number/$max-col-number available.
+While in a standard grid .s-3of12 would be replace by .s-1of4 (1/4 beeing the irreducible value of 3/12), you would also be able to use s-1of5; making the grid more flexible.
 
-## Classes
+## Classes and placeholders
 
-…
+### Containers
+
+* .flex-row;
+* .flex-grid;
+
+### Items
+
+* .breakpoint-3of12 where _breakpoint_ is a custom breakpoint set as $settings map key.
 
 ## Credits
 

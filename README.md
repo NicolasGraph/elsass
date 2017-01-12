@@ -7,7 +7,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * [Settings](#settings)
 * [Usage](#usage)
 * [Mixin](#mixin)
-* [Addons](#addons)
+* [Add-ons](#add-ons)
 * [Credits](#credits)
 
 ## Features
@@ -16,7 +16,8 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * unlimited breakpoints;
 * responsive gutters;
 * gutters as margin and/or padding;
-* and more…
+* add-ons;
+* etc.
 
 ## Usage
 
@@ -27,6 +28,8 @@ Import `oui_grid.scss` in your main `.scss` file.
 ```
 
 ## Settings
+
+You can customize the following values on the top of `_oui_grid.scss`.
 
 ```scss
 $settings: (
@@ -47,8 +50,6 @@ $settings: (
 
 ## Mixin
 
-See `src/mixins/_mixins.scss`.
-
 ### this
 
 ```scss
@@ -68,14 +69,14 @@ See `src/mixins/_mixins.scss`.
 - `flow` (`null`): CSS `flex-flow` value.
 
     ```scss
-    @include this("s" "l", "grid") { … };
+    @include this("s" "l", "row wrap") { … };
     ```
 
 - `$width` (`null`): fraction of factor of the container width.
 You can also use `true` to apply a width of 100% and a max-width of the `$max-content-width` responsive value.
     ```scss
-    @include this("s" "l", "grid", 1/2) { … }; // or…
-    @include this("s" "l", "grid", .5) { … };
+    @include this("s" "l", "row wrap", 1/2) { … }; // or…
+    @include this("s" "l", "row wrap", .5) { … };
     ```
 
 - `$gutter` (`null`): value or list of two or four values.
@@ -85,30 +86,30 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
   - a usual margin value followed by its unit will be used as it.
 
     ```scss
-    @include this("s" "l", "grid", 1/2, true) { … }; // or…
-    @include this("s" "l", "grid", 1/2, 2 -1) { … }; // or…
-    @include this("s" "l", "grid", 1/2, 1px 2px 3px 4px) { … };
+    @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … };
     ```
 
 - `$position` (`null`): a positive (to push) or a negative (to pull) fraction of the container width.
 
     ```scss
-    @include this("s" "l", "grid", 1/2, true, 1/2) { … }; // or…
-    @include this("s" "l", "grid", 1/2, true, -1/2) { … };
+    @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, true, -1/2) { … };
     ```
 
 - `$padding` (`null`): see `gutter`.
 
     ```scss
-    @include this("s" "l", "grid", 1/2, true, 1/2, true) { … }; // or…
-    @include this("s" "l", "grid", 1/2, true, 1/2, 1 -1) { … }; // or…
-    @include this("s" "l", "grid", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
+    @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
     ```
 
-## Addons
+## Add-ons
 
-* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/children);
-* [CSS](//github.com/NicolasGraph/oui_grid/tree/dev/addons/css).
+* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/children): apply `this` mixin with multiple width values to children elements;
+* [CSS](//github.com/NicolasGraph/oui_grid/tree/dev/addons/css): Old style CSS grid to use oui_grid through classes or placeholders
 
 ## Credits
 

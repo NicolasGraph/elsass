@@ -1,4 +1,4 @@
-# Oui_grid_children
+# Oui_grid children extension
 
 Extend oui_grid by adding a mixin alterating children elements.
 
