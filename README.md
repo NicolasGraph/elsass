@@ -105,7 +105,7 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
 
 ## Addons
 
-* [children mixin](#)
+* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons)
 
 ## Author
 
