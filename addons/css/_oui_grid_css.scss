@@ -14,8 +14,9 @@
 
 // $settings
 // -----------------------------------------------------------------------------
-$max-col-numbers: 12;
+$max-col-number: 12;
 $use-placeholders: false;
+$irreducible: true; // If true the grid will contain every irreducible fraction as available widths
 
 // CSS grid
 // -----------------------------------------------------------------------------
@@ -29,11 +30,32 @@ $pre: if($use-placeholders, "%", ".");
   @include this(false, row wrap, "max-width", false true);
 }
 
-@for $i from 1 through $max-col-numbers {
-  $bpts: map-keys($settings);
-  @each $bpt in $bpts {
-    #{$pre}#{$bpt}-#{$i} {
-      @include this($bpt, false, 1/$i, false true);
+$bpts: map-keys($settings);
+$widths: null;
+
+@for $col-number from 1 through $max-col-number {
+    @if $irreducible {
+        @for $col from 1 through $col-number {
+            $stored: null;
+            @each $width in $widths {
+                @if $col/$col-number == $width {
+                    $stored: true;
+                }
+            }
+            @if not $stored {
+                $widths: append($widths, $col/$col-number);
+                @each $bpt in $bpts {
+                    #{$pre}#{$bpt}-#{$col}of#{$col-number} {
+                        @include this($bpt, false, $col/$col-number, false true);
+                    }
+                }
+            }
+        }
+    } @else {
+        @each $bpt in $bpts {
+            #{$pre}#{$bpt}-#{$col-number} {
+                @include this($bpt, false, $col-number/$max-col-number, false true);
+            }
+        }
     }
-  }
 }
