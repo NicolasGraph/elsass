@@ -1,24 +1,21 @@
 # Oui_grid
 
-## In process!
-
 A sass powered css responsive grid builder [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 * [Features](#features)
 * [Settings](#settings)
 * [Usage](#usage)
-* [Mixins](#mixins)
-    * [bpt](#bpt)
-    * [item](#item)
+* [Mixin](#mixin)
 * [Addons](#addons)
+* [Credits](#credits)
 
 ## Features
 
 * Unlimited columns width;
 * unlimited breakpoints;
 * responsive gutters;
-* gutters as margin and/or padding;
+* gutters as gutter and/or padding;
 * and more…
 
 ## Usage
@@ -52,14 +49,14 @@ $layout: (
 );
 ```
 
-## Mixins
+## Mixin
 
 See `src/mixins/_mixins.scss`.
 
-### item
+### this
 
 ```scss
-@include item($media, $flow, $width, $gutter, $position, $padding);
+@include this($media, $flow, $width, $gutter, $position, $padding);
 ```
 
 #### arguments
@@ -67,60 +64,62 @@ See `src/mixins/_mixins.scss`.
 - `$media` (`null`): media-query min-width and/or max-width as `$layout` map keys.
 
     ```scss
-    @include item("s") { … }; // or…
-    @include item("m" "l") { … }; // or…
-    @include item(false "l") { … };
+    @include this("s") { … }; // or…
+    @include this("m" "l") { … }; // or…
+    @include this(false "l") { … };
     ```
 
-- `flow` (`null`): …
+- `flow` (`null`): CSS `flex-flow` value.
 
     ```scss
-    @include item("s" "l", "grid") { … };
+    @include this("s" "l", "grid") { … };
     ```
 
 - `$width` (`null`): fraction of factor of the container width.
 You can also use `true` to apply a width of 100% and a max-width of the `$max-content-width` responsive value.
     ```scss
-    @include item("s" "l", "grid", 1/2) { … }; // or…
-    @include item("s" "l", "grid", .5) { … };
+    @include this("s" "l", "grid", 1/2) { … }; // or…
+    @include this("s" "l", "grid", .5) { … };
     ```
 
 - `$gutter` (`null`): value or list of two or four values.
   - `true` or `false` will enable or disable the responsive gutter;
-  - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list item);
+  - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list this);
   - a unitless value will be read as a factor of the responsive gutter;
   - a usual margin value followed by its unit will be used as it.
 
     ```scss
-    @include item("s" "l", "grid", 1/2, true) { … }; // or…
-    @include item("s" "l", "grid", 1/2, 2 -1) { … }; // or…
-    @include item("s" "l", "grid", 1/2, 1px 2px 3px 4px) { … };
+    @include this("s" "l", "grid", 1/2, true) { … }; // or…
+    @include this("s" "l", "grid", 1/2, 2 -1) { … }; // or…
+    @include this("s" "l", "grid", 1/2, 1px 2px 3px 4px) { … };
     ```
 
 - `$position` (`null`): a positive (to push) or a negative (to pull) fraction of the container width.
 
     ```scss
-    @include item("s" "l", "grid", 1/2, true, 1/2) { … }; // or…
-    @include item("s" "l", "grid", 1/2, true, -1/2) { … };
+    @include this("s" "l", "grid", 1/2, true, 1/2) { … }; // or…
+    @include this("s" "l", "grid", 1/2, true, -1/2) { … };
     ```
 
-- `$padding` (`null`): see `margin`.
+- `$padding` (`null`): see `gutter`.
 
     ```scss
-    @include item("s" "l", "grid", 1/2, true, 1/2, true) { … }; // or…
-    @include item("s" "l", "grid", 1/2, true, 1/2, 1 -1) { … }; // or…
-    @include item("s" "l", "grid", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
+    @include this("s" "l", "grid", 1/2, true, 1/2, true) { … }; // or…
+    @include this("s" "l", "grid", 1/2, true, 1/2, 1 -1) { … }; // or…
+    @include this("s" "l", "grid", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
     ```
 
 ## Addons
 
 * [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/oui_grid_children)
 
-## Author
+## Credits
+
+### Author
 
 [Nicolas Morand](//twitter.com/NicolasGraph)
 
-## Licence
+### Licence
 
 This project is distributed under the [MIT licence](//opensource.org/licenses/MIT).
 

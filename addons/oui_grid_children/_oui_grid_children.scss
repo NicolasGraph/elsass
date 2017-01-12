@@ -12,26 +12,7 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// Table of contents
-// -----------------------------------------------------------------------------
-// 1. Settings     Where you can easily customize things!
-// 2. CSS base     Don't you already set that?
-// 3. Mixins
-// 3.1 bpt         Mainly used by other mixins.
-// 3.1 this        Generic resposive mixin.
-// 3.2 children    Apply "this" mixin to defined children elements.
-// 4. Functions    Exclusively used by mixins.
-// 4.1 this
-// 4.2 spacing
-// 4.3 spacing-val
-// 4.4 position
-// 4.5 bpts
-
-// -----------------------------------------------------------------------------
-// 1. Settings
-// -----------------------------------------------------------------------------
-
-// 3.3 children
+// children
 // -----------------------------------------------------------------------------
 // Generate a responsive flex row/grid or item.
 // @param    $media       Custom Breakpoint(s) used as media-query values;

@@ -1,12 +1,10 @@
-# Oui_grid_children extension
-
-## In process!
+# Oui_grid_children
 
 Extend oui_grid by adding a mixin alterating children elements.
 
 * [Usage](#usage)
 * [Mixin](#mixins)
-    * [children](#children)
+* [Credits](#credits)
 
 ## Usage
 
@@ -40,11 +38,13 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
     @include children("s" "l", 1/2 1/4 "repeat-last") { … };
     ```
 
-## Author
+## Credits
+
+### Author
 
 [Nicolas Morand](https://twitter.com/NicolasGraph)
 
-## Licence
+### Licence
 
 This project is distributed under the [MIT licence](https://opensource.org/licenses/MIT).
 
