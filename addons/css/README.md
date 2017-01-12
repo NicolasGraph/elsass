@@ -21,7 +21,7 @@ Import `_oui_grid_css_grid.scss` after `_oui_grid.scss` in your main `.scss` fil
 * `$max-col-number: 12;`
 * `$use-placeholders: false;`
 Change it to true to use @extend.
-* `$irreducible: false;``
+* `$irreducible: false;`
 If true, the generated CSS grid will make each [irreducible fraction](//en.wikipedia.org/wiki/Irreducible_fraction) from 1/1 to `$max-col-number`/`$max-col-number` available.
 While in a standard grid `.s-3of12` should be replaced by `.s-1of4` (1/4 beeing the irreducible value of 3/12), you would also be able to use s-1of5; making the grid more flexible.
 
