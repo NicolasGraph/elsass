@@ -29,7 +29,7 @@ $pre: if($use-placeholders, "%", ".");
   @include this(false, row wrap, "max-width", false true);
 }
 
-@for $i from 1 to $max-col-numbers {
+@for $i from 1 through $max-col-numbers {
   $bpts: map-keys($settings);
   @each $bpt in $bpts {
     #{$pre}#{$bpt}-#{$i} {
