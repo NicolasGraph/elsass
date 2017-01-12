@@ -2,8 +2,8 @@
 
 ## In process!
 
-A sass powered css responsive grid builder [flexbox](http://caniuse.com/#feat=flexbox) and [calc()](http://caniuse.com/#search=calc).
-Click these features for support informations via [caniuse.com](http://caniuse.com/).
+A sass powered css responsive grid builder [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
+Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 * [Features](#features)
 * [Settings](#settings)
@@ -19,6 +19,14 @@ Click these features for support informations via [caniuse.com](http://caniuse.c
 * responsive gutters;
 * gutters as margin and/or padding;
 * and more…
+
+## Usage
+
+Import `oui_grid.scss` in your main `.scss` file.
+
+```
+@import "_oui_grid";
+```
 
 ## Settings
 
@@ -105,14 +113,14 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
 
 ## Addons
 
-* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons)
+* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/oui_grid_children)
 
 ## Author
 
-[Nicolas Morand](https://twitter.com/NicolasGraph)
+[Nicolas Morand](//twitter.com/NicolasGraph)
 
 ## Licence
 
-This project is distributed under the [MIT licence](https://opensource.org/licenses/MIT).
+This project is distributed under the [MIT licence](//opensource.org/licenses/MIT).
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

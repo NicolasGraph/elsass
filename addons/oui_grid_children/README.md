@@ -4,6 +4,15 @@
 
 Extend oui_grid by adding a mixin alterating children elements.
 
+## Usage
+
+Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` file.
+
+```
+@import "_oui_grid";
+@import "_oui_grid_children";
+```
+
 ## Mixin
 
 ### children
