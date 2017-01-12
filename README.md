@@ -1,6 +1,6 @@
 # Oui_grid
 
-A sass powered css responsive grid builder [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
+A sass powered css responsive and "semantic" grid builder [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 * [Features](#features)
@@ -111,7 +111,8 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
 
 ## Addons
 
-* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/oui_grid_children)
+* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/oui_grid_children);
+* [css grid](//github.com/NicolasGraph/oui_grid/tree/dev/addons/oui_grid_css_grid).
 
 ## Credits
 
