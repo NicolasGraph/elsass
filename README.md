@@ -7,6 +7,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 * [Features](#features)
 * [Settings](#settings)
+* [Usage](#usage)
 * [Mixins](#mixins)
     * [bpt](#bpt)
     * [item](#item)
@@ -24,7 +25,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 Import `oui_grid.scss` in your main `.scss` file.
 
-```
+```scss
 @import "_oui_grid";
 ```
 
