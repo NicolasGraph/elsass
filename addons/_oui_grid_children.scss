@@ -1,0 +1,79 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+// -----------------------------------------------------------------------------
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// -----------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// Table of contents
+// -----------------------------------------------------------------------------
+// 1. Settings     Where you can easily customize things!
+// 2. CSS base     Don't you already set that?
+// 3. Mixins
+// 3.1 bpt         Mainly used by other mixins.
+// 3.1 this        Generic resposive mixin.
+// 3.2 children    Apply "this" mixin to defined children elements.
+// 4. Functions    Exclusively used by mixins.
+// 4.1 this
+// 4.2 spacing
+// 4.3 spacing-val
+// 4.4 position
+// 4.5 bpts
+
+// -----------------------------------------------------------------------------
+// 1. Settings
+// -----------------------------------------------------------------------------
+
+// 3.3 children
+// -----------------------------------------------------------------------------
+// Generate a responsive flex row/grid or item.
+// @param    $media       Custom Breakpoint(s) used as media-query values;
+// @param    $flow        flex-flow;
+// @param    $widths      Fractions/factors of the container width,
+//                        A repeat scheme can be defined at last (see doc.);
+// @param    $gutter      Up to four values (see doc.);
+// @param    $position    "pull", "push", "center" or fraction/factor
+//                        of the container width;
+// @param    $padding     Up to four values (see doc.);
+// -----------------------------------------------------------------------------
+@mixin children($media: null, $flow: null, $widths: null, $gutter: null, $position: null, $padding: null) {
+
+    // Separate valid widths from the optional repeat scheme.
+    $repeat: null;
+    $valid-widths: null;
+
+    @each $width in $widths {
+        @if type-of($width) == string {
+            $repeat: $width;
+        } @else {
+            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
+        }
+    }
+
+    $widths: $valid-widths;
+
+    // Iterate over $widths to call "this" mixin on defined children.
+    $children: length($widths);
+
+    @for $child from 1 through $children {
+        $nth: #{$children}n+#{$child}; // Default targeted child.
+        @if $repeat == "no-repeat" {
+            $nth: #{$child};
+        } @else if $repeat == "repeat-last" {
+            $nth: if($child != $children, #{$child}, n+#{$child});
+        }
+
+        > :nth-child(#{$nth}) {
+            @include this($media, $flow, nth($widths, $child), $gutter, $position, $padding) {
+                @content;
+            }
+        }
+    }
+}

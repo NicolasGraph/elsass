@@ -174,53 +174,6 @@ html * { box-sizing: inherit; }
     }
 }
 
-// 3.3 children
-// -----------------------------------------------------------------------------
-// Generate a responsive flex row/grid or item.
-// @param    $media       Custom Breakpoint(s) used as media-query values;
-// @param    $flow        flex-flow;
-// @param    $widths      Fractions/factors of the container width,
-//                        A repeat scheme can be defined at last (see doc.);
-// @param    $gutter      Up to four values (see doc.);
-// @param    $position    "pull", "push", "center" or fraction/factor
-//                        of the container width;
-// @param    $padding     Up to four values (see doc.);
-// -----------------------------------------------------------------------------
-@mixin children($media: null, $flow: null, $widths: null, $gutter: null, $position: null, $padding: null) {
-
-    // Separate valid widths from the optional repeat scheme.
-    $repeat: null;
-    $valid-widths: null;
-
-    @each $width in $widths {
-        @if type-of($width) == string {
-            $repeat: $width;
-        } @else {
-            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
-        }
-    }
-
-    $widths: $valid-widths;
-
-    // Iterate over $widths to call "this" mixin on defined children.
-    $children: length($widths);
-
-    @for $child from 1 through $children {
-        $nth: #{$children}n+#{$child}; // Default targeted child.
-        @if $repeat == "no-repeat" {
-            $nth: #{$child};
-        } @else if $repeat == "repeat-last" {
-            $nth: if($child != $children, #{$child}, n+#{$child});
-        }
-
-        > :nth-child(#{$nth}) {
-            @include this($media, $flow, nth($widths, $child), $gutter, $position, $padding) {
-                @content;
-            }
-        }
-    }
-}
-
 // -----------------------------------------------------------------------------
 // 4. Functions
 // -----------------------------------------------------------------------------

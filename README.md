@@ -2,14 +2,15 @@
 
 ## In process!
 
-A sass powered css responsive grid using [flexbox](http://caniuse.com/#feat=flexbox) and [calc()](http://caniuse.com/#search=calc).
+A sass powered css responsive grid builder [flexbox](http://caniuse.com/#feat=flexbox) and [calc()](http://caniuse.com/#search=calc).
 Click these features for support informations via [caniuse.com](http://caniuse.com/).
 
 * [Features](#features)
 * [Settings](#settings)
 * [Mixins](#mixins)
+    * [bpt](#bpt)
     * [item](#item)
-    * [children](#children)
+* [Addons](#addons)
 
 ## Features
 
@@ -17,7 +18,7 @@ Click these features for support informations via [caniuse.com](http://caniuse.c
 * unlimited breakpoints;
 * responsive gutters;
 * gutters as margin and/or padding;
-* etc.
+* and more…
 
 ## Settings
 
@@ -49,7 +50,7 @@ See `src/mixins/_mixins.scss`.
 ### item
 
 ```scss
-@include item($media, $flow, $width, $margin, $position, $padding);
+@include item($media, $flow, $width, $gutter, $position, $padding);
 ```
 
 #### arguments
@@ -75,7 +76,7 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
     @include item("s" "l", "grid", .5) { … };
     ```
 
-- `$margin` (`null`): value or list of two or four values.
+- `$gutter` (`null`): value or list of two or four values.
   - `true` or `false` will enable or disable the responsive gutter;
   - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list item);
   - a unitless value will be read as a factor of the responsive gutter;
@@ -102,26 +103,9 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
     @include item("s" "l", "grid", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
     ```
 
-### children
+## Addons
 
-```scss
-@include children($media, $flow, $width, $margin, $position, $padding);
-```
-
-#### children specific changes
-
-- `$width` (`null`): factor (.5) or fraction (1/2) of the parent width.
-
-    ```scss
-    @include children("s" "l", 1/2) { … }; // or…
-    @include children("s" "l", 1/2 1/4) { … };
-    ```
-
-- `$repeat` (`null`): extra value for `$width` to define the repeat scheme to use.
-
-    ```scss
-    @include children("s" "l", 1/2 1/4 "repeat-last") { … };
-    ```
+* [children mixin](#)
 
 ## Author
 
