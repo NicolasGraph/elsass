@@ -2,8 +2,11 @@
 
 Extend oui_grid by adding a mixin alterating children elements.
 
+## Contents
+
 * [Usage](#usage)
 * [Mixin](#mixins)
+* [Example](#example)
 * [Credits](#credits)
 
 ## Usage
@@ -37,6 +40,16 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
     ```scss
     @include children("s" "l", 1/2 1/4 "repeat-last") { … };
     ```
+
+## Example
+
+```scss
+.flex-grid {
+    @include this(false, row wrap, "max-width");
+    @include children("s" "l", false, 1 1/2 1/2, true);
+    @include children("l", false, 1/2 1/4 "repeat-last", true);
+}
+```
 
 ## Credits
 

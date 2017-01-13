@@ -2,9 +2,12 @@
 
 Extend oui_grid by adding an old school CSS grid with defined classes or placeholders.
 
+## Contents
+
 * [Usage](#usage)
 * [Settings](#settings)
 * [Classes](#classes)
+* [Example](#example)
 * [Credits](#credits)
 
 ## Usage
@@ -23,7 +26,7 @@ Import `_oui_grid_css_grid.scss` after `_oui_grid.scss` in your main `.scss` fil
 Change it to true to use @extend.
 * `$irreducible: false;`
 If true, the generated CSS grid will make each [irreducible fraction](//en.wikipedia.org/wiki/Irreducible_fraction) from 1/1 to `$max-col-number`/`$max-col-number` available.
-While in a standard grid `.s-3of12` should be replaced by `.s-1of4` (1/4 beeing the irreducible value of 3/12), you would also be able to use s-1of5; making the grid more flexible.
+While in a standard grid `.s-3of12` should be replaced by `.s-1of4` (1/4 beeing the irreducible fraction of 3/12), you would also be able to use `s-1of5`; making the grid more flexible.
 
 ## Classes and placeholders
 
@@ -35,6 +38,26 @@ While in a standard grid `.s-3of12` should be replaced by `.s-1of4` (1/4 beeing 
 ### Items
 
 * `.s-3of12` where _s_ is a custom breakpoint set as `$settings` map key.
+
+## Example
+
+### Using classes
+
+```html
+<div class="flex-grid">
+    <div class="s-3of12">
+        …
+    </div>
+    …
+</div>
+```
+
+### Using placeholders
+
+```scss
+.my-grid { @extend %flex-grid; }
+.my-grid-item { @extend %s-3of12; }
+```
 
 ## Credits
 

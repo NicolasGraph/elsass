@@ -1,13 +1,16 @@
 # Oui_grid
 
-A quite light sass powered css responsive and "semantic" grid builder [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
+A quite light sass powered css responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
 Click these features for support informations via [caniuse.com](//caniuse.com/).
+
+## Contents
 
 * [Features](#features)
 * [Settings](#settings)
 * [Usage](#usage)
 * [Mixin](#mixin)
 * [Add-ons](#add-ons)
+* [Example](#example)
 * [Credits](#credits)
 
 ## Features
@@ -81,7 +84,7 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
 
 - `$gutter` (`null`): value or list of two or four values.
   - `true` or `false` will enable or disable the responsive gutter;
-  - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list this);
+  - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list item);
   - a unitless value will be read as a factor of the responsive gutter;
   - a usual margin value followed by its unit will be used as it.
 
@@ -105,6 +108,19 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
     @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
     @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
     ```
+
+## Example
+
+```scss
+.flex-grid {
+    @include this(false, row wrap, "max-width");
+}
+
+.flex-item {
+    @include this("s" "l", false, 1/2, true);
+    @include this("l", false, 1/4, true);
+}
+```
 
 ## Add-ons
 
