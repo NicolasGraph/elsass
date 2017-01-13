@@ -10,7 +10,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * [Settings](#settings)
 * [Usage](#usage)
 * [Mixin](#mixin)
-* [Example](#example)
+* [Example / demo](#example-demo)
 * [Add-ons](#add-ons)
 * [Credits](#credits)
 
@@ -110,7 +110,22 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
   @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
   ```
 
-## Example
+## Example / demo
+
+```html
+<div class="my-grid">
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+    <div class="my-grid-item"></div>
+</div>
+```
 
 ```scss
 .my-grid {
@@ -122,6 +137,8 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
     @include this("l", false, 1/4, true);
 }
 ```
+
+See and play on [Sassmeister](//www.sassmeister.com/).
 
 ## Add-ons
 

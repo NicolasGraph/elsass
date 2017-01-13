@@ -7,7 +7,7 @@ Extend oui_grid by adding a mixin alterating children elements.
 * [Usage](#usage)
 * [Usage](#usage)
 * [Mixin](#mixins)
-* [Example](#example)
+* [Example / demo](#example-demo)
 * [Credits](#credits)
 
 ## Usage
@@ -44,15 +44,30 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
 
 ## Example
 
+```html
+<div class="my-grid">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+```
+
 ```scss
 .my-grid {
     @include this(false, row wrap, "max-width");
     @include children("s" "l", false, 1 1/2 1/2, true);
     @include children("l", false, 1/2 1/4 "repeat-last", true);
-
-    .my-last-grid-item { @include this($position: "push"); }
 }
 ```
+
+See and play on [Sassmeister](//www.sassmeister.com/).
 
 ## Credits
 
