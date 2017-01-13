@@ -24,22 +24,18 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
 ### children
 
 ```scss
-@include children($media, $flow, $width, $gutter, $position, $padding);
+@include children($media, $flow, $widths, $gutter, $position, $padding);
 ```
 
 #### children specific changes
 
-- `$width` (`null`): factor (.5) or fraction (1/2) of the parent width.
+- `$widths` (`null`): The only difference with `this` mixin arguments is the ability of `$widths` to receive multiple width values and to define repeat scheme. By default the mixin repeat the `$widths` sequence over and over but you can set the repeat scheme to `"repeat-first"` or `"repeat-last"`.
 
   ```scss
   @include children("s" "l", 1/2) { … }; // or…
-  @include children("s" "l", 1/2 1/4) { … };
-  ```
-
-- `$repeat` (`null`): extra value for `$width` to define the repeat scheme to use.
-
-  ```scss
-  @include children("s" "l", 1/2 1/4 "repeat-last") { … };
+  @include children("s" "l", 1/2 1/4) { … }; // or…
+  @include children("s" "l", 1/2 1/4 "repeat-first") { … }; // or…
+  @include children($widths: 1/2 1/4 "repeat-last") { … };
   ```
 
 ## Example
@@ -55,24 +51,27 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
     <li></li>
     <li></li>
     <li></li>
-    <li></li>
+    <li class="catalog_product--last"></li>
 </ul>
 ```
 
 ```scss
 .catalog {
-    @include this(false, row wrap, "max-width", true, "center", true) {
-        list-style: none;
-        background: #eee;
-    }
+    @include this(false, row wrap, "max-width", true, "center", true);
+    list-style: none;
+    background: #eee;
 
-    @include children() { background: #ddd; }
     @include children("s" "l", false, 1 1/2 "repeat-last", true, false, true);
     @include children("l", false, 1/2 1/4 "repeat-last", true, false, true);
+    @include children { background: #ddd };
+
+    .catalog_product--last {
+        @include this($position: "push");
+    }
 }
 ```
 
-See and play on [Sassmeister](//www.sassmeister.com/).
+See and play on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e873f38610fc15072).
 
 ## Credits
 

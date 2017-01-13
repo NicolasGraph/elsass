@@ -52,6 +52,8 @@ $settings: (
 );
 ```
 
+While oui_grid is able to play with responsive gutters, no extra CSS will be generated if two breakpoints have the same spacing values.
+
 ## Mixin
 
 ### this
@@ -73,14 +75,16 @@ $settings: (
 - `flow` (`null`): CSS `flex-flow` value.
 
   ```scss
-  @include this("s" "l", "row wrap") { … };
+  @include this("s" "l", row wrap) { … }; // or…
+  @include this($flow: row wrap) { … };
   ```
 
 - `$width` (`null`): fraction of factor of the container width.
 You can also use `max-width` to apply a width of 100% and a responsive `max-width` according to the `$max-content-width` value.
   ```scss
   @include this("s" "l", "row wrap", 1/2) { … }; // or…
-  @include this("s" "l", "row wrap", .5) { … };
+  @include this("s" "l", "row wrap", .5) { … }; // or…
+  @include this($width: 1/2) { … };
   ```
 
 - `$gutter` (`null`): value or list of two or four values.
@@ -93,14 +97,16 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
   ```scss
   @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
   @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … };
+  @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … }; // or…
+  @include this($gutter: false true) { … };
   ```
 
 - `$position` (`null`): a positive (to push) or a negative (to pull) fraction of the container width.
 
   ```scss
   @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, true, -1/2) { … };
+  @include this("s" "l", "row wrap", 1/2, true, -1/2) { … }; // or…
+  @include this($position: "center") { … };
   ```
 
 - `$padding` (`null`): see `gutter`.
@@ -108,7 +114,8 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
   ```scss
   @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
   @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
+  @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … }; // or…
+  @include this($padding: false true) { … };
   ```
 
 ## Example / demo
@@ -130,6 +137,7 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
 
 ```scss
 .catalog {
+    // @include this($media, $flow, $width, $gutter, $position, $padding);
     @include this(false, row wrap, "max-width", true, "center", true);
     list-style: none;
     background: #eee;
@@ -148,7 +156,6 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
             @include this($position: "push");
         }
     }
-}
 ```
 
 See and play on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d8d463fa7500693).
