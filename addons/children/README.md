@@ -5,6 +5,7 @@ Extend oui_grid by adding a mixin alterating children elements.
 ## Contents
 
 * [Usage](#usage)
+* [Usage](#usage)
 * [Mixin](#mixins)
 * [Example](#example)
 * [Credits](#credits)
@@ -30,24 +31,26 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
 
 - `$width` (`null`): factor (.5) or fraction (1/2) of the parent width.
 
-    ```scss
-    @include children("s" "l", 1/2) { … }; // or…
-    @include children("s" "l", 1/2 1/4) { … };
-    ```
+  ```scss
+  @include children("s" "l", 1/2) { … }; // or…
+  @include children("s" "l", 1/2 1/4) { … };
+  ```
 
 - `$repeat` (`null`): extra value for `$width` to define the repeat scheme to use.
 
-    ```scss
-    @include children("s" "l", 1/2 1/4 "repeat-last") { … };
-    ```
+  ```scss
+  @include children("s" "l", 1/2 1/4 "repeat-last") { … };
+  ```
 
 ## Example
 
 ```scss
-.flex-grid {
+.my-grid {
     @include this(false, row wrap, "max-width");
     @include children("s" "l", false, 1 1/2 1/2, true);
     @include children("l", false, 1/2 1/4 "repeat-last", true);
+
+    .my-last-grid-item { @include this($position: "push"); }
 }
 ```
 

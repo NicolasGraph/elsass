@@ -1,22 +1,23 @@
 # Oui_grid
 
-A quite light sass powered css responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
+A quite light (17ko) sass powered css responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Contents
 
 * [Features](#features)
+* [Usage](#usage)
 * [Settings](#settings)
 * [Usage](#usage)
 * [Mixin](#mixin)
-* [Add-ons](#add-ons)
 * [Example](#example)
+* [Add-ons](#add-ons)
 * [Credits](#credits)
 
 ## Features
 
 * Unlimited columns width;
-* unlimited breakpoints;
+* unlimited custom breakpoints;
 * responsive gutters;
 * gutters as margin and/or padding;
 * add-ons;
@@ -63,24 +64,24 @@ $settings: (
 
 - `$media` (`null`): media-query min-width and/or max-width as `$layout` map keys.
 
-    ```scss
-    @include this("s") { … }; // or…
-    @include this("m" "l") { … }; // or…
-    @include this(false "l") { … };
-    ```
+  ```scss
+  @include this("s") { … }; // or…
+  @include this("s" "l") { … }; // or…
+  @include this(false "l") { … };
+  ```
 
 - `flow` (`null`): CSS `flex-flow` value.
 
-    ```scss
-    @include this("s" "l", "row wrap") { … };
-    ```
+  ```scss
+  @include this("s" "l", "row wrap") { … };
+  ```
 
 - `$width` (`null`): fraction of factor of the container width.
-You can also use `true` to apply a width of 100% and a max-width of the `$max-content-width` responsive value.
-    ```scss
-    @include this("s" "l", "row wrap", 1/2) { … }; // or…
-    @include this("s" "l", "row wrap", .5) { … };
-    ```
+You can also use `max-width` to apply a width of 100% and a responsive `max-width` according to the `$max-content-width` value.
+  ```scss
+  @include this("s" "l", "row wrap", 1/2) { … }; // or…
+  @include this("s" "l", "row wrap", .5) { … };
+  ```
 
 - `$gutter` (`null`): value or list of two or four values.
   - `true` or `false` will enable or disable the responsive gutter;
@@ -88,35 +89,35 @@ You can also use `true` to apply a width of 100% and a max-width of the `$max-co
   - a unitless value will be read as a factor of the responsive gutter;
   - a usual margin value followed by its unit will be used as it.
 
-    ```scss
-    @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … };
-    ```
+  ```scss
+  @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
+  @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
+  @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … };
+  ```
 
 - `$position` (`null`): a positive (to push) or a negative (to pull) fraction of the container width.
 
-    ```scss
-    @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, true, -1/2) { … };
-    ```
+  ```scss
+  @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
+  @include this("s" "l", "row wrap", 1/2, true, -1/2) { … };
+  ```
 
 - `$padding` (`null`): see `gutter`.
 
-    ```scss
-    @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
-    ```
+  ```scss
+  @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
+  @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
+  @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … };
+  ```
 
 ## Example
 
 ```scss
-.flex-grid {
+.my-grid {
     @include this(false, row wrap, "max-width");
 }
 
-.flex-item {
+.my-grid-item {
     @include this("s" "l", false, 1/2, true);
     @include this("l", false, 1/4, true);
 }
