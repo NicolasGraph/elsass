@@ -51,7 +51,7 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
     <li></li>
     <li></li>
     <li></li>
-    <li class="catalog_product--last"></li>
+    <li></li>
 </ul>
 ```
 
@@ -64,10 +64,6 @@ Import `_oui_grid_children.scss` after `_oui_grid.scss` in your main `.scss` fil
     @include children("s" "l", false, 1 1/2 "repeat-last", true, false, true);
     @include children("l", false, 1/2 1/4 "repeat-last", true, false, true);
     @include children { background: #ddd };
-
-    .catalog_product--last {
-        @include this($position: "push");
-    }
 }
 ```
 

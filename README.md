@@ -52,7 +52,7 @@ $settings: (
 );
 ```
 
-While oui_grid is able to play with responsive gutters, no extra CSS will be generated if two breakpoints have the same spacing values.
+While oui_grid is designed to play with responsive values, no extra CSS will be generated if two breakpoints share the same spacing or max-width value.
 
 ## Mixin
 
@@ -131,7 +131,7 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
     <li class="catalog_product"></li>
     <li class="catalog_product"></li>
     <li class="catalog_product"></li>
-    <li class="catalog_product catalog_product--last"></li>
+    <li class="catalog_product"></li>
 </ul>
 ```
 
@@ -150,10 +150,6 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
         &--first {
             @include this("s" "l", false, 1, (silent: true));
             @include this("l", false, 1/2, (silent: true));
-        }
-
-        &--last {
-            @include this($position: "push");
         }
     }
 ```
