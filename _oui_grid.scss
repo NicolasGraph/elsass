@@ -225,6 +225,7 @@ html * { box-sizing: inherit; }
     // Get margin and padding values.
     $css-margins: null;
     $css-positions: null;
+    $silent-gutter: null;
 
     @if $gutter or $position or $padding {
         $spacing: map-get($min-settings, "vertical-spacing") map-get($min-settings, "horizontal-spacing");
@@ -232,8 +233,14 @@ html * { box-sizing: inherit; }
         // Set the margins properties from $gutter and $position.
         @if $gutter or $position {
             // Get a map of CSS margins.
+            @if type-of($gutter) == map {
+                @if not $position {
+                    $silent-gutter: true;
+                }
+                $gutter: map-get($gutter, "silent");
+            }
             $css-margins: spacing($spacing, $gutter);
-            $css-positions: $css-margins;
+            $css-positions: if($silent-gutter, (), $css-margins);
             @if $position {
                 // Alterate margins width $position.
                 $css-positions: position($css-positions, $position);

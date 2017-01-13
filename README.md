@@ -88,6 +88,7 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
   - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list item);
   - a unitless value will be read as a factor of the responsive gutter;
   - a usual margin value followed by its unit will be used as it.
+  - `(silent: …)` can be used to alterate the width of an item, by soustracting the applied gutter; without affecting any margin rule to it (see [Example / demo](#example--demo)).
 
   ```scss
   @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
@@ -139,8 +140,8 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
         background: #ddd;
 
         &--first {
-            @include this("s" "l", false, 1, true);
-            @include this("l", false, 1/2, true);
+            @include this("s" "l", false, 1, (silent: true));
+            @include this("l", false, 1/2, (silent: true));
         }
 
         &--last {
