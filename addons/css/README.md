@@ -8,7 +8,7 @@ Extend oui_grid by adding an old school CSS grid with defined classes or placeho
 * [Usage](#usage)
 * [Settings](#settings)
 * [Classes](#classes)
-* [Example / demo](#example-demo)
+* [Example / demo](#example--demo)
 * [Credits](#credits)
 
 ## Usage
@@ -56,20 +56,31 @@ While in a standard grid `.s-3of12` should be replaced by `.s-1of4` (1/4 beeing 
 ### Using placeholders
 
 ```html
-<div class="my-grid">
-    <div class="my-grid-item">
-        …
-    </div>
-    …
+<div class="catalog">
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
+    <div class="catalog_product"></div>
 </div>
 ```
 
 ```scss
-.my-grid { @extend %flex-grid; }
-.my-grid-item { @extend %s-3of12; } // or @extend %s-1of4;
+.catalog {
+    @extend %flex-grid;
+
+    &_product {
+        @extend %s-3of12; // or @extend %s-1of4;
+    }
+}
 ```
 
-See and edit on [Sassmeister](//www.sassmeister.com/).
+See and play on [Sassmeister](//www.sassmeister.com/).
 
 ## Credits
 

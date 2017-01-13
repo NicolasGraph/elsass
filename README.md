@@ -10,7 +10,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * [Settings](#settings)
 * [Usage](#usage)
 * [Mixin](#mixin)
-* [Example / demo](#example-demo)
+* [Example / demo](#example--demo)
 * [Add-ons](#add-ons)
 * [Credits](#credits)
 
@@ -113,32 +113,44 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
 ## Example / demo
 
 ```html
-<div class="my-grid">
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-    <div class="my-grid-item"></div>
-</div>
+<ul class="catalog">
+    <li class="catalog_product catalog_product--first"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product"></li>
+    <li class="catalog_product catalog_product--last"></li>
+</ul>
 ```
 
 ```scss
-.my-grid {
-    @include this(false, row wrap, "max-width");
-}
+.catalog {
+    @include this(false, row wrap, "max-width", true, "center", true);
+    list-style: none;
+    background: #eee;
 
-.my-grid-item {
-    @include this("s" "l", false, 1/2, true);
-    @include this("l", false, 1/4, true);
+    &_product {
+        @include this("s" "l", false, 1/2, true, false, true);
+        @include this("l", false, 1/4, true, false, true);
+        background: #ddd;
+
+        &--first {
+            @include this("s" "l", false, 1, true);
+            @include this("l", false, 1/2, true);
+        }
+
+        &--last {
+            @include this($position: "push");
+        }
+    }
 }
 ```
 
-See and play on [Sassmeister](//www.sassmeister.com/).
+See and play on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d8d463fa7500693).
 
 ## Add-ons
 
