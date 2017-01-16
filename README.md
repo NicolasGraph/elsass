@@ -1,6 +1,6 @@
-# Oui_grid
+# elsass responsive grid builder
 
-A quite light (17ko) sass powered css responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
+[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Contents
@@ -25,15 +25,15 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Usage
 
-Import `oui_grid.scss` in your main `.scss` file.
+Import `elsass.scss` in your main `.scss` file.
 
 ```scss
-@import "_oui_grid";
+@import "elsass/core/elsass";
 ```
 
 ## Settings
 
-You can customize the following values on the top of `_oui_grid.scss`.
+You can customize the following values on the top of `elsass.scss`.
 
 ```scss
 $settings: (
@@ -52,7 +52,7 @@ $settings: (
 );
 ```
 
-While oui_grid is designed to play with responsive values, no extra CSS will be generated if two breakpoints share the same spacing or max-width value.
+While elsass is designed to play with responsive values, no extra CSS will be generated if two breakpoints share the same spacing or max-width value.
 
 ## Mixin
 
@@ -148,27 +148,46 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
         background: #ddd;
 
         &--first {
-            @include this("s" "l", false, 1, (silent: true));
-            @include this("l", false, 1/2, (silent: true));
+            @include this("s" "l", false, 1, ("silent": true));
+            @include this("l", false, 1/2, ("silent": true));
         }
     }
+}
 ```
 
 See and play on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d8d463fa7500693).
 
 ## Add-ons
 
-* [children mixin](//github.com/NicolasGraph/oui_grid/tree/dev/addons/children): apply `this` mixin with multiple widths to children elements;
-* [CSS grid](//github.com/NicolasGraph/oui_grid/tree/dev/addons/css): Old style CSS grid to use oui_grid through classes or placeholders
+* [children mixin](//github.com/NicolasGraph/elsass/tree/dev/addons/children): apply `this` mixin with multiple widths to children elements;
+* [CSS grid](//github.com/NicolasGraph/elsass/tree/dev/addons/css): Old style CSS grid to use elsass through classes or placeholders
 
 ## Credits
 
 ### Author
 
-[Nicolas Morand](//twitter.com/NicolasGraph)
+[Nicolas Morand](https://twitter.com/NicolasGraph), graphic designer and front-end developer in Strasbourg, France.
 
 ### Licence
 
-This project is distributed under the [MIT licence](//opensource.org/licenses/MIT).
+This project is distributed under the [MIT licence](https://opensource.org/licenses/MIT).
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Copyright (c) 2017 [Nicolas Morand](https://twitter.com/NicolasGraph)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -15,7 +15,7 @@
 // $settings
 // -----------------------------------------------------------------------------
 $max-col-number: 12;
-$use-placeholders: false;
+$use-placeholders: false; // Use @extend if true.
 $irreducible: true; // If true the grid will contain every irreducible fraction as available widths
 
 // CSS grid
@@ -23,11 +23,11 @@ $irreducible: true; // If true the grid will contain every irreducible fraction 
 $pre: if($use-placeholders, "%", ".");
 
 #{$pre}flex-row {
-  @include this(false, false, "max-width", true false);
+    @include this(false, false, "max-width", true false);
 }
 
 #{$pre}flex-grid {
-  @include this(false, row wrap, "max-width", false true);
+    @include this(false, row wrap, "max-width", false true);
 }
 
 $bpts: map-keys($settings);
@@ -53,7 +53,7 @@ $widths: null;
         }
     } @else {
         @each $bpt in $bpts {
-            #{$pre}#{$bpt}-#{$col-number} {
+            #{$pre}#{$bpt}-#{$col-number}of#{$max-col-number} {
                 @include this($bpt, false, $col-number/$max-col-number, false true);
             }
         }

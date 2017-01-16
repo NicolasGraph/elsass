@@ -1,6 +1,6 @@
-# Oui_grid CSS extension
+# elsass CSS extension
 
-Extend oui_grid by adding an old school CSS grid with defined classes or placeholders.
+Extend [elsass](//github.com/NicolasGraph/elsass) by adding an old school CSS grid with defined classes or placeholders.
 
 ## Contents
 
@@ -13,11 +13,11 @@ Extend oui_grid by adding an old school CSS grid with defined classes or placeho
 
 ## Usage
 
-Import `_oui_grid_css_grid.scss` after `_oui_grid.scss` in your main `.scss` file.
+Import `elsass_css_grid.scss` after `elsass.scss` in your main `.scss` file.
 
 ```scss
-@import "_oui_grid";
-@import "_oui_grid_css_grid";
+@import "elsass";
+@import "elsass_css_grid";
 ```
 
 ## Settings
