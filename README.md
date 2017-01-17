@@ -1,6 +1,6 @@
 # elsass responsive grid builder
 
-[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).
+[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).  
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Contents
@@ -9,7 +9,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * [Usage](#usage)
 * [Settings](#settings)
 * [Usage](#usage)
-* [Mixin](#mixin)
+* [this mixin](#this-mixin)
 * [Example / demo](#example--demo)
 * [Add-ons](#add-ons)
 * [Credits](#credits)
@@ -52,23 +52,20 @@ $settings: (
 );
 ```
 
-## Mixin
-
-### this
+## this mixin
 
 ```scss
 @include this($media, $flow, $width, $gutter, $position, $padding);
 ```
 
-#### arguments
+- `$media` applies a media-query around the generated CSS to build responsive layouts.  
+    It Accepts a single value or list of two values as to set the media-query `min-` and `max-width`.
 
-- `$media` set the media-query/ies to apply.
-
-    | Value                        | Description                                                            |
-    |------------------------------|------------------------------------------------------------------------|
-    | Breakpoint (`$settings` key) | Uses the $settings map to get or calculate the `min-` and `max-width`. |
-    | CSS value                    | Applies this value to the media-query `min-` or `max-width`.           |
-    | false                        | Skips the media-query `min-width`.                                     |
+    | Value                        | Description                                                             |
+    |------------------------------|-------------------------------------------------------------------------|
+    | Breakpoint (`$settings` key) | Uses the $settings map to get or calculate the `min-` and `max-width`.  |
+    | CSS value                    | Applies this value to the media-query `min-` or `max-width`.            |
+    | false                        | Disables the media-query or skips `min-width` if a second value is set. |
 
     ```scss
     @include this("s") { … }; // or…
@@ -76,7 +73,8 @@ $settings: (
     @include this(false "l") { … };
     ```
 
-- `flow` set `flex-direction`, `flex-wrap` or `flex-flow` from a single value or a list of two values (as for the CSS `flex-flow` rule).
+- `$flow` set `flex-direction`, `flex-wrap` or `flex-flow`.  
+    It accepts a single value or a list of two values.
 
     …
 
@@ -87,10 +85,10 @@ $settings: (
 
 - `$width` set the item width (gutter included).
 
-    | Value               | Description                                                        |
-    |---------------------|--------------------------------------------------------------------|
-    | fraction or decimal | Calculates the gutter included `width` from the container `width`. |
-    | `"max-width"`       | Applies a `width` of 100%  and a responsive `max-width`.           |
+    | Value               | Description                                                                      |
+    |---------------------|----------------------------------------------------------------------------------|
+    | fraction or decimal | Calculates the element `width` (gutter included) based on the container `width`. |
+    | `"max-width"`       | Applies a `width` of 100%  and a responsive `max-width`.                         |
 
     ```scss
     @include this("s" "l", "row wrap", 1/2) { … }; // or…
@@ -98,13 +96,13 @@ $settings: (
     @include this($width: "max-width") { … };
     ```
 
-- `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule) and alterates the width by soustracting right and left margins from it.
+- `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule). It also alterates the item width, if provided, by soustracting the right and left margin.
 
     | Value           | Description                                                                              |
     |-----------------|------------------------------------------------------------------------------------------|
-    | `true`/`false`  | Enables/disables the related side(s) gutter as margin.                                   |
+    | `true`/`false`  | Enables/disables gutter as margin for the related side(s)                                |
     | `"nested"`      | Set a negative gutter on the related margin side(s).                                     |
-    | unitless number | Multiply the gutter value of the related margin side(s).                                 |
+    | unitless number | Multiplies the gutter value of the related margin side(s).                               |
     | CSS value       | Set this value as the related gutter/margin side(s) .                                    |
     | `(silent: …)`   | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
 
@@ -118,13 +116,13 @@ $settings: (
 
 - `$position` alterates margins to pull, push or center the element.
 
-    | Value                                           | Description                                                           |
-    |-------------------------------------------------|-----------------------------------------------------------------------|
-    | fraction/factor of the container width          | Alterates the left margin to push the element.                        |
-    | negative fraction/factor of the container width | Alterates the left margin to pull the element.                        |
-    | `"pull"`                                        | Pulls the element on the right side by applying `margin-right: auto`. |
-    | `"push"`                                        | Pushes the element on the left side by applying `margin-left: auto`.  |
-    | `"center"`                                      | Centers the element by setting the right an left margins to `auto`.   |
+    | Value                    | Description                                                                |
+    |--------------------------|----------------------------------------------------------------------------|
+    | fraction/factor          | Adds the related percentage to the left margin to push the element.        |
+    | negative fraction/factor | Soustract the related percentage from the left margin to push the element. |
+    | `"pull"`                 | Pulls the element on the right side by applying `margin-right: auto`.      |
+    | `"push"`                 | Pushes the element on the left side by applying `margin-left: auto`.       |
+    | `"center"`               | Centers the element by setting the right an left margins to `auto`.        |
 
     ```scss
     @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
@@ -191,13 +189,13 @@ See and play on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d
 ## Add-ons
 
 * [children mixin](/add-ons/children): apply `this` mixin with multiple widths to children elements;
-* [CSS grid](/add-ons/css): Old style CSS grid to use elsass through classes or placeholders
 
 ## Credits
 
 ### Author
 
 [Nicolas Morand](https://twitter.com/NicolasGraph), graphic designer and front-end developer in Strasbourg, France.
+_Pardon my frenglish…_
 
 ### Licence
 
