@@ -33,7 +33,7 @@ Import `elsass.scss` in your main `.scss` file.
 
 ## Settings
 
-You can customize the following values on the top of `elsass.scss`.
+You can customize `$settings` values on the top of `elsass.scss`.
 
 ```scss
 $settings: (
@@ -52,8 +52,6 @@ $settings: (
 );
 ```
 
-While elsass is designed to play with responsive values, no extra CSS will be generated if two breakpoints share the same spacing or max-width value.
-
 ## Mixin
 
 ### this
@@ -64,59 +62,90 @@ While elsass is designed to play with responsive values, no extra CSS will be ge
 
 #### arguments
 
-- `$media` (`null`): media-query min-width and/or max-width as `$layout` map keys.
+- `$media` set the media-query/ies to apply.
 
-  ```scss
-  @include this("s") { … }; // or…
-  @include this("s" "l") { … }; // or…
-  @include this(false "l") { … };
-  ```
+    | Value                        | Description                                                            |
+    |------------------------------|------------------------------------------------------------------------|
+    | Breakpoint (`$settings` key) | Uses the $settings map to get or calculate the `min-` and `max-width`. |
+    | CSS value                    | Applies this value to the media-query `min-` or `max-width`.           |
+    | false                        | Skips the media-query `min-width`.                                     |
 
-- `flow` (`null`): CSS `flex-flow` value.
+    ```scss
+    @include this("s") { … }; // or…
+    @include this("s" "l") { … }; // or…
+    @include this(false "l") { … };
+    ```
 
-  ```scss
-  @include this("s" "l", row wrap) { … }; // or…
-  @include this($flow: row wrap) { … };
-  ```
+- `flow` set `flex-direction`, `flex-wrap` or `flex-flow` from a single value or a list of two values (as for the CSS `flex-flow` rule).
 
-- `$width` (`null`): fraction of factor of the container width.
-You can also use `max-width` to apply a width of 100% and a responsive `max-width` according to the `$max-content-width` value.
-  ```scss
-  @include this("s" "l", "row wrap", 1/2) { … }; // or…
-  @include this("s" "l", "row wrap", .5) { … }; // or…
-  @include this($width: 1/2) { … };
-  ```
+    …
 
-- `$gutter` (`null`): value or list of two or four values.
-  - `true` or `false` will enable or disable the responsive gutter;
-  - `nested` will be read as a factor of `-1` of the responsive gutter (see the next list item);
-  - a unitless value will be read as a factor of the responsive gutter;
-  - a usual margin value followed by its unit will be used as it.
-  - `(silent: …)` can be used to alterate the width of an item, by soustracting the applied gutter; without affecting any margin rule to it (see [Example / demo](#example--demo)).
+    ```scss
+    @include this("s" "l", row-reverse) { … }; // or…
+    @include this($flow: row-reverse wrap) { … };
+    ```
 
-  ```scss
-  @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … }; // or…
-  @include this($gutter: false true) { … };
-  ```
+- `$width` set the item width (gutter included).
 
-- `$position` (`null`): a positive (to push) or a negative (to pull) fraction of the container width.
+    | Value               | Description                                                        |
+    |---------------------|--------------------------------------------------------------------|
+    | fraction or decimal | Calculates the gutter included `width` from the container `width`. |
+    | `"max-width"`       | Applies a `width` of 100%  and a responsive `max-width`.           |
 
-  ```scss
-  @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, true, -1/2) { … }; // or…
-  @include this($position: "center") { … };
-  ```
+    ```scss
+    @include this("s" "l", "row wrap", 1/2) { … }; // or…
+    @include this("s" "l", "row wrap", .5) { … }; // or…
+    @include this($width: "max-width") { … };
+    ```
 
-- `$padding` (`null`): see `gutter`.
+- `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule) and alterates the width by soustracting right and left margins from it.
 
-  ```scss
-  @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
-  @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … }; // or…
-  @include this($padding: false true) { … };
-  ```
+    | Value           | Description                                                                              |
+    |-----------------|------------------------------------------------------------------------------------------|
+    | `true`/`false`  | Enables/disables the related side(s) gutter as margin.                                   |
+    | `"nested"`      | Set a negative gutter on the related margin side(s).                                     |
+    | unitless number | Multiply the gutter value of the related margin side(s).                                 |
+    | CSS value       | Set this value as the related gutter/margin side(s) .                                    |
+    | `(silent: …)`   | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
+
+    ```scss
+    @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, ("silent": true)) { … }; // or…
+    @include this($gutter: false true) { … };
+    ```
+
+- `$position` alterates margins to pull, push or center the element.
+
+    | Value                                           | Description                                                           |
+    |-------------------------------------------------|-----------------------------------------------------------------------|
+    | fraction/factor of the container width          | Alterates the left margin to push the element.                        |
+    | negative fraction/factor of the container width | Alterates the left margin to pull the element.                        |
+    | `"pull"`                                        | Pulls the element on the right side by applying `margin-right: auto`. |
+    | `"push"`                                        | Pushes the element on the left side by applying `margin-left: auto`.  |
+    | `"center"`                                      | Centers the element by setting the right an left margins to `auto`.   |
+
+    ```scss
+    @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, true, -1/2) { … }; // or…
+    @include this($position: "center") { … };
+    ```
+
+- `$padding` set paddings from a value or a list of two or four values (as for the CSS padding rule).
+
+    | Value           | Description                                                               |
+    |-----------------|---------------------------------------------------------------------------|
+    | `true`/`false`  | Enables/disables the related side(s) padding.                             |
+    | unitless number | Multiplies the media-query related spacing values of the defined side(s). |
+    | CSS value       | Set this value as the related side(s) padding.                            |
+
+    ```scss
+    @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
+    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … }; // or…
+    @include this($padding: false true) { … };
+    ```
 
 ## Example / demo
 
@@ -138,16 +167,18 @@ You can also use `max-width` to apply a width of 100% and a responsive `max-widt
 ```scss
 .catalog {
     // @include this($media, $flow, $width, $gutter, $position, $padding);
-    @include this(false, row wrap, "max-width", true, "center", true);
-    list-style: none;
-    background: #eee;
+    @include this(false, row wrap, "max-width", true, "center", true) {
+        list-style: none;
+        background: #eee;
+    }
 
     &_product {
+        border: 1px solid #ddd;
         @include this("s" "l", false, 1/2, true, false, true);
         @include this("l", false, 1/4, true, false, true);
-        background: #ddd;
 
         &--first {
+            background: #fff;
             @include this("s" "l", false, 1, ("silent": true));
             @include this("l", false, 1/2, ("silent": true));
         }
@@ -159,8 +190,8 @@ See and play on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d
 
 ## Add-ons
 
-* [children mixin](//github.com/NicolasGraph/elsass/tree/dev/addons/children): apply `this` mixin with multiple widths to children elements;
-* [CSS grid](//github.com/NicolasGraph/elsass/tree/dev/addons/css): Old style CSS grid to use elsass through classes or placeholders
+* [children mixin](/add-ons/children): apply `this` mixin with multiple widths to children elements;
+* [CSS grid](/add-ons/css): Old style CSS grid to use elsass through classes or placeholders
 
 ## Credits
 
