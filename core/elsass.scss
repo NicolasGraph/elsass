@@ -34,26 +34,26 @@
 $settings: (
     "s": (                           // Each $settings key is used as a custom breakpoint.
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
-        "vertical-spacing"  : 12px,  // Top and bottom gutters.
-        "horizontal-spacing": 8px    // Right and left gutters.
+        "vertical-spacing"  : 24px,  // Top and bottom gutters.
+        "horizontal-spacing": 16px    // Right and left gutters.
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
-        "vertical-spacing"  : 16px,
-        "horizontal-spacing": 12px
+        "vertical-spacing"  : 32px,
+        "horizontal-spacing": 24px
     ),
     "l": (
         "device-min-width"  : 1024px,
         "content-max-width" : 1000px,
-        "vertical-spacing"  : 24px,
-        "horizontal-spacing": 16px
+        "vertical-spacing"  : 48px,
+        "horizontal-spacing": 32px
     ),
     "xl": (
         "device-min-width"  : 1440px,
         "content-max-width" : 1280px,
-        "vertical-spacing"  : 32px,
-        "horizontal-spacing": 24px
+        "vertical-spacing"  : 54px,
+        "horizontal-spacing": 48px
     )
 );
 
@@ -374,11 +374,11 @@ html * { box-sizing: inherit; }
     $spacing: null;
 
     @if $val == true {
-        $spacing: $base; // Use the $base val.
+        $spacing: $base / 2; // Use the $base val.
     } @else if $val == "nested" {
-        $spacing: (-$base); // Use $base as a negative val.
+        $spacing: (-($base / 2)); // Use $base as a negative val.
     } @else if type-of($val) == number and unitless($val) {
-        $spacing: if($val == 0, $val, $val * $base); // Multiply the $base val.
+        $spacing: if($val == 0, $val, $val * ($base / 2)); // Multiply the $base val.
     } @else {
         $spacing: $val; // Use a custom spacing value.
     }
