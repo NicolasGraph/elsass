@@ -199,7 +199,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
             <p class="infos_description"></p>
         </header>
         <img class="post_image" … >
-        <p class="post_body"></footer>
+        <p class="post_body"></p>
         <footer class="post_footer"></footer>
     </article>
     <aside class="page_sidebar"></div>
@@ -220,7 +220,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 
     &_sidebar {
         border: 1px solid #ddd;
-        @include this($gutter: true, $padding: true);
+        @include this($gutter: true, $padding: 2);
         @include this("s" "l", false, 1, ("silent": true));
         @include this("l", false, 1/3, ("silent": true));
     }
@@ -238,7 +238,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_image {
         border: 1px solid #ddd;
         background: #fff;
-        @include this($gutter: true);
+        @include this($gutter: true, $padding: 2);
         @include this("s" "m", false, 1, ("silent": true));
         @include this("m", false, 1/2,  ("silent": true));
     }
@@ -248,15 +248,22 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
         border: 1px solid #ddd;
         @include this(false, false, 1, true, false, true);
     }
+
+    &_body {
+        @include this($padding: 5);
+    }
 }
 
 .infos {
-    @include this(false, column);
+    @include this("s" "m", row);
+    @include this("m", column);
 
     &_title,
     &_description {
         border: 1px solid #ddd;
-        @include this(false, false, 1, true, false, true);
+        @include this($gutter: true, $padding: true);
+        @include this("s" "m", false, 1/2, ("silent": true));
+        @include this("m", false, 1, ("silent": true));
     }
 }
 ```
