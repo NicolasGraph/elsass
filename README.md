@@ -96,7 +96,8 @@ $settings: (
     @include this($width: "max-width") { … };
     ```
 
-- `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule). It also alterates the item width, if provided, by soustracting the right and left margin.
+- `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule).  
+    It also alterates the item width, if provided, by soustracting the right and left margin from it.
 
     | Value           | Description                                                                              |
     |-----------------|------------------------------------------------------------------------------------------|
@@ -147,6 +148,8 @@ $settings: (
 
 ## Example / demo
 
+### Simple grid
+
 ```html
 <ul class="catalog">
     <li class="catalog_product catalog_product--first"></li>
@@ -184,7 +187,81 @@ $settings: (
 }
 ```
 
-See and play on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d8d463fa7500693).
+See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d8d463fa7500693).
+
+### Metro-UI-like grid
+
+```html
+<main class="page">
+    <article class="page_post post">
+        <header class="post_infos infos">
+            <h1 class="infos_title"></h1>
+            <p class="infos_description"></p>
+        </header>
+        <img class="post_image" … >
+        <p class="post_body"></footer>
+        <footer class="post_footer"></footer>
+    </article>
+    <aside class="page_sidebar"></div>
+</main>
+```
+
+```sass
+.page {
+    background: #eee;
+    @include this(false, false, "max-width", true, "center", true);
+    @include this("s" "m", column);
+    @include this("m", row wrap);
+
+    &_post {
+        @include this("s" "l", false, 1);
+        @include this("l", false, 2/3);
+    }
+
+    &_sidebar {
+        border: 1px solid #ddd;
+        @include this($gutter: true, $padding: true);
+        @include this("s" "l", false, 1, ("silent": true));
+        @include this("l", false, 1/3, ("silent": true));
+    }
+}
+
+.post {
+    @include this("s" "m", column);
+    @include this("m", row wrap);
+
+    &_infos {
+        @include this("s" "m", false, 1);
+        @include this("m", false, 1/2);
+    }
+
+    &_image {
+        border: 1px solid #ddd;
+        background: #fff;
+        @include this($gutter: true);
+        @include this("s" "m", false, 1, ("silent": true));
+        @include this("m", false, 1/2,  ("silent": true));
+    }
+
+    &_body,
+    &_footer {
+        border: 1px solid #ddd;
+        @include this(false, false, 1, true, false, true);
+    }
+}
+
+.infos {
+    @include this(false, column);
+
+    &_title,
+    &_description {
+        border: 1px solid #ddd;
+        @include this(false, false, 1, true, false, true);
+    }
+}
+```
+
+See and resize on [Sassmeister](http://www.sassmeister.com/gist/2722430257d50d32d2ca662f2ad6d942).
 
 ## Add-ons
 
