@@ -15,8 +15,8 @@
 // $settings
 // -----------------------------------------------------------------------------
 $max-col-number: 12;
-$use-placeholders: false; // Use @extend if true.
 $irreducible: true; // If true the grid will contain every irreducible fraction as available widths
+$use-placeholders: false; // Use @extend if true.
 
 // CSS grid
 // -----------------------------------------------------------------------------
@@ -31,30 +31,34 @@ $pre: if($use-placeholders, "%", ".");
 }
 
 $bpts: map-keys($settings);
-$widths: null;
+$widths: ();
 
 @for $col-number from 1 through $max-col-number {
     @if $irreducible {
         @for $col from 1 through $col-number {
             $stored: null;
-            @each $width in $widths {
+            @each $name, $width in $widths {
                 @if $col/$col-number == $width {
                     $stored: true;
                 }
             }
             @if not $stored {
-                $widths: append($widths, $col/$col-number);
-                @each $bpt in $bpts {
-                    #{$pre}#{$bpt}-#{$col}of#{$col-number} {
-                        @include this($bpt, false, $col/$col-number, false true);
-                    }
-                }
+                $widths: map-merge($widths, (#{$col}of#{$col-number}: $col/$col-number));
             }
         }
     } @else {
-        @each $bpt in $bpts {
-            #{$pre}#{$bpt}-#{$col-number}of#{$max-col-number} {
-                @include this($bpt, false, $col-number/$max-col-number, false true);
+        $widths: map-merge($widths, (#{$col-number}of#{$max-col-number}: $col-number/$max-col-number));
+    }
+}
+
+@if $widths {
+    @each $bpt in $bpts {
+        @each $name, $width in $widths {
+            #{$pre}#{$bpt}-#{$name} {
+                @include this($bpt, false, $width);
+            }
+            #{$pre}#{$bpt}-#{$name}-gutter {
+                @include this($bpt, false, $width, false true);
             }
         }
     }
