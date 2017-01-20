@@ -113,10 +113,12 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
     @include this("s" "m", column);
     @include this("m", row wrap);
 
+    @include children { border: 1px solid #ddd; }
     @include children("s" "m", false, 1, true, false, true);
     @include children("m", false, 1/2 1/2 1 "repeat-last", true, false, true);
 
     & :first-child {
+        border: none;
         @include this("s" "m", false, 1, 0, false, 0);
         @include this("m", false, 1/2, 0, false, 0);
     }
@@ -138,10 +140,6 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
     background: #fff;
     padding: 0;
 }
-
-.image,
-.body,
-.footer { border: 1px solid #ddd; }
 
 .body { height: 240px; }
 ```
