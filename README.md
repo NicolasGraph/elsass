@@ -209,9 +209,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 ```sass
 .page {
     background: #eee;
-    @include this(false, false, "max-width", true, "center", true);
-    @include this("s" "m", column);
-    @include this("m", row wrap);
+    @include this("s" "m", column, "max-width", true, "center", true);
+    @include this("m", row wrap, "max-width", true, "center", true);
 
     &_post {
         @include this("s" "l", false, 1);
@@ -220,9 +219,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 
     &_sidebar {
         border: 1px solid #ddd;
-        @include this($gutter: true, $padding: 2);
-        @include this("s" "l", false, 1, ("silent": true));
-        @include this("l", false, 1/3, ("silent": true));
+        @include this("s" "l", false, 1, true, false, 2);
+        @include this("l", false, 1/3, true, false, 2);
     }
 }
 
@@ -238,9 +236,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_image {
         border: 1px solid #ddd;
         background: #fff;
-        @include this($gutter: true, $padding: 2);
-        @include this("s" "m", false, 1, ("silent": true));
-        @include this("m", false, 1/2,  ("silent": true));
+        @include this("s" "m", false, 1, true, false, 2);
+        @include this("m", false, 1/2, true, false, 2);
     }
 
     &_body,
@@ -261,9 +258,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_title,
     &_description {
         border: 1px solid #ddd;
-        @include this($gutter: true, $padding: true);
-        @include this("s" "m", false, 1/2, ("silent": true));
-        @include this("m", false, 1, ("silent": true));
+        @include this("s" "m", false, 1/2, true, false, true);
+        @include this("m", false, 1, true, false, true);
     }
 }
 ```
