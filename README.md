@@ -10,7 +10,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * [Settings](#settings)
 * [Usage](#usage)
 * [this mixin](#this-mixin)
-* [Example / demo](#example--demo)
+* [Examples / demos](#examples--demos)
 * [Add-ons](#add-ons)
 * [Credits](#credits)
 
@@ -146,7 +146,7 @@ $settings: (
     @include this($padding: false true) { … };
     ```
 
-## Example / demo
+## Examples / demos
 
 ### Simple grid
 

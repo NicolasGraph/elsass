@@ -7,7 +7,7 @@ Extend [elsass](//github.com/NicolasGraph/elsass) by adding a mixin alterating c
 * [Usage](#usage)
 * [Usage](#usage)
 * [Mixin](#mixins)
-* [Example / demo](#example--demo)
+* [Examples / demos](#examples--demos)
 * [Credits](#credits)
 
 ## Usage
@@ -38,7 +38,7 @@ Import `elsass_children.scss` after `elsass.scss` in your main `.scss` file.
   @include children($widths: 1/2 1/4 "repeat-last") { … };
   ```
 
-## Example / demo
+## Examples / demos
 
 ### Simple grid
 
@@ -117,7 +117,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
     @include children("s" "m", false, 1, true, false, true);
     @include children("m", false, 1/2 1/2 1 "repeat-last", true, false, true);
 
-    & :first-child {
+    & > :first-child {
         border: none;
         @include this("s" "m", false, 1, 0, false, 0);
         @include this("m", false, 1/2, 0, false, 0);
