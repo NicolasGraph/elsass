@@ -292,7 +292,7 @@ html * { box-sizing: inherit; }
         // Set the width and max-width values.
         $css-width: null;
         $css-max-width: null;
-        @if $width == "max-width" {
+        @if type-of($width) == string {
             $css-width: 100%;
             $css-max-width: map-get($min-settings, "content-max-width");
         } @else {
