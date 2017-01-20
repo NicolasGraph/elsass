@@ -40,6 +40,8 @@ Import `elsass_children.scss` after `elsass.scss` in your main `.scss` file.
 
 ## Example / demo
 
+### Simple grid
+
 ```html
 <ul class="catalog">
     <li></li>
@@ -57,17 +59,94 @@ Import `elsass_children.scss` after `elsass.scss` in your main `.scss` file.
 
 ```scss
 .catalog {
-    @include this(false, row wrap, "max-width", true, "center", true);
-    list-style: none;
-    background: #eee;
+    @include this(false, row wrap, "max-width", true, "center", true) {
+        list-style: none;
+        background: #eee;
+    }
 
+    @include children { border: 1px solid #ddd; };
     @include children("s" "l", false, 1 1/2 "repeat-last", true, false, true);
     @include children("l", false, 1/2 1/4 "repeat-last", true, false, true);
-    @include children { background: #ddd };
+
+    & :first-child { background: #fff; }
 }
 ```
 
-See and play on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e873f38610fc15072).
+See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e873f38610fc15072).
+
+### Metro-UI-like grid
+
+```html
+<main class="page">
+    <article class="page_post post">
+        <header class="infos">
+            <h1></h1>
+            <p></p>
+        </header>
+        <img class="image" height="240" width="480">
+        <p class="body"></p>
+        <footer class="footer"></footer>
+    </article>
+    <aside class="page_sidebar"></aside>
+</div>
+```
+
+```scss
+.page {
+    background: #eee;
+    @include this("s" "m", column, "max", true, "center", true);
+    @include this("m", row wrap, "max", true, "center", true);
+
+    &_post {
+        @include this("s" "l", false, 1);
+        @include this("l", false, 2/3);
+    }
+
+    &_sidebar {
+        border: 1px solid #ddd;
+        @include this("s" "l", false, 1, true, false, 2);
+        @include this("l", false, 1/3, true, false, 2);
+    }
+}
+
+.post {
+    @include this("s" "m", column);
+    @include this("m", row wrap);
+
+    @include children("s" "m", false, 1, true, false, true);
+    @include children("m", false, 1/2 1/2 1 "repeat-last", true, false, true);
+
+    & :first-child {
+        @include this("s" "m", false, 1, 0, false, 0);
+        @include this("m", false, 1/2, 0, false, 0);
+    }
+}
+
+.infos {
+    @include this("s" "m", row);
+    @include this("m", column);
+
+    @include children {
+        border: 1px solid #ddd;
+        flex-grow: 1;
+    }
+    @include children("s" "m", false, 1/2, true, false, true);
+    @include children("m", false, 1, true, false, true);
+}
+
+.image {
+    background: #fff;
+    padding: 0;
+}
+
+.image,
+.body,
+.footer { border: 1px solid #ddd; }
+
+.body { height: 240px; }
+```
+
+See and play on [Sassmeister](http://www.sassmeister.com/gist/f000107b5994d2113b23772524a539c5).
 
 ## Credits
 
