@@ -18,7 +18,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 * Unlimited columns width;
 * unlimited custom breakpoints;
-* responsive gutters;
+* responsive gutters (optional);
 * gutters as margin and/or padding;
 * add-ons;
 * etc.
@@ -59,7 +59,7 @@ $settings: (
 ```
 
 - `$media` applies a media-query around the generated CSS to build responsive layouts.  
-    It Accepts a single value or list of two values as to set the media-query `min-` and `max-width`.
+    It accepts a single value or list of two values to set the media-query `min-` and `max-width`.
 
     | Value                        | Description                                                             |
     |------------------------------|-------------------------------------------------------------------------|
@@ -83,7 +83,7 @@ $settings: (
     @include this($flow: row-reverse wrap) { … };
     ```
 
-- `$width` set the item width (gutter included).
+- `$width` set the element width (gutter included).
 
     | Value               | Description                                                                      |
     |---------------------|----------------------------------------------------------------------------------|
@@ -97,7 +97,7 @@ $settings: (
     ```
 
 - `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule).  
-    It also alterates the item width, if provided, by soustracting the right and left margin from it.
+    It also alterates the element width if provided, by soustracting the right and left margin from it.
 
     | Value           | Description                                                                              |
     |-----------------|------------------------------------------------------------------------------------------|
@@ -167,7 +167,6 @@ $settings: (
 
 ```scss
 .catalog {
-    // @include this($media, $flow, $width, $gutter, $position, $padding);
     @include this(false, row wrap, "max-width", true, "center", true) {
         list-style: none;
         background: #eee;
@@ -180,7 +179,7 @@ $settings: (
 
         &--first {
             background: #fff;
-            @include this("s" "l", false, 1, ("silent": true));
+            @include this("s" "l", false, 1, ("silent": true)); // $gutter is already set in .catalog_product.
             @include this("l", false, 1/2, ("silent": true));
         }
     }
@@ -198,19 +197,19 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
             <h1 class="infos_title"></h1>
             <p class="infos_description"></p>
         </header>
-        <img class="post_image" … >
+        <img class="post_image" height="240" width="480">
         <p class="post_body"></p>
         <footer class="post_footer"></footer>
     </article>
-    <aside class="page_sidebar"></div>
-</main>
+    <aside class="page_sidebar"></aside>
+</div>
 ```
 
 ```sass
 .page {
     background: #eee;
-    @include this("s" "m", column, "max-width", true, "center", true);
-    @include this("m", row wrap, "max-width", true, "center", true);
+    @include this("s" "m", column, "max", true, "center", true);
+    @include this("m", row wrap, "max", true, "center", true);
 
     &_post {
         @include this("s" "l", false, 1);
@@ -236,8 +235,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_image {
         border: 1px solid #ddd;
         background: #fff;
-        @include this("s" "m", false, 1, true, false, 2);
-        @include this("m", false, 1/2, true, false, 2);
+        @include this("s" "m", false, 1, true);
+        @include this("m", false, 1/2, true);
     }
 
     &_body,
@@ -247,7 +246,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     }
 
     &_body {
-        @include this($padding: 5);
+        height: 240px;
     }
 }
 
@@ -258,6 +257,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_title,
     &_description {
         border: 1px solid #ddd;
+        flex-grow: 1;
         @include this("s" "m", false, 1/2, true, false, true);
         @include this("m", false, 1, true, false, true);
     }
