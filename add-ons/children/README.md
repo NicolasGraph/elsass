@@ -59,14 +59,14 @@ Import `elsass_children.scss` after `elsass.scss` in your main `.scss` file.
 
 ```scss
 .catalog {
-    @include this(false, row wrap, "max-width", true, "center", true) {
+    @include this("…", $position: "center") {
         list-style: none;
         background: #eee;
     }
 
     @include children { border: 1px solid #ddd; };
-    @include children("s" "l", false, 1 1/2 "repeat-last", true, false, true);
-    @include children("l", false, 1/2 1/4 "repeat-last", true, false, true);
+    @include children("s" "l", false, 1 1/2 "repeat-last", "…");
+    @include children("l", false, 1/2 1/4 "repeat-last", "…");
 
     & :first-child { background: #fff; }
 }
@@ -94,8 +94,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
 ```scss
 .page {
     background: #eee;
-    @include this("s" "m", column, "max", true, "center", true);
-    @include this("m", row wrap, "max", true, "center", true);
+    @include this("…", $position: "center");
+    @include this("s" "m", column, "…");
 
     &_post {
         @include this("s" "l", false, 1);
@@ -104,8 +104,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
 
     &_sidebar {
         border: 1px solid #ddd;
-        @include this("s" "l", false, 1, true, false, 2);
-        @include this("l", false, 1/3, true, false, 2);
+        @include this("s" "l", false, 1, "…");
+        @include this("l", false, 1/3, "…");
     }
 }
 
@@ -114,8 +114,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
     @include this("m", row wrap);
 
     @include children { border: 1px solid #ddd; }
-    @include children("s" "m", false, 1, true, false, true);
-    @include children("m", false, 1/2 1/2 1 "repeat-last", true, false, true);
+    @include children("s" "m", false, 1, "…");
+    @include children("m", false, 1/2 1/2 1 "repeat-last", "…");
 
     & > :first-child {
         border: none;
@@ -125,15 +125,14 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/614d42fbe999a66e
 }
 
 .infos {
-    @include this("s" "m", row);
     @include this("m", column);
 
     @include children {
         border: 1px solid #ddd;
         flex-grow: 1;
     }
-    @include children("s" "m", false, 1/2, true, false, true);
-    @include children("m", false, 1, true, false, true);
+    @include children("s" "m", false, 1/2, "…");
+    @include children("m", false, 1, "…");
 }
 
 .image {
