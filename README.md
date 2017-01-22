@@ -39,14 +39,22 @@ You can customize `$settings` values on the top of `elsass.scss`.
 $settings: (
     "s": (                           // Each $settings key is used as a custom breakpoint.
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
-        "vertical-spacing"  : 12px,  // Top and bottom gutters.
-        "horizontal-spacing": 8px    // Right and left gutters.
+        "vertical-spacing"  : 24px,  // Top and bottom gutters.
+        "horizontal-spacing": 16px,  // Right and left gutters.
+        "default-flow": row wrap,
+        "default-width": "max",
+        "default-in": true,
+        "default-out": true
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
-        "vertical-spacing"  : 16px,
-        "horizontal-spacing": 12px
+        "vertical-spacing"  : 32px,
+        "horizontal-spacing": 24px,
+        "default-flow": row wrap,
+        "default-width": "max",
+        "default-in": true,
+        "default-out": true
     ),
     …
 );
@@ -61,11 +69,12 @@ $settings: (
 - `$media` applies a media-query around the generated CSS to build responsive layouts.  
     It accepts a single value or list of two values to set the media-query `min-` and `max-width`.
 
-    | Value                        | Description                                                             |
-    |------------------------------|-------------------------------------------------------------------------|
-    | Breakpoint (`$settings` key) | Uses the $settings map to get or calculate the `min-` and `max-width`.  |
-    | CSS value                    | Applies this value to the media-query `min-` or `max-width`.            |
-    | false                        | Disables the media-query or skips `min-width` if a second value is set. |
+    | Value                        | Description                                                                       |
+    |------------------------------|-----------------------------------------------------------------------------------|
+    | Breakpoint (`$settings` key) | Uses the $settings map to get or calculate the `min-` and `max-width`.            |
+    | CSS value                    | Applies this value to the media-query `min-` or `max-width`.                      |
+    | `false`                      | Disables the media-query or skips `min-width` if a second value is set.           |
+    | `"…"`                        | Set the default values for this argument and the following non defined arguments. |
 
     ```scss
     @include this("s") { … }; // or…
@@ -85,10 +94,11 @@ $settings: (
 
 - `$width` set the element width (gutter included).
 
-    | Value               | Description                                                                      |
-    |---------------------|----------------------------------------------------------------------------------|
-    | fraction or decimal | Calculates the element `width` (gutter included) based on the container `width`. |
-    | `"max-width"`       | Applies a `width` of 100%  and a responsive `max-width`.                         |
+    | Value               | Description                                                                       |
+    |---------------------|-----------------------------------------------------------------------------------|
+    | fraction or decimal | Calculates the element `width` (gutter included) based on the container `width`.  |
+    | `"max-width"`       | Applies a `width` of 100%  and a responsive `max-width`.                          |
+    | `"…"`               | Set the default values for this argument and the following non defined arguments. |
 
     ```scss
     @include this("s" "l", "row wrap", 1/2) { … }; // or…
@@ -106,6 +116,7 @@ $settings: (
     | unitless number | Multiplies the gutter value of the related margin side(s).                               |
     | CSS value       | Set this value as the related gutter/margin side(s) .                                    |
     | `(silent: …)`   | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
+    | `"…"`           | Set the default values for this argument and the following non defined arguments.        |
 
     ```scss
     @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
@@ -117,13 +128,14 @@ $settings: (
 
 - `$position` alterates margins to pull, push or center the element.
 
-    | Value                    | Description                                                                |
-    |--------------------------|----------------------------------------------------------------------------|
-    | fraction/factor          | Adds the related percentage to the left margin to push the element.        |
-    | negative fraction/factor | Soustract the related percentage from the left margin to push the element. |
-    | `"pull"`                 | Pulls the element on the right side by applying `margin-right: auto`.      |
-    | `"push"`                 | Pushes the element on the left side by applying `margin-left: auto`.       |
-    | `"center"`               | Centers the element by setting the right an left margins to `auto`.        |
+    | Value                    | Description                                                                       |
+    |--------------------------|-----------------------------------------------------------------------------------|
+    | fraction/factor          | Adds the related percentage to the left margin to push the element.               |
+    | negative fraction/factor | Soustract the related percentage from the left margin to push the element.        |
+    | `"pull"`                 | Pulls the element on the right side by applying `margin-right: auto`.             |
+    | `"push"`                 | Pushes the element on the left side by applying `margin-left: auto`.              |
+    | `"center"`               | Centers the element by setting the right an left margins to `auto`.               |
+    | `"…"`                    | Set the default values for this argument and the following non defined arguments. |
 
     ```scss
     @include this("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
@@ -133,11 +145,12 @@ $settings: (
 
 - `$padding` set paddings from a value or a list of two or four values (as for the CSS padding rule).
 
-    | Value           | Description                                                               |
-    |-----------------|---------------------------------------------------------------------------|
-    | `true`/`false`  | Enables/disables the related side(s) padding.                             |
-    | unitless number | Multiplies the media-query related spacing values of the defined side(s). |
-    | CSS value       | Set this value as the related side(s) padding.                            |
+    | Value           | Description                                                                       |
+    |-----------------|-----------------------------------------------------------------------------------|
+    | `true`/`false`  | Enables/disables the related side(s) padding.                                     |
+    | unitless number | Multiplies the media-query related spacing values of the defined side(s).         |
+    | CSS value       | Set this value as the related side(s) padding.                                    |
+    | `"…"`           | Set the default values for this argument and the following non defined arguments. |
 
     ```scss
     @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
@@ -167,20 +180,20 @@ $settings: (
 
 ```scss
 .catalog {
-    @include this(false, row wrap, "max-width", true, "center", true) {
+    @include this("…", $position: "center") {
         list-style: none;
         background: #eee;
     }
 
     &_product {
         border: 1px solid #ddd;
-        @include this("s" "l", false, 1/2, true, false, true);
-        @include this("l", false, 1/4, true, false, true);
+        @include this("s" "l", false, 1/2, "…");
+        @include this("l", false, 1/4, "…");
 
         &--first {
             background: #fff;
-            @include this("s" "l", false, 1, ("silent": true)); // $gutter is already set in .catalog_product.
-            @include this("l", false, 1/2, ("silent": true));
+            @include this("s" "l", false, 1, "silent");
+            @include this("l", false, 1/2, "silent");
         }
     }
 }
@@ -208,8 +221,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 ```sass
 .page {
     background: #eee;
-    @include this("s" "m", column, "max", true, "center", true);
-    @include this("m", row wrap, "max", true, "center", true);
+    @include this("…", $position: "center");
+    @include this("s" "m", column);
 
     &_post {
         @include this("s" "l", false, 1);
@@ -218,8 +231,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 
     &_sidebar {
         border: 1px solid #ddd;
-        @include this("s" "l", false, 1, true, false, 2);
-        @include this("l", false, 1/3, true, false, 2);
+        @include this("s" "l", false, 1, "…");
+        @include this("l", false, 1/3, "…");
     }
 }
 
@@ -235,14 +248,14 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_image {
         border: 1px solid #ddd;
         background: #fff;
-        @include this("s" "m", false, 1, true);
-        @include this("m", false, 1/2, true);
+        @include this("s" "m", false, 1, "…");
+        @include this("m", false, 1/2, "…");
     }
 
     &_body,
     &_footer {
         border: 1px solid #ddd;
-        @include this(false, false, 1, true, false, true);
+        @include this(false, false, 1, "…");
     }
 
     &_body {
@@ -258,8 +271,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
     &_description {
         border: 1px solid #ddd;
         flex-grow: 1;
-        @include this("s" "m", false, 1/2, true, false, true);
-        @include this("m", false, 1, true, false, true);
+        @include this("s" "m", false, 1/2, "…");
+        @include this("m", false, "…");
     }
 }
 ```

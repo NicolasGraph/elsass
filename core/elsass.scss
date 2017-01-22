@@ -35,25 +35,41 @@ $settings: (
     "s": (                           // Each $settings key is used as a custom breakpoint.
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
         "vertical-spacing"  : 24px,  // Top and bottom gutters.
-        "horizontal-spacing": 16px    // Right and left gutters.
+        "horizontal-spacing": 16px,    // Right and left gutters.
+        "default-flow": row wrap,
+        "default-width": "max",
+        "default-in": true,
+        "default-out": true
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
         "vertical-spacing"  : 32px,
-        "horizontal-spacing": 24px
+        "horizontal-spacing": 24px,
+        "default-flow": row wrap,
+        "default-width": "max",
+        "default-in": true,
+        "default-out": true
     ),
     "l": (
         "device-min-width"  : 1024px,
         "content-max-width" : 1000px,
         "vertical-spacing"  : 48px,
-        "horizontal-spacing": 32px
+        "horizontal-spacing": 32px,
+        "default-flow": row wrap,
+        "default-width": "max",
+        "default-in": true,
+        "default-out": true
     ),
     "xl": (
         "device-min-width"  : 1440px,
         "content-max-width" : 1280px,
         "vertical-spacing"  : 54px,
-        "horizontal-spacing": 48px
+        "horizontal-spacing": 48px,
+        "default-flow": row wrap,
+        "default-width": "max",
+        "default-in": true,
+        "default-out": true
     )
 );
 
@@ -128,10 +144,47 @@ html * { box-sizing: inherit; }
 // -----------------------------------------------------------------------------
 @mixin this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
 
+    $default: false;
+
+    @if $media == "…" {
+        $default: true;
+        $media: false;
+    }
     // List breakpoints explicitly or implicitly set.
     $min-bpt: if(nth($media, 1), nth($media, 1), false);
     $max-bpt: if(type-of($media) == list, nth($media, 2), false);
     $bpts: bpts($min-bpt, $max-bpt);
+
+    // Get the media-query related values.
+    $min-settings: null;
+    $min-width: null;
+    $max-width: null;
+
+    @if $media and not $default {
+        @if nth($media, 1) {
+            $min-settings: map-get($settings, nth($media, 1));
+        } @else {
+            $min-settings: map-get($settings, "s");
+        }
+    } @else {
+        $min-settings: map-get($settings, "s");
+    }
+
+    @if $flow == "…" or ($flow == null and $default == true)  {
+        $default: true;
+        $flow: map-get($min-settings, "default-flow");
+    }
+    @if $width == "…" or ($width == null and $default == true) {
+        $default: true;
+        $width: map-get($min-settings, "default-width");
+    }
+    @if $gutter == "…" or ($gutter == null and $default == true) {
+        $default: true;
+        $gutter: map-get($min-settings, "default-out");
+    }
+    @if $padding == "…" or ($padding == null and $default == true) {
+        $padding: map-get($min-settings, "default-in");
+    }
 
     // Store each breakpoint CSS properties and values.
     $css: ();
@@ -233,7 +286,7 @@ html * { box-sizing: inherit; }
         // Set the margins properties from $gutter and $position.
         @if $gutter or $position {
             // Get a map of CSS margins.
-            @if type-of($gutter) == map {
+            @if type-of($gutter) == map or $gutter == "silent" {
                 @if not $position {
                     $silent-gutter: true;
                 }
