@@ -373,17 +373,9 @@ html * { box-sizing: inherit; }
 
         // Soustract gutters from CSS width and max-width if needed.
         @if $out-factor {
-            $out-unit: unit($out-factor);
-            @if $out-unit == "%" {
-                $css-width: $css-width - $out-factor;
-                @if $css-max-width {
-                    $css-max-width: calc(#{$css-max-width} - #{$out-factor});
-                }
-            } @else {
-                $css-width: calc(#{$css-width} - #{$out-factor});
-                @if $css-max-width {
-                    $css-max-width: $css-max-width - $out-factor;
-                }
+            $css-width: calc(#{$css-width} - #{$out-factor});
+            @if $css-max-width {
+                $css-max-width: $css-max-width - $out-factor;
             }
         }
 
