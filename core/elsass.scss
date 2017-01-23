@@ -36,40 +36,40 @@ $settings: (
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
         "vertical-spacing"  : 24px,  // Top and bottom gutters.
         "horizontal-spacing": 16px,    // Right and left gutters.
-        "default-flow": row wrap,
-        "default-width": "max",
-        "default-in": true,
-        "default-out": true
+        "default-flow"      : row wrap,
+        "default-width"     : "max",
+        "default-gutter-in" : true,
+        "default-gutter-out": true
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
         "vertical-spacing"  : 32px,
         "horizontal-spacing": 24px,
-        "default-flow": row wrap,
-        "default-width": "max",
-        "default-in": true,
-        "default-out": true
+        "default-flow"      : row wrap,
+        "default-width"     : "max",
+        "default-gutter-in" : true,
+        "default-gutter-out": true
     ),
     "l": (
         "device-min-width"  : 1024px,
         "content-max-width" : 1000px,
         "vertical-spacing"  : 48px,
         "horizontal-spacing": 32px,
-        "default-flow": row wrap,
-        "default-width": "max",
-        "default-in": true,
-        "default-out": true
+        "default-flow"      : row wrap,
+        "default-width"     : "max",
+        "default-gutter-in" : true,
+        "default-gutter-out": true
     ),
     "xl": (
         "device-min-width"  : 1440px,
         "content-max-width" : 1280px,
         "vertical-spacing"  : 54px,
         "horizontal-spacing": 48px,
-        "default-flow": row wrap,
-        "default-width": "max",
-        "default-in": true,
-        "default-out": true
+        "default-flow"      : row wrap,
+        "default-width"     : "max",
+        "default-gutter-in" : true,
+        "default-gutter-out": true
     )
 );
 
@@ -137,12 +137,20 @@ html * { box-sizing: inherit; }
 // @param    $width       Fraction/factor of the container width,
 //                        "max-width" can also be used to generate a width of 100%
 //                        followed by the responsive max-width provided in $settings.
-// @param    $gutter      Up to four values (see doc.);
+// @param    $out      Up to four values (see doc.);
 // @param    $position    "pull", "push", "center" or fraction/factor
 //                        of the container width;
-// @param    $padding     Up to four values (see doc.);
+// @param    $in     Up to four values (see doc.);
 // -----------------------------------------------------------------------------
-@mixin this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
+@mixin this($media: null,
+            $flow: null,
+            $width: null,
+            $gutter-out: null,
+            $position: null,
+            $gutter-in: null) {
+
+    $in: $gutter-in;
+    $out: $gutter-out;
 
     $default: false;
 
@@ -178,19 +186,22 @@ html * { box-sizing: inherit; }
         $default: true;
         $width: map-get($min-settings, "default-width");
     }
-    @if $gutter == "…" or ($gutter == null and $default == true) {
+    @if $out == "…" or ($out == null and $default == true) {
         $default: true;
-        $gutter: map-get($min-settings, "default-out");
+        $out: map-get($min-settings, "default-gutter-out");
     }
-    @if $padding == "…" or ($padding == null and $default == true) {
-        $padding: map-get($min-settings, "default-in");
+    @if $position == "…" {
+        $default: true;
+    }
+    @if $in == "…" or ($in == null and $default == true) {
+        $in: map-get($min-settings, "default-gutter-in");
     }
 
     // Store each breakpoint CSS properties and values.
     $css: ();
     @each $bpt in $bpts {
         // Get each breakpoint CSS properties and values.
-        $bpt-css: this($bpt, $flow, $width, $gutter, $position, $padding);
+        $bpt-css: this($bpt, $flow, $width, $out, $position, $in);
         // Remove useless repeated values through media-queries.
         @each $bpt-prop, $bpt-val in $bpt-css {
             @each $stored-bpt, $stored-css in $css {
@@ -236,7 +247,12 @@ html * { box-sizing: inherit; }
 // Return CSS properties and values for "this" mixin.
 // @see    3.1 this
 // -----------------------------------------------------------------------------
-@function this($media: null, $flow: null, $width: null, $gutter: null, $position: null, $padding: null) {
+@function this($media: null,
+               $flow: null,
+               $width: null,
+               $out: null,
+               $position: null,
+               $in: null) {
 
     // Set a map to store the generated css properties and their values.
     $css : ();
@@ -280,19 +296,22 @@ html * { box-sizing: inherit; }
     $css-positions: null;
     $silent-gutter: null;
 
-    @if $gutter or $position or $padding {
+    @if $out or $position or $in {
         $spacing: map-get($min-settings, "vertical-spacing") map-get($min-settings, "horizontal-spacing");
 
-        // Set the margins properties from $gutter and $position.
-        @if $gutter or $position {
+        // Set the margins properties from $out and $position.
+        @if $out or $position {
             // Get a map of CSS margins.
-            @if type-of($gutter) == map or $gutter == "silent" {
+            @if $out == "silent" {
+                $out: ("silent": map-get($min-settings, "default-gutter-out"));
+            }
+            @if type-of($out) == map {
                 @if not $position {
                     $silent-gutter: true;
                 }
-                $gutter: map-get($gutter, "silent");
+                $out: map-get($out, "silent");
             }
-            $css-margins: spacing($spacing, $gutter);
+            $css-margins: spacing($spacing, $out);
             $css-positions: if($silent-gutter, (), $css-margins);
             @if $position {
                 // Alterate margins width $position.
@@ -308,10 +327,10 @@ html * { box-sizing: inherit; }
             }
         }
 
-        // Set the paddings properties from $padding.
-        @if $padding {
+        // Set the paddings properties from $in.
+        @if $in {
             // Get a map of CSS paddings.
-            $css-paddings: spacing($spacing, $padding);
+            $css-paddings: spacing($spacing, $in);
             // Get the padding shorthand or each side value.
             @if map-has-key($css-paddings, "global") {
                 $css: map-merge($css, (padding: map-get($css-paddings, "global")));
@@ -323,21 +342,21 @@ html * { box-sizing: inherit; }
         }
     }
 
-    // Set the width and max-width properties from $width and $gutter.
+    // Set the width and max-width properties from $width and $out.
     @if $width {
         // Get the margin value to soustract from the width (right and left).
-        $gutter-factor: null;
-        @if $gutter {
+        $out-factor: null;
+        @if $out {
             $right: map-get($css-margins, "right");
             @if $right and $right != 0 {
-                $gutter-factor: $right;
+                $out-factor: $right;
             }
             $left: map-get($css-margins, "left");
             @if $left and $left != 0 {
-                @if $gutter-factor {
-                    $gutter-factor: $gutter-factor + $left;
+                @if $out-factor {
+                    $out-factor: $out-factor + $left;
                 } @else {
-                    $gutter-factor: $left;
+                    $out-factor: $left;
                 }
             }
         }
@@ -353,10 +372,18 @@ html * { box-sizing: inherit; }
         }
 
         // Soustract gutters from CSS width and max-width if needed.
-        @if $gutter-factor {
-            $css-width: calc(#{$css-width} - #{$gutter-factor});
-            @if $css-max-width {
-                $css-max-width: calc(#{$css-max-width} - #{$gutter-factor});
+        @if $out-factor {
+            $out-unit: unit($out-factor);
+            @if $out-unit == "%" {
+                $css-width: $css-width - $out-factor;
+                @if $css-max-width {
+                    $css-max-width: calc(#{$css-max-width} - #{$out-factor});
+                }
+            } @else {
+                $css-width: calc(#{$css-width} - #{$out-factor});
+                @if $css-max-width {
+                    $css-max-width: $css-max-width - $out-factor;
+                }
             }
         }
 
@@ -370,7 +397,7 @@ html * { box-sizing: inherit; }
 // -----------------------------------------------------------------------------
 // Return a map of spacing values from $spacing.
 // @param     $base        Default values for vertical and horizontal spacings;
-// @param     $spacing     $gutter or $padding mixin argument (see Mixins);
+// @param     $spacing     $out or $in mixin argument (see Mixins);
 // @return    $spacings    Map of spacing values par side (+"global" as shorthand).
 // @see       @mixin this
 // -----------------------------------------------------------------------------
@@ -474,9 +501,9 @@ html * { box-sizing: inherit; }
             $operator: if($position == abs($position), "+", "-");
             $position: percentage(abs($position));
             // Set the margin-left value.
-            $gutter: map-get($margins, "left");
-            @if $gutter and $gutter != 0 {
-                $val: calc(#{$gutter} #{$operator} #{$position});
+            $out: map-get($margins, "left");
+            @if $out and $out != 0 {
+                $val: calc(#{$out} #{$operator} #{$position});
             } @else {
                 $val: #{$operator}$position;
             }
