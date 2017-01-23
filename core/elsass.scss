@@ -305,7 +305,7 @@ html * { box-sizing: inherit; }
             @if $out == "silent" {
                 $out: ("silent": map-get($min-settings, "default-gutter-out"));
             }
-            @if type-of($out) == map {
+            @if type-of($out) == map and map-has-key($out, "silent") {
                 @if not $position {
                     $silent-gutter: true;
                 }
@@ -395,15 +395,26 @@ html * { box-sizing: inherit; }
 // -----------------------------------------------------------------------------
 @function spacing($base: null, $spacing: null) {
 
-    // Make $spacing a four items list.
-    @if type-of($spacing) == list and length($spacing) == 2 {
+    // Set each side margin.
+    $sides: "top", "right", "bottom", "left";
+
+    @if type-of($spacing) == map {
+        $new-spacing: null;
+        @each $side in $sides {
+            @if map-has-key($spacing, $side) {
+                $val: map-get($spacing, $side);
+                $new-spacing: if($new-spacing == null, $val, append($new-spacing, $val));
+            } @else {
+                $new-spacing: if($new-spacing == null, false, append($new-spacing, false));
+            }
+        }
+        $spacing: $new-spacing;
+    } @else if type-of($spacing) == list and length($spacing) == 2 {
         $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
     } @else if type-of($spacing) != list {
         $spacing: $spacing $spacing $spacing $spacing;
     }
 
-    // Set each side margin.
-    $sides: "top", "right", "bottom", "left";
     $spacings: ();
 
     @for $i from 1 through length($spacing) {
