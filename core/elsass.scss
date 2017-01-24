@@ -32,14 +32,14 @@
 // -----------------------------------------------------------------------------
 
 $settings: (
-    "s": (                           // Each $settings key is used as a custom breakpoint.
-        "content-max-width" : 480px, // Max-width to optionally apply to containers.
-        "vertical-spacing"  : 24px,  // Top and bottom gutters.
-        "horizontal-spacing": 16px,    // Right and left gutters.
-        "default-flow"      : row wrap,
-        "default-width"     : "max",
-        "default-gutter-in" : true,
-        "default-gutter-out": true
+    "s": (                              // Each $settings key is used as a custom breakpoint.
+        "content-max-width" : 480px,    // Max-width to optionally apply to containers.
+        "vertical-spacing"  : 24px,     // Top and bottom gutters.
+        "horizontal-spacing": 16px,     // Right and left gutters.
+        "default-flow"      : row wrap, // Default value for the $flow mixin argument.
+        "default-width"     : "max",    // Default value for the $width mixin argument.
+        "default-gutter-in" : .5,       // Default value for the $gutter-in mixin argument.
+        "default-gutter-out": .5,       // Default value for the $gutter-out mixin argument.
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
@@ -48,8 +48,8 @@ $settings: (
         "horizontal-spacing": 24px,
         "default-flow"      : row wrap,
         "default-width"     : "max",
-        "default-gutter-in" : true,
-        "default-gutter-out": true
+        "default-gutter-in" : .5,
+        "default-gutter-out": .5,
     ),
     "l": (
         "device-min-width"  : 1024px,
@@ -58,8 +58,8 @@ $settings: (
         "horizontal-spacing": 32px,
         "default-flow"      : row wrap,
         "default-width"     : "max",
-        "default-gutter-in" : true,
-        "default-gutter-out": true
+        "default-gutter-in" : .5,
+        "default-gutter-out": .5,
     ),
     "xl": (
         "device-min-width"  : 1440px,
@@ -68,8 +68,8 @@ $settings: (
         "horizontal-spacing": 48px,
         "default-flow"      : row wrap,
         "default-width"     : "max",
-        "default-gutter-in" : true,
-        "default-gutter-out": true
+        "default-gutter-in" : .5,
+        "default-gutter-out": .5,
     )
 );
 
@@ -145,13 +145,11 @@ html * { box-sizing: inherit; }
 @mixin this($media: null,
             $flow: null,
             $width: null,
+            $gutter-in: null,
             $gutter-out: null,
-            $position: null,
-            $gutter-in: null) {
+            $position: null) {
 
-    $in: $gutter-in;
-    $out: $gutter-out;
-
+    // Set default argument values where needed.
     $default: false;
 
     @if $media == "…" {
@@ -178,24 +176,27 @@ html * { box-sizing: inherit; }
         $min-settings: map-get($settings, "s");
     }
 
-    @if $flow == "…" or ($flow == null and $default == true)  {
-        $default: true;
-        $flow: map-get($min-settings, "default-flow");
+    $args: (
+        "flow": $flow,
+        "width": $width,
+        "gutter-in": $gutter-in,
+        "gutter-out": $gutter-out,
+    );
+
+    @each $arg, $val in $args {
+        @if $val == true or $val == "…" or ($val == null and $default == true)  {
+            @if $val == "…" {
+                $default: true;
+            }
+            $val: (#{$arg}: map-get($min-settings, default-#{$arg}));
+            $args: map-merge($args, $val);
+        }
     }
-    @if $width == "…" or ($width == null and $default == true) {
-        $default: true;
-        $width: map-get($min-settings, "default-width");
-    }
-    @if $out == "…" or ($out == null and $default == true) {
-        $default: true;
-        $out: map-get($min-settings, "default-gutter-out");
-    }
-    @if $position == "…" {
-        $default: true;
-    }
-    @if $in == "…" or ($in == null and $default == true) {
-        $in: map-get($min-settings, "default-gutter-in");
-    }
+
+    $flow: map-get($args, "flow");
+    $width: map-get($args, "width");
+    $in: map-get($args, "gutter-in");
+    $out: map-get($args, "gutter-out");
 
     // Store each breakpoint CSS properties and values.
     $css: ();
@@ -304,6 +305,13 @@ html * { box-sizing: inherit; }
             // Get a map of CSS margins.
             @if $out == "silent" {
                 $out: ("silent": map-get($min-settings, "default-gutter-out"));
+            } @else if $out == "nested" {
+                $new-out: null;
+                @each $side in map-get($min-settings, "default-gutter-out") {
+                    $side: if(type-of($side) == number, (-$side), $side);
+                    $new-out: if($new-out, append($new-out, $side), $side);
+                }
+                $out: $new-out;
             }
             @if type-of($out) == map and map-has-key($out, "silent") {
                 @if not $position {
@@ -373,9 +381,17 @@ html * { box-sizing: inherit; }
 
         // Soustract gutters from CSS width and max-width if needed.
         @if $out-factor {
-            $css-width: calc(#{$css-width} - #{$out-factor});
-            @if $css-max-width {
-                $css-max-width: $css-max-width - $out-factor;
+            $abs-factor: abs($out-factor);
+            @if $out-factor == $abs-factor {
+                $css-width: calc(#{$css-width} + #{$abs-factor});
+                @if $css-max-width {
+                    $css-max-width: $css-max-width + $abs-factor;
+                }
+            } @else {
+                $css-width: calc(#{$css-width} - #{$abs-factor});
+                @if $css-max-width {
+                    $css-max-width: $css-max-width - $abs-factor;
+                }
             }
         }
 
@@ -456,12 +472,10 @@ html * { box-sizing: inherit; }
 @function spacing-val($base: null, $val: null) {
     $spacing: null;
 
-    @if $val == true {
-        $spacing: $base / 2; // Use the $base val.
-    } @else if $val == "nested" {
-        $spacing: (-($base / 2)); // Use $base as a negative val.
+    @if $val == "nested" {
+        $spacing: (-($base)); // Use $base as a negative val.
     } @else if type-of($val) == number and unitless($val) {
-        $spacing: if($val == 0, $val, $val * ($base / 2)); // Multiply the $base val.
+        $spacing: if($val == 0, $val, $val * ($base)); // Multiply the $base val.
     } @else {
         $spacing: $val; // Use a custom spacing value.
     }
