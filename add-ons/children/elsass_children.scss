@@ -14,17 +14,23 @@
 
 // children
 // -----------------------------------------------------------------------------
-// Generate a responsive flex row/grid or item.
-// @param    $media       Custom Breakpoint(s) used as media-query values;
-// @param    $flow        flex-flow;
-// @param    $widths      Fractions/factors of the container width,
-//                        A repeat scheme can be defined at last (see doc.);
-// @param    $gutter      Up to four values (see doc.);
-// @param    $position    "pull", "push", "center" or fraction/factor
-//                        of the container width;
-// @param    $padding     Up to four values (see doc.);
+// Generate whatever responsive element you need.
+// @param  $media       Breakpoint(s);
+// @param  $flow        "flex-row", "flex-grid" or false;
+// @param  $widths      Ratio(s) of the container width
+//                      optionally followed by a repeat scheme:
+//                      "repeat" (default), "repeat-first", "repeat-last";
+// @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint spacings;
+// @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
+// @param  $position    "pull", "push", "center" or ratio of the container width.
 // -----------------------------------------------------------------------------
-@mixin children($media: null, $flow: null, $widths: null, $gutter: null, $position: null, $padding: null) {
+@mixin children(
+    $media: null,
+    $flow: null,
+    $widths: null,
+    $gutter: null,
+    $position: null,
+    $padding: null) {
 
     // Separate valid widths from the optional repeat scheme.
     $repeat: null;
@@ -34,13 +40,13 @@
         @if type-of($width) == string {
             $repeat: $width;
         } @else {
-            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
+            $valid-widths: if($valid-widths, $valid-widths $width, $width);
         }
     }
 
     $widths: $valid-widths;
 
-    // Iterate over $widths to call "this" mixin on defined children.
+    // Iterate over $widths to call elsass mixin on defined children.
     $children: length($widths);
 
     @for $child from 1 through $children {
@@ -52,7 +58,8 @@
         }
 
         > :nth-child(#{$nth}) {
-            @include this($media, $flow, nth($widths, $child), $gutter, $position, $padding) {
+            $width: nth($widths, $child);
+            @include elsass($media, $flow, $width, $gutter, $position, $padding) {
                 @content;
             }
         }
