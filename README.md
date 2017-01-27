@@ -1,6 +1,6 @@
 # elsass responsive grid builder
 
-[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox) and [calc()](//caniuse.com/#search=calc).  
+[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox). It does also use [calc()](//caniuse.com/#search=calc) as long as you use the `$gutter-out-out` mixin argument.
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Contents
@@ -41,20 +41,20 @@ $settings: (
         "content-max-width" : 480px, // Max-width to optionally apply to containers.
         "vertical-spacing"  : 24px,  // Top and bottom gutters.
         "horizontal-spacing": 16px,  // Right and left gutters.
-        "default-flow": row wrap,
-        "default-width": "max",
-        "default-in": true,
-        "default-out": true
+        "default-flow"      : row wrap,
+        "default-width"     : "max",
+        "default-in"        : true,
+        "default-out"       : true
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
         "vertical-spacing"  : 32px,
         "horizontal-spacing": 24px,
-        "default-flow": row wrap,
-        "default-width": "max",
-        "default-in": true,
-        "default-out": true
+        "default-flow"      : row wrap,
+        "default-width"     : "max",
+        "default-in"        : true,
+        "default-out"       : true
     ),
     …
 );
@@ -63,7 +63,7 @@ $settings: (
 ## this mixin
 
 ```scss
-@include this($media, $flow, $width, $gutter, $position, $padding);
+@include this($media, $flow, $width, $gutter-out, $position, $gutter-in);
 ```
 
 - `$media` applies a media-query around the generated CSS to build responsive layouts.  
@@ -106,24 +106,80 @@ $settings: (
     @include this($width: "max-width") { … };
     ```
 
-- `$gutter` set margins from a value or a list of two or four values (as for the CSS margin rule).  
+- `$gutter-in` set paddings from a value or a list of two or four values (as for the CSS padding rule).
+    - `false`  
+    As a single value, `false` does not apply any margin.  
+    Used in a list or a map it disables the margin on the related sides.
+
+        ```scss
+        @include this("s" "l", "row wrap", 1/2, false) { … }; // No margin is applied.
+        @include this("s" "l", "row wrap", 1/2, false .5) { … }; // Half gutter on right and left only.
+        ```
+
+    - `true`  
+    Enables the argument default value; must be used as a single value.
+
+        ```scss
+        @include this("s" "l", "row wrap", 1/2, true) { … }; // Half nested gutter on right and left.
+        ```
+
+    - `"…"`  
+    Enables the default values for this argument and the following non defined arguments.
+
+        ```scss
+        @include this("s" "l", "row wrap", 1/2, "…") { … }; // Half nested gutter on right and left.
+        ```
+
+    - `"nested"`  
+    Removes the padding effect of the container by applying a negative margin, according to the $gutter-in default value.
+
+        ```scss
+        @include this("s" "l", "row wrap", 1/2, true, "nested") { … }; // Half nested gutter on right and left.
+        ```
+
+    - fraction(s) or factor(s)  
+    Applies list order related sides padding based on the gutter with value.
+
+        ```scss
+        @include this("s" "l", "row wrap", 1/2, true, .5) { … }; // Half gutter all around.
+        @include this("s" "l", "row wrap", 1/2, true, false .5) { … }; // Half gutter on right and left only.
+        @include this("s" "l", "row wrap", 1/2, true, false false 1 1) { … }; // Full gutter at the bottom and on the left.
+        ```
+
+    ```scss
+    // Using the default value as defined in $settings.
+    // ------------------------------------------------
+    @include this("s" "l", "row wrap", 1/2, true) { … }; // Enables the default margin.
+    @include this("s" "l", "row wrap", 1/2, "nested") { … }; // Applies the default margin.
+    @include this("s" "l", "row wrap", 1/2, "silent") { … }; // Alterates the element width without affecting any margin.
+    @include this("s" "l", "row wrap", 1/2, "…") { … }; // Set $gutter-out and the following argumants to their default value if defined.
+
+    // Using custom values.
+    // --------------------
+    @include this("s" "l", "row wrap", 1/2, .5) { … }; // Half gutter as padding all around.
+    @include this("s" "l", "row wrap", 1/2, ("silent": .5)) { … }; // Alterates the element width without affecting any margin.
+    @include this("s" "l", "row wrap", 1/2, false -.5) { … }; // Half nested gutter on right and left.
+    @include this("s" "l", "row wrap", 1/2, (left: 1)) { … }; // Full gutter on the left padding side.
+    @include this($gutter-in: 1px 2px 3px 4px) { … }; // Usual padding CSS values.
+    ```
+
+- `$gutter-out` set margins from a value or a list of two or four values (as for the CSS margin rule).  
     It also alterates the element width if provided, by soustracting the right and left margin from it.
 
     | Value           | Description                                                                              |
     |-----------------|------------------------------------------------------------------------------------------|
-    | `true`/`false`  | Enables/disables gutter as margin for the related side(s)                                |
-    | `"nested"`      | Set a negative gutter on the related margin side(s).                                     |
-    | unitless number | Multiplies the gutter value of the related margin side(s).                               |
+    | `true`          | Enables the default `$gutter-out` value.                                                 |
+    | `false`         | Disables gutter as margin for the related side(s).                                       |
+    | fraction/factor | Multiplies the gutter value of the related margin side(s).                               |
     | CSS value       | Set this value as the related gutter/margin side(s) .                                    |
-    | `(silent: …)`   | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
+    | `silent`        | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
     | `"…"`           | Set the default values for this argument and the following non defined arguments.        |
 
     ```scss
-    @include this("s" "l", "row wrap", 1/2, true) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, 2 -1) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, 1px 2px 3px 4px) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, ("silent": true)) { … }; // or…
-    @include this($gutter: false true) { … };
+    @include this("s" "l", "row wrap", 1/2, 1/2) { … }; // Half gutter as margin all around.
+    @include this("s" "l", "row wrap", 1/2, false -.5) { … }; // Half gutter nested on right and left.
+    @include this("s" "l", "row wrap", 1/2, (right: 1)) { … }; // Full gutter on the right margin side.
+    @include this($gutter-out: 1px 2px 3px 4px) { … }; // Usual CSS values.
     ```
 
 - `$position` alterates margins to pull, push or center the element.
@@ -143,25 +199,9 @@ $settings: (
     @include this($position: "center") { … };
     ```
 
-- `$padding` set paddings from a value or a list of two or four values (as for the CSS padding rule).
-
-    | Value           | Description                                                                       |
-    |-----------------|-----------------------------------------------------------------------------------|
-    | `true`/`false`  | Enables/disables the related side(s) padding.                                     |
-    | unitless number | Multiplies the media-query related spacing values of the defined side(s).         |
-    | CSS value       | Set this value as the related side(s) padding.                                    |
-    | `"…"`           | Set the default values for this argument and the following non defined arguments. |
-
-    ```scss
-    @include this("s" "l", "row wrap", 1/2, true, 1/2, true) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1 -1) { … }; // or…
-    @include this("s" "l", "row wrap", 1/2, true, 1/2, 1px 2px 3px 4px) { … }; // or…
-    @include this($padding: false true) { … };
-    ```
-
 ## Examples / demos
 
-### Simple grid
+### Simple responsive grid
 
 ```html
 <ul class="catalog">
@@ -201,7 +241,7 @@ $settings: (
 
 See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b95404d8d463fa7500693).
 
-### Metro-UI-like grid
+### Metro-UI-like responsive grid
 
 ```html
 <main class="page">
@@ -272,7 +312,7 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
         border: 1px solid #ddd;
         flex-grow: 1;
         @include this("s" "m", false, 1/2, "…");
-        @include this("m", false, "…");
+        @include this("m", false, 1, "…");
     }
 }
 ```

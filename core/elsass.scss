@@ -18,10 +18,10 @@
 // 2. CSS base     Don't you already set that?
 // 3. Mixins
 // 3.1 bpt         Mainly used by other mixins.
-// 3.1 this        Generic resposive mixin.
-// 3.2 children    Apply "this" mixin to defined children elements.
+// 3.1 elsass        Generic resposive mixin.
+// 3.2 children    Apply "elsass" mixin to defined children elements.
 // 4. Functions    Exclusively used by mixins.
-// 4.1 this
+// 4.1 elsass
 // 4.2 spacing
 // 4.3 spacing-val
 // 4.4 position
@@ -36,40 +36,24 @@ $settings: (
         "content-max-width" : 480px,    // Max-width to optionally apply to containers.
         "vertical-spacing"  : 24px,     // Top and bottom gutters.
         "horizontal-spacing": 16px,     // Right and left gutters.
-        "default-flow"      : row wrap, // Default value for the $flow mixin argument.
-        "default-width"     : "max",    // Default value for the $width mixin argument.
-        "default-gutter-in" : .5,       // Default value for the $gutter-in mixin argument.
-        "default-gutter-out": .5,       // Default value for the $gutter-out mixin argument.
     ),
     "m": (
         "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
         "content-max-width" : 800px,
         "vertical-spacing"  : 32px,
         "horizontal-spacing": 24px,
-        "default-flow"      : row wrap,
-        "default-width"     : "max",
-        "default-gutter-in" : .5,
-        "default-gutter-out": .5,
     ),
     "l": (
         "device-min-width"  : 1024px,
         "content-max-width" : 1000px,
         "vertical-spacing"  : 48px,
         "horizontal-spacing": 32px,
-        "default-flow"      : row wrap,
-        "default-width"     : "max",
-        "default-gutter-in" : .5,
-        "default-gutter-out": .5,
     ),
     "xl": (
         "device-min-width"  : 1440px,
         "content-max-width" : 1280px,
         "vertical-spacing"  : 54px,
         "horizontal-spacing": 48px,
-        "default-flow"      : row wrap,
-        "default-width"     : "max",
-        "default-gutter-in" : .5,
-        "default-gutter-out": .5,
     )
 );
 
@@ -90,36 +74,32 @@ html * { box-sizing: inherit; }
 // Generate a media-query.
 // @param    $from    min-width as a custom breakpoint or CSS value;
 // @param    $to      max-width as a custom breakpoint or CSS value.
-// @see      3.1 this
+// @see      3.1 elsass
 // -----------------------------------------------------------------------------
 @mixin bpt($from: null, $to: null) {
     $mq: null;
 
+    // Set a media-query min-width if $from is set and not the first breakpoint.
     @if $from and $from != nth(map-keys($settings), 1) {
         @if map-has-key($settings, $from) {
-            // $from is a custom breakpoint; get the related value if it exists.
+            // Get the breakpoint media-query min-width.
             $from-settings: map-get($settings, $from);
             $from: map-get($from-settings, "device-min-width");
         }
-        // Set the media-query min-width.
         $mq: "(min-width: #{$from})";
     }
 
+    // Set a media-query max-width if needed.
     @if $to {
-        // If $to is a $settings key; get the related value.
         @if map-has-key($settings, $to) {
+            // Calculate the previous breakpoint max-width.
             $to-settings: map-get($settings, $to);
             $to: map-get($to-settings, "device-min-width") - 1;
         }
-        // Add or set the media-query max-width.
-        @if $from and $from != nth(map-keys($settings), 1) {
-            $mq: $mq " and (max-width: #{$to})";
-        } @else {
-            $mq: "(max-width: #{$to})";
-        }
+        $mq: if($mq, $mq " and (max-width: #{$to})", "(max-width: #{$to})");
     }
 
-    // Generate the CSS media-query if it exists.
+    // Wrap @content in a media query if set.
     @if $mq {
         @media screen and #{$mq} {
             @content;
@@ -129,7 +109,7 @@ html * { box-sizing: inherit; }
     }
 }
 
-// 3.2 this
+// 3.2 elsass
 // -----------------------------------------------------------------------------
 // Generate a responsive flex row/grid or item.
 // @param    $media       Custom Breakpoint(s) used as media-query values;
@@ -142,89 +122,86 @@ html * { box-sizing: inherit; }
 //                        of the container width;
 // @param    $in     Up to four values (see doc.);
 // -----------------------------------------------------------------------------
-@mixin this($media: null,
-            $flow: null,
-            $width: null,
-            $gutter-in: null,
-            $gutter-out: null,
-            $position: null) {
+@mixin elsass($media: null,
+              $flow: null,
+              $width: null,
+              $gutter-in: null,
+              $gutter-out: null,
+              $position: null) {
 
-    // Set default argument values where needed.
-    $default: false;
-
-    @if $media == "…" {
-        $default: true;
-        $media: false;
-    }
-    // List breakpoints explicitly or implicitly set.
-    $min-bpt: if(nth($media, 1), nth($media, 1), false);
+    // Get the provided breakpoints.
+    $bpts: map-keys($settings);
+    $min-bpt: if(nth($media, 1), nth($media, 1), nth($bpts, 1));
     $max-bpt: if(type-of($media) == list, nth($media, 2), false);
-    $bpts: bpts($min-bpt, $max-bpt);
 
-    // Get the media-query related values.
-    $min-settings: null;
-    $min-width: null;
-    $max-width: null;
+    // List breakpoints explicitly and implicitly set.
+    $bpts-set: bpts-set($min-bpt, $max-bpt);
 
-    @if $media and not $default {
-        @if nth($media, 1) {
-            $min-settings: map-get($settings, nth($media, 1));
-        } @else {
-            $min-settings: map-get($settings, "s");
+    $css: (); // To store CSS properties and values per breakpoint.
+    @each $bpt in $bpts-set {
+        $bpt-css: (); // To store the current breakpoint CSS.
+
+        $silent-gutter: null;
+        $width-out: $gutter-out;
+        @if type-of($gutter-out) == map and map-has-key($gutter-out, "silent")  {
+            $width-out: map-get($gutter-out, "silent");
+            $silent-gutter: true;
         }
-    } @else {
-        $min-settings: map-get($settings, "s");
-    }
-
-    $args: (
-        "flow": $flow,
-        "width": $width,
-        "gutter-in": $gutter-in,
-        "gutter-out": $gutter-out,
-    );
-
-    @each $arg, $val in $args {
-        @if $val == true or $val == "…" or ($val == null and $default == true)  {
-            @if $val == "…" {
-                $default: true;
-            }
-            $val: (#{$arg}: map-get($min-settings, default-#{$arg}));
-            $args: map-merge($args, $val);
+        // Get and store CSS width related properties and values.
+        @if $width {
+            $width-max: $width;
+            $max-width: null;
+            @if $width == true {
+                $width-max: 1;
+                $max-width: true;
+            };
+            $bpt-width: width($bpt, $width-max, $max-width, $width-out);
+            $bpt-css: map-merge($bpt-css, $bpt-width);
         }
-    }
+        // Get and store CSS margin related properties and values.
+        @if ($gutter-out and not $silent-gutter) or $position {
+            $gutter: if($silent-gutter, false, $gutter-out);
+            $bpt-css: map-merge($bpt-css, margin($bpt, $gutter, $position));
+        }
+        // Get and store CSS padding related properties and values.
+        @if $gutter-in {
+            $bpt-css: map-merge($bpt-css, padding($bpt, $gutter-in));
+        }
 
-    $flow: map-get($args, "flow");
-    $width: map-get($args, "width");
-    $in: map-get($args, "gutter-in");
-    $out: map-get($args, "gutter-out");
+        // Get and store CSS flex related properties and values.
+        @if $flow {
+            $direction: if($flow, nth($flow, 1), false);
+            $wrap: if(type-of($flow) == list, nth($flow, 2), false);
+            $bpt-css: map-merge($bpt-css, flex($direction, $wrap));
+        }
 
-    // Store each breakpoint CSS properties and values.
-    $css: ();
-    @each $bpt in $bpts {
-        // Get each breakpoint CSS properties and values.
-        $bpt-css: this($bpt, $flow, $width, $out, $position, $in);
-        // Remove useless repeated values through media-queries.
+        // Iterate breakpoint CSS to remove useless properties.
         @each $bpt-prop, $bpt-val in $bpt-css {
+            // Iterate stored CSS per breakpoint.
             @each $stored-bpt, $stored-css in $css {
                 @if map-has-key($stored-css, $bpt-prop) {
                     @if map-get($stored-css, $bpt-prop) == $bpt-val {
+                        // Remove duplicated CSS.
                         $bpt-css: map-remove($bpt-css, $bpt-prop);
                     } @else {
+                        // Re-merge CSS as it was maybe removed.
                         $bpt-css: map-merge($bpt-css, ($bpt-prop: $bpt-val));
                     }
                 }
             }
         }
+
+        // Store tidy breakpoint related CSS.
         $css: map-merge($css, ($bpt: $bpt-css));
     }
 
-    // Generate CSS.
+    // Generate CSS by iterating CSS per breakpoint.
     @each $stored-bpt, $stored-css in $css {
-        @if $stored-bpt == nth($bpts, 1) {
-            $to-bpt: nth($bpts, length($bpts));
+        @if $stored-bpt == nth($bpts-set, 1) {
+            $to-bpt: nth($bpts-set, length($bpts-set));
             @include bpt($stored-bpt, if($max-bpt, $to-bpt, false)) {
                 @each $prop, $val in map-get($css, $stored-bpt) {
-                    #{$prop}: $val;
+                    #{$prop}: #{$val};
                 }
                 @content;
             }
@@ -232,7 +209,7 @@ html * { box-sizing: inherit; }
         } @else {
             @include bpt($stored-bpt) {
                 @each $prop, $val in map-get($css, $stored-bpt) {
-                    #{$prop}: $val;
+                    #{$prop}: #{$val};
                 }
             }
         }
@@ -243,162 +220,163 @@ html * { box-sizing: inherit; }
 // 4. Functions
 // -----------------------------------------------------------------------------
 
-// 4.1 this
+// 4.1 flex
 // -----------------------------------------------------------------------------
-// Return CSS properties and values for "this" mixin.
-// @see    3.1 this
+// Returns a map of flex related CSS properties and their values.
+// @param    $direction    CSS flex-direction value;
+// @param    $wrap         CSS flex-wrap value;
 // -----------------------------------------------------------------------------
-@function this($media: null,
-               $flow: null,
-               $width: null,
-               $out: null,
-               $position: null,
-               $in: null) {
+@function flex($direction: null, $wrap: null) {
+    $out: (); // Prepare the output.
 
-    // Set a map to store the generated css properties and their values.
-    $css : ();
+    $out: map-merge($out, (display: flex));
 
-    // Get the media-query related values.
-    $min-settings: null;
-    $min-width: null;
-    $max-width: null;
+    @if ($direction and $direction != row) and ($wrap and $wrap != nowrap) {
+        $out: map-merge($out, (flex-flow: $direction $wrap));
+    } @else if $direction and $direction != row {
+        $out: map-merge($out, (flex-direction: $direction));
+    } @else if $wrap and $wrap != nowrap {
+        $out: map-merge($out, (flex-wrap: $wrap));
+    }
 
-    @if $media {
-        @if nth($media, 1) {
-            $min-settings: map-get($settings, nth($media, 1));
-        } @else {
-            $min-settings: map-get($settings, "s");
+    $out: map-merge($out, (" > * {" box-sizing: border-box "}"));
+
+    @return $out;
+}
+
+// 4.4 width
+// -----------------------------------------------------------------------------
+// Returns a map of width related CSS properties and their values.
+// @param    $bpt          Breakpoint as a $settings key;
+// @param    $width        Gutter;
+// @param    $max-width    Gutter;
+// @param    $gutter-out      ;
+// -----------------------------------------------------------------------------
+@function width($bpt, $width, $max-width: null, $gutter-out: null) {
+    $out: ();
+    $min-settings: map-get($settings, $bpt);
+    $width-out: null;
+
+    @if $gutter-out {
+        $margin: spacing($bpt, $gutter-out);
+
+        $right: map-get($margin, "right");
+        @if $right and $right != 0 {
+            $width-out: $right;
+        }
+
+        $left: map-get($margin, "left");
+        @if $left and $left != 0 {
+            @if $width-out {
+                $width-out: $width-out + $left;
+            } @else {
+                $width-out: $left;
+            }
+        }
+    }
+
+    // Soustract gutters from CSS width and max-width if needed.
+    @if $width-out {
+        $abs-factor: abs($width-out);
+
+        @if $width {
+            $width: if(unitless($width), percentage($width), $width);
+            $comparable: comparable($width, $width-out);
+            $calc-width: null;
+            @if $comparable {
+                @if $width-out == $abs-factor {
+                    $calc-width: $width - $abs-factor;
+                } @else {
+                    $calc-width: $width + $abs-factor;
+                }
+            } @else {
+                @warn "width is using calc().";
+                @if $width-out == $abs-factor {
+                    $calc-width: calc(#{$width} - #{$abs-factor});
+                } @else {
+                    $calc-width: calc(#{$width} + #{$abs-factor});
+                }
+            }
+            $out: map-merge($out, (width: $calc-width));
+        }
+
+        @if $max-width {
+            $max-width: map-get($min-settings, "content-max-width");
+            $comparable: comparable($max-width, $width-out);
+            $calc-max: null;
+            @if $comparable {
+                @if $width-out == $abs-factor {
+                    $calc-max: $max-width - $abs-factor;
+                } @else {
+                    $calc-max: $max-width + $abs-factor;
+                }
+            } @else {
+                @warn "max-width is using calc().";
+                @if $width-out == $abs-factor {
+                    $calc-max: calc(#{$max-width} - #{$abs-factor});
+                } @else {
+                    $calc-max: calc(#{$max-width} + #{$abs-factor});
+                }
+            }
+            $out: map-merge($out, (max-width: $calc-max));
         }
     } @else {
-        $min-settings: map-get($settings, "s");
+        $out: map-merge($out, (width: $width));
+        $out: map-merge($out, (max-width: $max-width));
     }
+    @return $out;
+}
 
-    // Set the flex properties from $flow.
-    @if $flow {
-        $css: map-merge($css, (display: flex));
-        $direction: nth($flow, 1);
-        $wrap: null;
-        @if type-of($flow) == list and nth($flow, 2) != nowrap {
-            $wrap: nth($flow, 2);
-        }
-        @if $direction and $direction != row {
-            @if $wrap {
-                $css: map-merge($css, (flex-flow: #{$direction $wrap}));
-            } @else {
-                $css: map-merge($css, (flex-direction: #{$direction}));
-            }
-        } @else {
-            $css: map-merge($css, (flex-wrap: #{$wrap}));
-        }
-    }
+// 4.4 padding
+// -----------------------------------------------------------------------------
+// Returns a map of padding related CSS properties and their values.
+// @param    $bpt         Breakpoint as a $settings key;
+// @param    $gutter      Gutter;
+// -----------------------------------------------------------------------------
+@function padding($bpt, $gutter) {
+    // Get a map of padding values.
+    $padding: spacing($bpt, $gutter);
 
-    // Get margin and padding values.
-    $css-margins: null;
-    $css-positions: null;
-    $silent-gutter: null;
-
-    @if $out or $position or $in {
-        $spacing: map-get($min-settings, "vertical-spacing") map-get($min-settings, "horizontal-spacing");
-
-        // Set the margins properties from $out and $position.
-        @if $out or $position {
-            // Get a map of CSS margins.
-            @if $out == "silent" {
-                $out: ("silent": map-get($min-settings, "default-gutter-out"));
-            } @else if $out == "nested" {
-                $new-out: null;
-                @each $side in map-get($min-settings, "default-gutter-out") {
-                    $side: if(type-of($side) == number, (-$side), $side);
-                    $new-out: if($new-out, append($new-out, $side), $side);
-                }
-                $out: $new-out;
-            }
-            @if type-of($out) == map and map-has-key($out, "silent") {
-                @if not $position {
-                    $silent-gutter: true;
-                }
-                $out: map-get($out, "silent");
-            }
-            $css-margins: spacing($spacing, $out);
-            $css-positions: if($silent-gutter, (), $css-margins);
-            @if $position {
-                // Alterate margins width $position.
-                $css-positions: position($css-positions, $position);
-            }
-            // Get the margin shorthand or each side value.
-            @if map-has-key($css-positions, "global") {
-                $css: map-merge($css, (margin: map-get($css-positions, "global")));
-            } @else {
-                @each $side, $val in $css-positions {
-                    $css: map-merge($css, (margin-#{$side}: $val));
-                }
-            }
-        }
-
-        // Set the paddings properties from $in.
-        @if $in {
-            // Get a map of CSS paddings.
-            $css-paddings: spacing($spacing, $in);
-            // Get the padding shorthand or each side value.
-            @if map-has-key($css-paddings, "global") {
-                $css: map-merge($css, (padding: map-get($css-paddings, "global")));
-            } @else {
-                @each $side, $val in $css-paddings {
-                    $css: map-merge($css, (padding-#{$side}: $val));
-                }
-            }
+    $out: (); // Prepare the output.
+    // Get the padding shorthand or each margin side value.
+    @if map-has-key($padding, "global") {
+        $out: map-merge($out, (padding: map-get($padding, "global")));
+    } @else {
+        @each $side, $val in $padding {
+            $out: map-merge($out, (padding-#{$side}: $val));
         }
     }
 
-    // Set the width and max-width properties from $width and $out.
-    @if $width {
-        // Get the margin value to soustract from the width (right and left).
-        $out-factor: null;
-        @if $out {
-            $right: map-get($css-margins, "right");
-            @if $right and $right != 0 {
-                $out-factor: $right;
-            }
-            $left: map-get($css-margins, "left");
-            @if $left and $left != 0 {
-                @if $out-factor {
-                    $out-factor: $out-factor + $left;
-                } @else {
-                    $out-factor: $left;
-                }
-            }
-        }
+    @return $out;
+}
 
-        // Set the width and max-width values.
-        $css-width: null;
-        $css-max-width: null;
-        @if type-of($width) == string {
-            $css-width: 100%;
-            $css-max-width: map-get($min-settings, "content-max-width");
-        } @else {
-            $css-width: $width * 100%;
-        }
+// 4.4 margin
+// -----------------------------------------------------------------------------
+// Returns a map of margin related CSS properties and their values.
+// @param    $bpt         Breakpoint as a $settings key;
+// @param    $gutter      Gutter;
+// @param    $position    ;
+// -----------------------------------------------------------------------------
+@function margin($bpt, $gutter, $position: null) {
+    // Get a map of margin values.
+    $margin: spacing($bpt, $gutter);
 
-        // Soustract gutters from CSS width and max-width if needed.
-        @if $out-factor {
-            $abs-factor: abs($out-factor);
-            @if $out-factor == $abs-factor {
-                $css-width: calc(#{$css-width} + #{$abs-factor});
-                @if $css-max-width {
-                    $css-max-width: $css-max-width + $abs-factor;
-                }
-            } @else {
-                $css-width: calc(#{$css-width} - #{$abs-factor});
-                @if $css-max-width {
-                    $css-max-width: $css-max-width - $abs-factor;
-                }
-            }
-        }
-
-        $css: map-merge($css, (width: $css-width, max-width: $css-max-width));
+    // Alterate the $margin map values with $position.
+    @if $position {
+        $margin: position($margin, $position);
     }
 
-    @return $css;
+    $out: (); // Prepare the output.
+    // Get the margin shorthand or each margin side value.
+    @if map-has-key($margin, "global") {
+        $out: map-merge($out, (margin: map-get($margin, "global")));
+    } @else {
+        @each $side, $val in $margin {
+            $out: map-merge($out, (margin-#{$side}: $val));
+        }
+    }
+
+    @return $out;
 }
 
 // 4.2 spacing
@@ -407,9 +385,13 @@ html * { box-sizing: inherit; }
 // @param     $base        Default values for vertical and horizontal spacings;
 // @param     $spacing     $out or $in mixin argument (see Mixins);
 // @return    $spacings    Map of spacing values par side (+"global" as shorthand).
-// @see       @mixin this
+// @see       @mixin elsass
 // -----------------------------------------------------------------------------
-@function spacing($base: null, $spacing: null) {
+@function spacing($bpt, $spacing) {
+    // Get the breakpoint related spacing values as a calculation base.
+    $min-settings: map-get($settings, $bpt);
+    $base: map-get($min-settings, "vertical-spacing");
+    $base: $base map-get($min-settings, "horizontal-spacing");
 
     // Set each side margin.
     $sides: "top", "right", "bottom", "left";
@@ -489,67 +471,67 @@ html * { box-sizing: inherit; }
 // @param     $spacings    Map returned by spacing(),
 // @param     $position    Mixin argument
 // @return    $spacings    Alterated map
-// @see       4.2 spacing + 4.1 this
+// @see       4.2 spacing + 4.1 elsass
 // -----------------------------------------------------------------------------
-@function position($margins, $position) {
+@function position($margin, $position) {
     $side: null;
     $val: null;
 
     @if $position == "center" {
-        $margins: map-merge($margins, ("right": auto, "left": auto));
-        // Add a margin shorthand if top and bottom values are equal.
-        $margin-top: map-get($margins, "top");
-        @if $margin-top and $margin-top == map-get($margins, "bottom") {
+        $margin: map-merge($margin, ("right": auto, "left": auto));
+        // Set or reset a margin shorthand if possible.
+        $margin-top: map-get($margin, "top");
+        @if $margin-top and $margin-top == map-get($margin, "bottom") {
             $global: if($margin-top == "auto", auto, $margin-top auto);
-            $new-margins: ("global": $global);
-            $margins: map-merge($margins, $new-margins);
+            $margin: map-merge($margin, ("global": $global));
         }
     } @else {
         // Margin shorthand won't be useful anymore.
-        @if map-has-key($margins, "global") {
-            $margins: map-remove($margins, "global");
+        @if map-has-key($margin, "global") {
+            $margin: map-remove($margin, "global");
         }
         @if $position == "pull" {
-            $margins: map-merge($margins, ("right": auto));
+            $margin: map-merge($margin, ("right": auto));
         } @else if $position == "push" {
-            $margins: map-merge($margins, ("left": auto));
+            $margin: map-merge($margin, ("left": auto));
         } @else if type-of($position) == number {
             // Prepare $position to be added, or soustracted if negative.
             $operator: if($position == abs($position), "+", "-");
             $position: percentage(abs($position));
             // Set the margin-left value.
-            $out: map-get($margins, "left");
+            $out: map-get($margin, "left");
             @if $out and $out != 0 {
                 $val: calc(#{$out} #{$operator} #{$position});
             } @else {
                 $val: #{$operator}$position;
             }
-            $margins: map-merge($margins, ("left": #{$val}));
+            $margin: map-merge($margin, ("left": #{$val}));
         }
     }
 
-    @return $margins;
+    @return $margin;
 }
 
 // 4.5 bpts
 // -----------------------------------------------------------------------------
-// Get a list of breakpoints explicitly or implicitly set in the this mixin.
+// Get a list of breakpoints explicitly or implicitly set in the elsass mixin.
 // @param     $from        Custom breakpoint used as the min-width;
 // @param     $to          Custom breakpoint used as the max-width;
 // @return    $bpts-set    A list of breakpoints as $settings map keys.
-// @see       3.1 this
+// @see       3.1 elsass
 // -----------------------------------------------------------------------------
-@function bpts($from: null, $to: null) {
+@function bpts-set($from: null, $to: null) {
+    // Get the position of each breakpoint in the $settings map.
     $bpts: map-keys($settings);
     $from: if($from, index($bpts, $from), 1);
     $to: if($to, index($bpts, $to), length($bpts));
 
-    $bpts-set: null;
-
+    $out: null; // Prepare the output.
+    // Get a list of the breakpoints set explicitly and implicitly.
     @for $i from $from through $to {
         $bpt: nth($bpts, $i);
-        $bpts-set: if($bpts-set, append($bpts-set, $bpt), $bpt);
+        $out: if($out, append($out, $bpt), $bpt);
     }
 
-    @return $bpts-set;
+    @return $out;
 }
