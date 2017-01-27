@@ -123,12 +123,13 @@ html { box-sizing: border-box; }
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
 // @param  $position    "pull", "push", "center" or ratio of the container width.
 // -----------------------------------------------------------------------------
-@mixin elsass($media: null,
-              $flow: null,
-              $width: null,
-              $gutter-in: null,
-              $gutter-out: null,
-              $position: null) {
+@mixin elsass(
+    $media: null,
+    $flow: null,
+    $width: null,
+    $gutter-in: null,
+    $gutter-out: null,
+    $position: null) {
 
     // Get the provided breakpoints.
     $bpts: map-keys($settings);
@@ -242,8 +243,6 @@ html { box-sizing: border-box; }
         $out: map-merge($out, (flex-wrap: $wrap));
     }
 
-    $out: map-merge($out, (" > * {" box-sizing: border-box "}"));
-
     @return $out;
 }
 
@@ -259,8 +258,8 @@ html { box-sizing: border-box; }
     $out: ();
     $min-settings: map-get($settings, $bpt);
     $width-out: null;
-
-    @if $gutter-out {
+    $abs-factor: null;
+    @if ($width or $max-width) and $gutter-out {
         $margin: spacing($bpt, $gutter-out);
 
         $right: map-get($margin, "right");
@@ -276,14 +275,14 @@ html { box-sizing: border-box; }
                 $width-out: $left;
             }
         }
+
+        $abs-factor: if($width-out, abs($width-out), null);
     }
 
-    // Soustract gutters from CSS width and max-width if needed.
-    @if $width-out {
-        $abs-factor: abs($width-out);
+    @if $width {
+        $width: if(unitless($width), percentage($width), $width);
 
-        @if $width {
-            $width: if(unitless($width), percentage($width), $width);
+        @if $width-out {
             $comparable: comparable($width, $width-out);
             $calc-width: null;
             @if $comparable {
@@ -301,10 +300,14 @@ html { box-sizing: border-box; }
                 }
             }
             $out: map-merge($out, (width: $calc-width));
+        } @else {
+            $out: map-merge($out, (width: $width));
         }
+    }
 
-        @if $max-width {
-            $max-width: map-get($min-settings, "content-max-width");
+    @if $max-width == true {
+        $max-width: map-get($min-settings, "content-max-width");
+        @if $width-out {
             $comparable: comparable($max-width, $width-out);
             $calc-max: null;
             @if $comparable {
@@ -322,11 +325,11 @@ html { box-sizing: border-box; }
                 }
             }
             $out: map-merge($out, (max-width: $calc-max));
+        } @else {
+            $out: map-merge($out, (max-width: $max-width));
         }
-    } @else {
-        $out: map-merge($out, (width: $width));
-        $out: map-merge($out, (max-width: $max-width));
     }
+
     @return $out;
 }
 
