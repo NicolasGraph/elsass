@@ -40,7 +40,7 @@
         @if type-of($width) == string {
             $repeat: $width;
         } @else {
-            $valid-widths: if($valid-widths, $valid-widths $width, $width);
+            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
         }
     }
 
