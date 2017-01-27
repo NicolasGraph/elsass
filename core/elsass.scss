@@ -63,7 +63,9 @@ $settings: (
 
 html { box-sizing: border-box; }
 
-html * { box-sizing: inherit; }
+*,
+*:before,
+*:after { box-sizing: inherit; }
 
 // -----------------------------------------------------------------------------
 // 3. Mixins
@@ -72,9 +74,8 @@ html * { box-sizing: inherit; }
 // 3.1 bpt
 // -----------------------------------------------------------------------------
 // Generate a media-query.
-// @param    $from    min-width as a custom breakpoint or CSS value;
-// @param    $to      max-width as a custom breakpoint or CSS value.
-// @see      3.1 elsass
+// @param  $from  breakpoint or min-width value;
+// @param  $to    breakpoint or max-width value.
 // -----------------------------------------------------------------------------
 @mixin bpt($from: null, $to: null) {
     $mq: null;
@@ -111,16 +112,16 @@ html * { box-sizing: inherit; }
 
 // 3.2 elsass
 // -----------------------------------------------------------------------------
-// Generate a responsive flex row/grid or item.
-// @param    $media       Custom Breakpoint(s) used as media-query values;
-// @param    $flow        "flex-row", "flex-grid" or false;
-// @param    $width       Fraction/factor of the container width,
-//                        "max-width" can also be used to generate a width of 100%
-//                        followed by the responsive max-width provided in $settings.
-// @param    $out      Up to four values (see doc.);
-// @param    $position    "pull", "push", "center" or fraction/factor
-//                        of the container width;
-// @param    $in     Up to four values (see doc.);
+// Generate whatever responsive element you need.
+// @param  $media       Breakpoint(s);
+// @param  $flow        "flex-row", "flex-grid" or false;
+// @param  $width       Ratio of the container width or true
+//                      to generate a width of 100%
+//                      and apply the breakpoint(s) related max-width;
+//                      followed by the responsive max-width provided in $settings.
+// @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint spacings;
+// @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
+// @param  $position    "pull", "push", "center" or ratio of the container width.
 // -----------------------------------------------------------------------------
 @mixin elsass($media: null,
               $flow: null,
@@ -138,6 +139,7 @@ html * { box-sizing: inherit; }
     $bpts-set: bpts-set($min-bpt, $max-bpt);
 
     $css: (); // To store CSS properties and values per breakpoint.
+
     @each $bpt in $bpts-set {
         $bpt-css: (); // To store the current breakpoint CSS.
 
@@ -147,6 +149,7 @@ html * { box-sizing: inherit; }
             $width-out: map-get($gutter-out, "silent");
             $silent-gutter: true;
         }
+
         // Get and store CSS width related properties and values.
         @if $width {
             $width-max: $width;
@@ -222,9 +225,9 @@ html * { box-sizing: inherit; }
 
 // 4.1 flex
 // -----------------------------------------------------------------------------
-// Returns a map of flex related CSS properties and their values.
+// Returns a map of needed flex related CSS properties and their values.
 // @param    $direction    CSS flex-direction value;
-// @param    $wrap         CSS flex-wrap value;
+// @param    $wrap         CSS flex-wrap value;needed
 // -----------------------------------------------------------------------------
 @function flex($direction: null, $wrap: null) {
     $out: (); // Prepare the output.
@@ -244,13 +247,13 @@ html * { box-sizing: inherit; }
     @return $out;
 }
 
-// 4.4 width
+// 4.2 width
 // -----------------------------------------------------------------------------
-// Returns a map of width related CSS properties and their values.
-// @param    $bpt          Breakpoint as a $settings key;
-// @param    $width        Gutter;
-// @param    $max-width    Gutter;
-// @param    $gutter-out      ;
+// Returns a map of needed width related CSS properties and their values.
+// @param  $bpt         Breakpoint as a $settings key;
+// @param  $width       Width value or ratio of the container width;
+// @param  $max-width   Max width value or true to use the breakpoint settings;
+// @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
 // -----------------------------------------------------------------------------
 @function width($bpt, $width, $max-width: null, $gutter-out: null) {
     $out: ();
@@ -327,15 +330,15 @@ html * { box-sizing: inherit; }
     @return $out;
 }
 
-// 4.4 padding
+// 4.3 padding
 // -----------------------------------------------------------------------------
 // Returns a map of padding related CSS properties and their values.
-// @param    $bpt         Breakpoint as a $settings key;
-// @param    $gutter      Gutter;
+// @param  $bpt        Breakpoint as a $settings key;
+// @param  $gutter-in  Padding value(s) or ratio(s) of the breakpoint spacings.
 // -----------------------------------------------------------------------------
-@function padding($bpt, $gutter) {
+@function padding($bpt, $gutter-in) {
     // Get a map of padding values.
-    $padding: spacing($bpt, $gutter);
+    $padding: spacing($bpt, $gutter-in);
 
     $out: (); // Prepare the output.
     // Get the padding shorthand or each margin side value.
@@ -353,13 +356,12 @@ html * { box-sizing: inherit; }
 // 4.4 margin
 // -----------------------------------------------------------------------------
 // Returns a map of margin related CSS properties and their values.
-// @param    $bpt         Breakpoint as a $settings key;
-// @param    $gutter      Gutter;
-// @param    $position    ;
+// @param  $bpt         Breakpoint as a $settings key;
+// @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings.
 // -----------------------------------------------------------------------------
-@function margin($bpt, $gutter, $position: null) {
+@function margin($bpt, $gutter-out, $position: null) {
     // Get a map of margin values.
-    $margin: spacing($bpt, $gutter);
+    $margin: spacing($bpt, $gutter-out);
 
     // Alterate the $margin map values with $position.
     @if $position {
@@ -379,13 +381,11 @@ html * { box-sizing: inherit; }
     @return $out;
 }
 
-// 4.2 spacing
+// 4.5 spacing
 // -----------------------------------------------------------------------------
 // Return a map of spacing values from $spacing.
-// @param     $base        Default values for vertical and horizontal spacings;
-// @param     $spacing     $out or $in mixin argument (see Mixins);
-// @return    $spacings    Map of spacing values par side (+"global" as shorthand).
-// @see       @mixin elsass
+// @param  $bpt      Breakpoint as a $settings key;
+// @param  $spacing  Margin/padding value(s) or ratio(s) of the breakpoint spacings.
 // -----------------------------------------------------------------------------
 @function spacing($bpt, $spacing) {
     // Get the breakpoint related spacing values as a calculation base.
@@ -443,13 +443,11 @@ html * { box-sizing: inherit; }
     @return $spacings;
 }
 
-// 4.3 spacing-val
+// 4.6 spacing-val
 // -----------------------------------------------------------------------------
 // Return a css value.
-// @param     $base       A CSS value used as a calculation base;
-// @param     $val        A $spacing value;
-// @return    $spacing    A CSS margin/padding value.
-// @see       4.2 spacing
+// @param  $base  A CSS value used as a calculation base;
+// @param  $val   A $spacing value.
 // -----------------------------------------------------------------------------
 @function spacing-val($base: null, $val: null) {
     $spacing: null;
@@ -465,13 +463,11 @@ html * { box-sizing: inherit; }
     @return $spacing;
 }
 
-// 4.4 position
+// 4.7 position
 // -----------------------------------------------------------------------------
-// Atlterate margins depending of the $position value.
-// @param     $spacings    Map returned by spacing(),
-// @param     $position    Mixin argument
-// @return    $spacings    Alterated map
-// @see       4.2 spacing + 4.1 elsass
+// Atlterate margins according to the $position value.
+// @param   $margin    Map returned by spacing(),
+// @param   $position  Mixin argument.
 // -----------------------------------------------------------------------------
 @function position($margin, $position) {
     $side: null;
@@ -512,13 +508,11 @@ html * { box-sizing: inherit; }
     @return $margin;
 }
 
-// 4.5 bpts
+// 4.8 bpts
 // -----------------------------------------------------------------------------
-// Get a list of breakpoints explicitly or implicitly set in the elsass mixin.
-// @param     $from        Custom breakpoint used as the min-width;
-// @param     $to          Custom breakpoint used as the max-width;
-// @return    $bpts-set    A list of breakpoints as $settings map keys.
-// @see       3.1 elsass
+// Returns a list of breakpoints explicitly or implicitly set in the elsass mixin.
+// @param   $from  Breakpoint;
+// @param   $to    Breakpoint.
 // -----------------------------------------------------------------------------
 @function bpts-set($from: null, $to: null) {
     // Get the position of each breakpoint in the $settings map.
