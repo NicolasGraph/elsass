@@ -4,7 +4,7 @@
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // -----------------------------------------------------------------------------
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 // OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 // IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -19,7 +19,7 @@
 // 3. Mixins
 // 3.1 bpt         Mainly used by other mixins.
 // 3.1 elsass        Generic resposive mixin.
-// 3.2 children    Apply "elsass" mixin to defined children elements.
+// 3.2 children    Apply 'elsass' mixin to defined children elements.
 // 4. Functions    Exclusively used by mixins.
 // 4.1 elsass
 // 4.2 spacing
@@ -32,30 +32,30 @@
 // -----------------------------------------------------------------------------
 
 $settings: (
-    "s": (                              // Each $settings key is used as a custom breakpoint.
-        "content-max-width" : 480px,    // Max-width to optionally apply to containers.
-        "vertical-spacing"  : 24px,     // Top and bottom gutters.
-        "horizontal-spacing": 16px,     // Right and left gutters.
+    's': (                              // Each $settings key is used as a custom breakpoint.
+        'content-max-width' : 480px,    // Max-width to optionally apply to containers.
+        'vertical-spacing'  : 24px,     // Top and bottom gutters.
+        'horizontal-spacing': 16px,     // Right and left gutters.
     ),
-    "m": (
-        "device-min-width"  : 640px, // Media-query min-width (useless for the first breakpoint).
-        "content-max-width" : 800px,
-        "vertical-spacing"  : 32px,
-        "horizontal-spacing": 24px,
+    'm': (
+        'device-min-width'  : 640px, // Media-query min-width (useless for the first breakpoint).
+        'content-max-width' : 800px,
+        'vertical-spacing'  : 32px,
+        'horizontal-spacing': 24px,
     ),
-    "l": (
-        "device-min-width"  : 1024px,
-        "content-max-width" : 1000px,
-        "vertical-spacing"  : 48px,
-        "horizontal-spacing": 32px,
+    'l': (
+        'device-min-width'  : 1024px,
+        'content-max-width' : 1000px,
+        'vertical-spacing'  : 48px,
+        'horizontal-spacing': 32px,
     ),
-    "xl": (
-        "device-min-width"  : 1440px,
-        "content-max-width" : 1280px,
-        "vertical-spacing"  : 54px,
-        "horizontal-spacing": 48px,
+    'xl': (
+        'device-min-width'  : 1440px,
+        'content-max-width' : 1280px,
+        'vertical-spacing'  : 54px,
+        'horizontal-spacing': 48px,
     )
-);
+) !default;
 
 // -----------------------------------------------------------------------------
 // 2. CSS base
@@ -85,9 +85,9 @@ html { box-sizing: border-box; }
         @if map-has-key($settings, $from) {
             // Get the breakpoint media-query min-width.
             $from-settings: map-get($settings, $from);
-            $from: map-get($from-settings, "device-min-width");
+            $from: map-get($from-settings, 'device-min-width');
         }
-        $mq: "(min-width: #{$from})";
+        $mq: '(min-width: #{$from})';
     }
 
     // Set a media-query max-width if needed.
@@ -95,9 +95,9 @@ html { box-sizing: border-box; }
         @if map-has-key($settings, $to) {
             // Calculate the previous breakpoint max-width.
             $to-settings: map-get($settings, $to);
-            $to: map-get($to-settings, "device-min-width") - 1;
+            $to: map-get($to-settings, 'device-min-width') - 1;
         }
-        $mq: if($mq, $mq " and (max-width: #{$to})", "(max-width: #{$to})");
+        $mq: if($mq, $mq ' and (max-width: #{$to})', '(max-width: #{$to})');
     }
 
     // Wrap @content in a media query if set.
@@ -114,14 +114,14 @@ html { box-sizing: border-box; }
 // -----------------------------------------------------------------------------
 // Generate whatever responsive element you need.
 // @param  $media       Breakpoint(s);
-// @param  $flow        "flex-row", "flex-grid" or false;
+// @param  $flow        'flex-row', 'flex-grid' or false;
 // @param  $width       Ratio of the container width or true
 //                      to generate a width of 100%
 //                      and apply the breakpoint(s) related max-width;
 //                      followed by the responsive max-width provided in $settings.
 // @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint spacings;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
-// @param  $position    "pull", "push", "center" or ratio of the container width.
+// @param  $position    'pull', 'push', 'center' or ratio of the container width.
 // -----------------------------------------------------------------------------
 @mixin elsass(
     $media: null,
@@ -146,8 +146,8 @@ html { box-sizing: border-box; }
 
         $silent-gutter: null;
         $width-out: $gutter-out;
-        @if type-of($gutter-out) == map and map-has-key($gutter-out, "silent")  {
-            $width-out: map-get($gutter-out, "silent");
+        @if type-of($gutter-out) == map and map-has-key($gutter-out, 'silent')  {
+            $width-out: map-get($gutter-out, 'silent');
             $silent-gutter: true;
         }
 
@@ -262,12 +262,12 @@ html { box-sizing: border-box; }
     @if ($width or $max-width) and $gutter-out {
         $margin: spacing($bpt, $gutter-out);
 
-        $right: map-get($margin, "right");
+        $right: map-get($margin, 'right');
         @if $right and $right != 0 {
             $width-out: $right;
         }
 
-        $left: map-get($margin, "left");
+        $left: map-get($margin, 'left');
         @if $left and $left != 0 {
             @if $width-out {
                 $width-out: $width-out + $left;
@@ -281,52 +281,35 @@ html { box-sizing: border-box; }
 
     @if $width {
         $width: if(unitless($width), percentage($width), $width);
-
-        @if $width-out {
-            $comparable: comparable($width, $width-out);
-            $calc-width: null;
-            @if $comparable {
-                @if $width-out == $abs-factor {
-                    $calc-width: $width - $abs-factor;
-                } @else {
-                    $calc-width: $width + $abs-factor;
-                }
-            } @else {
-                @warn "width is using calc().";
-                @if $width-out == $abs-factor {
-                    $calc-width: calc(#{$width} - #{$abs-factor});
-                } @else {
-                    $calc-width: calc(#{$width} + #{$abs-factor});
-                }
-            }
-            $out: map-merge($out, (width: $calc-width));
-        } @else {
-            $out: map-merge($out, (width: $width));
-        }
     }
 
     @if $max-width == true {
-        $max-width: map-get($min-settings, "content-max-width");
-        @if $width-out {
-            $comparable: comparable($max-width, $width-out);
-            $calc-max: null;
-            @if $comparable {
-                @if $width-out == $abs-factor {
-                    $calc-max: $max-width - $abs-factor;
+        $max-width: map-get($min-settings, 'content-max-width');
+    }
+
+    @each $prop, $val in (width: $width, max-width: $max-width) {
+        @if $val {
+            @if $width-out {
+                $comparable: comparable($val, $width-out);
+                $calc: null;
+                @if $comparable {
+                    @if $width-out == $abs-factor {
+                        $calc: $val - $abs-factor;
+                    } @else {
+                        $calc: $val + $abs-factor;
+                    }
                 } @else {
-                    $calc-max: $max-width + $abs-factor;
+                    @warn 'Using calc() as CSS value for' + #{$prop};
+                    @if $width-out == $abs-factor {
+                        $calc: calc(#{$val} - #{$abs-factor});
+                    } @else {
+                        $calc: calc(#{$val} + #{$abs-factor});
+                    }
                 }
+                $out: map-merge($out, (#{$prop}: $calc));
             } @else {
-                @warn "max-width is using calc().";
-                @if $width-out == $abs-factor {
-                    $calc-max: calc(#{$max-width} - #{$abs-factor});
-                } @else {
-                    $calc-max: calc(#{$max-width} + #{$abs-factor});
-                }
+                $out: map-merge($out, (#{$prop}: $val));
             }
-            $out: map-merge($out, (max-width: $calc-max));
-        } @else {
-            $out: map-merge($out, (max-width: $max-width));
         }
     }
 
@@ -345,8 +328,8 @@ html { box-sizing: border-box; }
 
     $out: (); // Prepare the output.
     // Get the padding shorthand or each margin side value.
-    @if map-has-key($padding, "global") {
-        $out: map-merge($out, (padding: map-get($padding, "global")));
+    @if map-has-key($padding, 'global') {
+        $out: map-merge($out, (padding: map-get($padding, 'global')));
     } @else {
         @each $side, $val in $padding {
             $out: map-merge($out, (padding-#{$side}: $val));
@@ -373,8 +356,8 @@ html { box-sizing: border-box; }
 
     $out: (); // Prepare the output.
     // Get the margin shorthand or each margin side value.
-    @if map-has-key($margin, "global") {
-        $out: map-merge($out, (margin: map-get($margin, "global")));
+    @if map-has-key($margin, 'global') {
+        $out: map-merge($out, (margin: map-get($margin, 'global')));
     } @else {
         @each $side, $val in $margin {
             $out: map-merge($out, (margin-#{$side}: $val));
@@ -392,12 +375,11 @@ html { box-sizing: border-box; }
 // -----------------------------------------------------------------------------
 @function spacing($bpt, $spacing) {
     // Get the breakpoint related spacing values as a calculation base.
-    $min-settings: map-get($settings, $bpt);
-    $base: map-get($min-settings, "vertical-spacing");
-    $base: $base map-get($min-settings, "horizontal-spacing");
+    $bpt-settings: map-get($settings, $bpt);
+    $base: map-get($bpt-settings, 'vertical-spacing') map-get($bpt-settings, 'horizontal-spacing');;
 
     // Set each side margin.
-    $sides: "top", "right", "bottom", "left";
+    $sides: 'top', 'right', 'bottom', 'left';
 
     @if type-of($spacing) == map {
         $new-spacing: null;
@@ -430,16 +412,15 @@ html { box-sizing: border-box; }
     }
 
     // Set a margin shorthand if possible.
-    $top: map-get($spacings, "top");
-    $right: map-get($spacings, "right");
-    $bottom: map-get($spacings, "bottom");
-    $left: map-get($spacings, "left");
+    $top: map-get($spacings, 'top');
+    $right: map-get($spacings, 'right');
 
-    @if $top and $top == $bottom and $right and $right == $left {
+    @if $top and $top == map-get($spacings, 'bottom') and
+        $right and $right == map-get($spacings, 'left') {
         @if $top == $right {
-            $spacings: map-merge($spacings, ("global": $top));
+            $spacings: map-merge($spacings, ('global': $top));
         } @else {
-            $spacings: map-merge($spacings, ("global": $top $right));
+            $spacings: map-merge($spacings, ('global': $top $right));
         }
     }
 
@@ -455,9 +436,7 @@ html { box-sizing: border-box; }
 @function spacing-val($base: null, $val: null) {
     $spacing: null;
 
-    @if $val == "nested" {
-        $spacing: (-($base)); // Use $base as a negative val.
-    } @else if type-of($val) == number and unitless($val) {
+    @if unitless($val) {
         $spacing: if($val == 0, $val, $val * ($base)); // Multiply the $base val.
     } @else {
         $spacing: $val; // Use a custom spacing value.
@@ -476,35 +455,35 @@ html { box-sizing: border-box; }
     $side: null;
     $val: null;
 
-    @if $position == "center" {
-        $margin: map-merge($margin, ("right": auto, "left": auto));
+    @if $position == 'center' {
+        $margin: map-merge($margin, ('right': auto, 'left': auto));
         // Set or reset a margin shorthand if possible.
-        $margin-top: map-get($margin, "top");
-        @if $margin-top and $margin-top == map-get($margin, "bottom") {
-            $global: if($margin-top == "auto", auto, $margin-top auto);
-            $margin: map-merge($margin, ("global": $global));
+        $margin-top: map-get($margin, 'top');
+        @if $margin-top and $margin-top == map-get($margin, 'bottom') {
+            $global: if($margin-top == 'auto', auto, $margin-top auto);
+            $margin: map-merge($margin, ('global': $global));
         }
     } @else {
         // Margin shorthand won't be useful anymore.
-        @if map-has-key($margin, "global") {
-            $margin: map-remove($margin, "global");
+        @if map-has-key($margin, 'global') {
+            $margin: map-remove($margin, 'global');
         }
-        @if $position == "pull" {
-            $margin: map-merge($margin, ("right": auto));
-        } @else if $position == "push" {
-            $margin: map-merge($margin, ("left": auto));
+        @if $position == 'pull' {
+            $margin: map-merge($margin, ('right': auto));
+        } @else if $position == 'push' {
+            $margin: map-merge($margin, ('left': auto));
         } @else if type-of($position) == number {
             // Prepare $position to be added, or soustracted if negative.
-            $operator: if($position == abs($position), "+", "-");
+            $operator: if($position == abs($position), '+', '-');
             $position: percentage(abs($position));
             // Set the margin-left value.
-            $out: map-get($margin, "left");
+            $out: map-get($margin, 'left');
             @if $out and $out != 0 {
                 $val: calc(#{$out} #{$operator} #{$position});
             } @else {
                 $val: #{$operator}$position;
             }
-            $margin: map-merge($margin, ("left": #{$val}));
+            $margin: map-merge($margin, ('left': #{$val}));
         }
     }
 
