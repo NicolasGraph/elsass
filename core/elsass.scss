@@ -1,9 +1,7 @@
-// -----------------------------------------------------------------------------
 // Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
-// -----------------------------------------------------------------------------
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
-// -----------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 // THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 // OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -12,54 +10,73 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// Table of contents
-// -----------------------------------------------------------------------------
-// 1. Settings     Where you can easily customize things!
-// 2. CSS base     Don't you already set that?
-// 3. Mixins
-// 3.1 bpt         Mainly used by other mixins.
-// 3.1 elsass        Generic resposive mixin.
-// 3.2 children    Apply 'elsass' mixin to defined children elements.
-// 4. Functions    Exclusively used by mixins.
-// 4.1 elsass
-// 4.2 spacing
-// 4.3 spacing-val
-// 4.4 position
-// 4.5 bpts
-
-// -----------------------------------------------------------------------------
 // 1. Settings
-// -----------------------------------------------------------------------------
+// 1.1 Layout variables
+// 1.2 Layout constants
+// 1.3 Default mixin argument values
+// 2. CSS base
+// 3. Mixins
+// 3.1 bpt
+// 3.2 elsass
+// 4. Functions
+// 4.1 flex
+// 4.2 width
+// 4.3 padding
+// 4.4 margin
+// 4.5 spacing
+// 4.6 spacing-val
+// 4.7 position
+// 4.8 bpts-set
 
+// 1. Settings
+// ===========
+
+// 1.1 Layout variables
+// --------------------
 $settings: (
-    's': (                              // Each $settings key is used as a custom breakpoint.
-        'content-max-width' : 480px,    // Max-width to optionally apply to containers.
-        'vertical-spacing'  : 24px,     // Top and bottom gutters.
-        'horizontal-spacing': 16px,     // Right and left gutters.
-    ),
-    'm': (
-        'device-min-width'  : 640px, // Media-query min-width (useless for the first breakpoint).
-        'content-max-width' : 800px,
-        'vertical-spacing'  : 32px,
-        'horizontal-spacing': 24px,
-    ),
-    'l': (
-        'device-min-width'  : 1024px,
-        'content-max-width' : 1000px,
-        'vertical-spacing'  : 48px,
-        'horizontal-spacing': 32px,
-    ),
-    'xl': (
-        'device-min-width'  : 1440px,
-        'content-max-width' : 1280px,
-        'vertical-spacing'  : 54px,
-        'horizontal-spacing': 48px,
-    )
+  's': (                          // Each $settings key is used as a custom breakpoint.
+    'container-max-width': 480px, // Max-width to optionally apply to containers.
+    'vertical-gutter'  : 24px,    // y axis (top/bottom) related gutter value.
+    'horizontal-gutter'  : 16px,  // x axis (right/left) related gutter value.
+  ),
+  'm': (
+    'device-min-width'   : 640px, // Media-query min-width (useless for the first breakpoint).
+    'container-max-width': 800px,
+    'vertical-gutter'  : 32px,
+    'horizontal-gutter'  : 24px,
+  ),
+  'l': (
+    'device-min-width'   : 1024px,
+    'container-max-width': 1000px,
+    'vertical-gutter'  : 48px,
+    'horizontal-gutter'  : 32px,
+  ),
+  'xl': (
+    'device-min-width'   : 1440px,
+    'container-max-width': 1280px,
+    'vertical-gutter'  : 54px,
+    'horizontal-gutter'  : 48px,
+  )
 ) !default;
 
-// -----------------------------------------------------------------------------
+// 1.2 Layout constants -> Keep this untouched!
+// --------------------
+$BPTS: map-keys($settings); // Breakpoints list.
+$BPT-MIN: nth($BPTS, 1);  // Smallest breakpoint.
+
+// 1.3 Default mixin argument values
+// ---------------------------------
+$elsass: (
+  'media'     : $BPT-MIN,
+  'flow'      : null,
+  'width'     : 1,
+  'gutter-in' : .5,
+  'gutter-out': .5,
+  'position'  : null,
+) !default;
+
 // 2. CSS base
-// -----------------------------------------------------------------------------
+// ===========
 
 html { box-sizing: border-box; }
 
@@ -67,54 +84,53 @@ html { box-sizing: border-box; }
 *:before,
 *:after { box-sizing: inherit; }
 
-// -----------------------------------------------------------------------------
 // 3. Mixins
-// -----------------------------------------------------------------------------
+// =========
 
 // 3.1 bpt
-// -----------------------------------------------------------------------------
+// -------
 // Generate a media-query.
 // @param  $from  breakpoint or min-width value;
 // @param  $to    breakpoint or max-width value.
-// -----------------------------------------------------------------------------
-@mixin bpt($from: null, $to: null) {
-    $mq: null;
+// @see    3.2 elsass
+@mixin oui-bpt($from: null, $to: null) {
+  $mq: null;
 
-    // Set a media-query min-width if $from is set and not the first breakpoint.
-    @if $from and $from != nth(map-keys($settings), 1) {
-        @if map-has-key($settings, $from) {
-            // Get the breakpoint media-query min-width.
-            $from-settings: map-get($settings, $from);
-            $from: map-get($from-settings, 'device-min-width');
-        }
-        $mq: '(min-width: #{$from})';
+  // Set a media-query min-width if $from is set and not the first breakpoint.
+  @if $from and $from != $BPT-MIN {
+    @if map-has-key($settings, $from) {
+      // Get the breakpoint media-query min-width.
+      $from-settings: map-get($settings, $from);
+      $from: map-get($from-settings, 'device-min-width');
     }
+    $mq: '(min-width: #{$from})';
+  }
 
-    // Set a media-query max-width if needed.
-    @if $to {
-        @if map-has-key($settings, $to) {
-            // Calculate the previous breakpoint max-width.
-            $to-settings: map-get($settings, $to);
-            $to: map-get($to-settings, 'device-min-width') - 1;
-        }
-        $mq: if($mq, $mq ' and (max-width: #{$to})', '(max-width: #{$to})');
+  // Set a media-query max-width if needed.
+  @if $to {
+    @if map-has-key($settings, $to) {
+      // Calculate the previous breakpoint max-width.
+      $to-settings: map-get($settings, $to);
+      $to: map-get($to-settings, 'device-min-width') - 1;
     }
+    $mq: if($mq, $mq ' and (max-width: #{$to})', '(max-width: #{$to})');
+  }
 
-    // Wrap @content in a media query if set.
-    @if $mq {
-        @media screen and #{$mq} {
-            @content;
-        }
-    } @else {
-        @content;
+  // Wrap @content in a media query if set.
+  @if $mq {
+    @media screen and #{$mq} {
+      @content;
     }
+  } @else {
+    @content;
+  }
 }
 
 // 3.2 elsass
-// -----------------------------------------------------------------------------
+// ----------
 // Generate whatever responsive element you need.
 // @param  $media       Breakpoint(s);
-// @param  $flow        'flex-row', 'flex-grid' or false;
+// @param  $flow        flex-direction flex-wrap;
 // @param  $width       Ratio of the container width or true
 //                      to generate a width of 100%
 //                      and apply the breakpoint(s) related max-width;
@@ -122,392 +138,396 @@ html { box-sizing: border-box; }
 // @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint spacings;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
 // @param  $position    'pull', 'push', 'center' or ratio of the container width.
-// -----------------------------------------------------------------------------
 @mixin elsass(
-    $media: null,
-    $flow: null,
-    $width: null,
-    $gutter-in: null,
-    $gutter-out: null,
-    $position: null) {
+  $media   : map-get($elsass, 'media'),
+  $flow    : map-get($elsass, 'flow'),
+  $width   : map-get($elsass, 'width'),
+  $gutter-in : map-get($elsass, 'gutter-in'),
+  $gutter-out: map-get($elsass, 'gutter-out'),
+  $position  : map-get($elsass, 'position'))
+{
 
-    // Get the provided breakpoints.
-    $bpts: map-keys($settings);
-    $min-bpt: if(nth($media, 1), nth($media, 1), nth($bpts, 1));
-    $max-bpt: if(type-of($media) == list, nth($media, 2), false);
+  // Get the provided breakpoints.
+  $min-bpt: if(nth($media, 1), nth($media, 1), $BPT-MIN);
+  $max-bpt: if(type-of($media) == list, nth($media, 2), false);
 
-    // List breakpoints explicitly and implicitly set.
-    $bpts-set: bpts-set($min-bpt, $max-bpt);
+  // List breakpoints explicitly and implicitly set.
+  $bpts-set: oui-bpts-set($min-bpt, $max-bpt);
 
-    $css: (); // To store CSS properties and values per breakpoint.
+  $css: (); // To store CSS properties and values per breakpoint.
 
-    @each $bpt in $bpts-set {
-        $bpt-css: (); // To store the current breakpoint CSS.
+  @each $bpt in $bpts-set {
+    $bpt-css: (); // To store the current breakpoint CSS.
 
-        $silent-gutter: null;
-        $width-out: $gutter-out;
-        @if type-of($gutter-out) == map and map-has-key($gutter-out, 'silent')  {
-            $width-out: map-get($gutter-out, 'silent');
-            $silent-gutter: true;
-        }
-
-        // Get and store CSS width related properties and values.
-        @if $width {
-            $width-max: $width;
-            $max-width: null;
-            @if $width == true {
-                $width-max: 1;
-                $max-width: true;
-            };
-            $bpt-width: width($bpt, $width-max, $max-width, $width-out);
-            $bpt-css: map-merge($bpt-css, $bpt-width);
-        }
-        // Get and store CSS margin related properties and values.
-        @if ($gutter-out and not $silent-gutter) or $position {
-            $gutter: if($silent-gutter, false, $gutter-out);
-            $bpt-css: map-merge($bpt-css, margin($bpt, $gutter, $position));
-        }
-        // Get and store CSS padding related properties and values.
-        @if $gutter-in {
-            $bpt-css: map-merge($bpt-css, padding($bpt, $gutter-in));
-        }
-
-        // Get and store CSS flex related properties and values.
-        @if $flow {
-            $direction: if($flow, nth($flow, 1), false);
-            $wrap: if(type-of($flow) == list, nth($flow, 2), false);
-            $bpt-css: map-merge($bpt-css, flex($direction, $wrap));
-        }
-
-        // Iterate breakpoint CSS to remove useless properties.
-        @each $bpt-prop, $bpt-val in $bpt-css {
-            // Iterate stored CSS per breakpoint.
-            @each $stored-bpt, $stored-css in $css {
-                @if map-has-key($stored-css, $bpt-prop) {
-                    @if map-get($stored-css, $bpt-prop) == $bpt-val {
-                        // Remove duplicated CSS.
-                        $bpt-css: map-remove($bpt-css, $bpt-prop);
-                    } @else {
-                        // Re-merge CSS as it was maybe removed.
-                        $bpt-css: map-merge($bpt-css, ($bpt-prop: $bpt-val));
-                    }
-                }
-            }
-        }
-
-        // Store tidy breakpoint related CSS.
-        $css: map-merge($css, ($bpt: $bpt-css));
+    $silent-gutter: null;
+    $width-out: $gutter-out;
+    @if type-of($gutter-out) == map and map-has-key($gutter-out, 'silent')  {
+      $width-out: map-get($gutter-out, 'silent');
+      $silent-gutter: true;
     }
 
-    // Generate CSS by iterating CSS per breakpoint.
-    @each $stored-bpt, $stored-css in $css {
-        @if $stored-bpt == nth($bpts-set, 1) {
-            $to-bpt: nth($bpts-set, length($bpts-set));
-            @include bpt($stored-bpt, if($max-bpt, $to-bpt, false)) {
-                @each $prop, $val in map-get($css, $stored-bpt) {
-                    #{$prop}: #{$val};
-                }
-                @content;
-            }
-            $css: if($max-bpt, map-remove($css, $to-bpt), $css);
-        } @else {
-            @include bpt($stored-bpt) {
-                @each $prop, $val in map-get($css, $stored-bpt) {
-                    #{$prop}: #{$val};
-                }
-            }
-        }
+    // Get and store CSS width related properties and values.
+    @if $width {
+      $width-max: $width;
+      $max-width: null;
+      @if $width == true {
+        $width-max: 1;
+        $max-width: true;
+      };
+      $bpt-width: oui-width($bpt, $width-max, $max-width, $width-out);
+      $bpt-css: map-merge($bpt-css, $bpt-width);
     }
+    // Get and store CSS margin related properties and values.
+    @if ($gutter-out and not $silent-gutter) or $position {
+      $gutter: if($silent-gutter, false, $gutter-out);
+      $bpt-css: map-merge($bpt-css, oui-margin($bpt, $gutter, $position));
+    }
+    // Get and store CSS padding related properties and values.
+    @if $gutter-in {
+      $bpt-css: map-merge($bpt-css, oui-padding($bpt, $gutter-in));
+    }
+
+    // Get and store CSS flex related properties and values.
+    @if $flow {
+      $direction: if($flow, nth($flow, 1), false);
+      $wrap: if(type-of($flow) == list, nth($flow, 2), false);
+      $bpt-css: map-merge($bpt-css, oui-flex($direction, $wrap));
+    }
+
+    // Iterate breakpoint CSS to remove useless properties.
+    @each $bpt-prop, $bpt-val in $bpt-css {
+      // Iterate stored CSS per breakpoint.
+      @each $stored-bpt, $stored-css in $css {
+        @if map-has-key($stored-css, $bpt-prop) {
+          @if map-get($stored-css, $bpt-prop) == $bpt-val {
+            // Remove duplicated CSS.
+            $bpt-css: map-remove($bpt-css, $bpt-prop);
+          } @else {
+            // Re-merge CSS as it was maybe removed.
+            $bpt-css: map-merge($bpt-css, ($bpt-prop: $bpt-val));
+          }
+        }
+      }
+    }
+
+    // Store tidy breakpoint related CSS.
+    $css: map-merge($css, ($bpt: $bpt-css));
+  }
+
+  // Generate CSS by iterating CSS per breakpoint.
+  @each $stored-bpt, $stored-css in $css {
+    @if $stored-bpt == nth($bpts-set, 1) {
+      $to-bpt: nth($bpts-set, length($bpts-set));
+      @include oui-bpt($stored-bpt, if($max-bpt, $to-bpt, false)) {
+        @each $prop, $val in map-get($css, $stored-bpt) {
+          #{$prop}: #{$val};
+        }
+        @content;
+      }
+      $css: if($max-bpt, map-remove($css, $to-bpt), $css);
+    } @else {
+      @include oui-bpt($stored-bpt) {
+        @each $prop, $val in map-get($css, $stored-bpt) {
+          #{$prop}: #{$val};
+        }
+      }
+    }
+  }
 }
 
-// -----------------------------------------------------------------------------
 // 4. Functions
-// -----------------------------------------------------------------------------
+// ============
 
-// 4.1 flex
-// -----------------------------------------------------------------------------
+// 4.1 oui-flex
+// ------------
 // Returns a map of needed flex related CSS properties and their values.
-// @param    $direction    CSS flex-direction value;
-// @param    $wrap         CSS flex-wrap value;needed
-// -----------------------------------------------------------------------------
-@function flex($direction: null, $wrap: null) {
-    $out: (); // Prepare the output.
+// @param  $direction  CSS flex-direction value;
+// @param  $wrap       CSS flex-wrap value;
+// @see    3.2 elsass
+@function oui-flex($direction: null, $wrap: null) {
+  $out: (); // Prepare the output.
 
-    $out: map-merge($out, (display: flex));
+  $out: map-merge($out, (display: flex));
 
-    @if ($direction and $direction != row) and ($wrap and $wrap != nowrap) {
-        $out: map-merge($out, (flex-flow: $direction $wrap));
-    } @else if $direction and $direction != row {
-        $out: map-merge($out, (flex-direction: $direction));
-    } @else if $wrap and $wrap != nowrap {
-        $out: map-merge($out, (flex-wrap: $wrap));
-    }
+  @if ($direction and $direction != row) and ($wrap and $wrap != nowrap) {
+    $out: map-merge($out, (flex-flow: $direction $wrap));
+  } @else if $direction and $direction != row {
+    $out: map-merge($out, (flex-direction: $direction));
+  } @else if $wrap and $wrap != nowrap {
+    $out: map-merge($out, (flex-wrap: $wrap));
+  }
 
-    @return $out;
+  @return $out;
 }
 
-// 4.2 width
-// -----------------------------------------------------------------------------
+// 4.2 oui-width
+// -------------
 // Returns a map of needed width related CSS properties and their values.
 // @param  $bpt         Breakpoint as a $settings key;
 // @param  $width       Width value or ratio of the container width;
 // @param  $max-width   Max width value or true to use the breakpoint settings;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
-// -----------------------------------------------------------------------------
-@function width($bpt, $width, $max-width: null, $gutter-out: null) {
-    $out: ();
-    $min-settings: map-get($settings, $bpt);
-    $width-out: null;
-    $abs-factor: null;
-    @if ($width or $max-width) and $gutter-out {
-        $margin: spacing($bpt, $gutter-out);
+// @see    3.2 elsass
+@function oui-width($bpt, $width, $max-width: null, $gutter-out: null) {
+  $out: ();
+  $min-settings: map-get($settings, $bpt);
+  $width-out: null;
+  $abs-factor: null;
+  @if ($width or $max-width) and $gutter-out {
+    $margin: oui-spacing($bpt, $gutter-out);
 
-        $right: map-get($margin, 'right');
-        @if $right and $right != 0 {
-            $width-out: $right;
+    $right: map-get($margin, 'right');
+    @if $right and $right != 0 {
+      $width-out: $right;
+    }
+
+    $left: map-get($margin, 'left');
+    @if $left and $left != 0 {
+      @if $width-out {
+        $width-out: $width-out + $left;
+      } @else {
+        $width-out: $left;
+      }
+    }
+
+    $abs-factor: if($width-out, abs($width-out), null);
+  }
+
+  @if $width {
+    $width: if(unitless($width), percentage($width), $width);
+  }
+
+  @if $max-width == true {
+    $max-width: map-get($min-settings, 'container-max-width');
+  }
+
+  @each $prop, $val in (width: $width, max-width: $max-width) {
+    @if $val {
+      @if $width-out {
+        $comparable: comparable($val, $width-out);
+        $calc: null;
+        @if $comparable {
+          @if $width-out == $abs-factor {
+            $calc: $val - $abs-factor;
+          } @else {
+            $calc: $val + $abs-factor;
+          }
+        } @else {
+          @warn 'Using calc() as CSS value for' + #{$prop};
+          @if $width-out == $abs-factor {
+            $calc: calc(#{$val} - #{$abs-factor});
+          } @else {
+            $calc: calc(#{$val} + #{$abs-factor});
+          }
         }
-
-        $left: map-get($margin, 'left');
-        @if $left and $left != 0 {
-            @if $width-out {
-                $width-out: $width-out + $left;
-            } @else {
-                $width-out: $left;
-            }
-        }
-
-        $abs-factor: if($width-out, abs($width-out), null);
+        $out: map-merge($out, (#{$prop}: $calc));
+      } @else {
+        $out: map-merge($out, (#{$prop}: $val));
+      }
     }
+  }
 
-    @if $width {
-        $width: if(unitless($width), percentage($width), $width);
-    }
-
-    @if $max-width == true {
-        $max-width: map-get($min-settings, 'content-max-width');
-    }
-
-    @each $prop, $val in (width: $width, max-width: $max-width) {
-        @if $val {
-            @if $width-out {
-                $comparable: comparable($val, $width-out);
-                $calc: null;
-                @if $comparable {
-                    @if $width-out == $abs-factor {
-                        $calc: $val - $abs-factor;
-                    } @else {
-                        $calc: $val + $abs-factor;
-                    }
-                } @else {
-                    @warn 'Using calc() as CSS value for' + #{$prop};
-                    @if $width-out == $abs-factor {
-                        $calc: calc(#{$val} - #{$abs-factor});
-                    } @else {
-                        $calc: calc(#{$val} + #{$abs-factor});
-                    }
-                }
-                $out: map-merge($out, (#{$prop}: $calc));
-            } @else {
-                $out: map-merge($out, (#{$prop}: $val));
-            }
-        }
-    }
-
-    @return $out;
+  @return $out;
 }
 
-// 4.3 padding
-// -----------------------------------------------------------------------------
+// 4.3 oui-padding
+// ---------------
 // Returns a map of padding related CSS properties and their values.
 // @param  $bpt        Breakpoint as a $settings key;
 // @param  $gutter-in  Padding value(s) or ratio(s) of the breakpoint spacings.
-// -----------------------------------------------------------------------------
-@function padding($bpt, $gutter-in) {
-    // Get a map of padding values.
-    $padding: spacing($bpt, $gutter-in);
+// @see    3.2 elsass
+@function oui-padding($bpt, $gutter-in) {
+  // Get a map of padding values.
+  $padding: oui-spacing($bpt, $gutter-in);
 
-    $out: (); // Prepare the output.
-    // Get the padding shorthand or each margin side value.
-    @if map-has-key($padding, 'global') {
-        $out: map-merge($out, (padding: map-get($padding, 'global')));
-    } @else {
-        @each $side, $val in $padding {
-            $out: map-merge($out, (padding-#{$side}: $val));
-        }
+  $out: (); // Prepare the output.
+  // Get the padding shorthand or each margin side value.
+  @if map-has-key($padding, 'global') {
+    $out: map-merge($out, (padding: map-get($padding, 'global')));
+  } @else {
+    @each $side, $val in $padding {
+      $out: map-merge($out, (padding-#{$side}: $val));
     }
+  }
 
-    @return $out;
+  @return $out;
 }
 
-// 4.4 margin
-// -----------------------------------------------------------------------------
+// 4.4 oui-margin
+// --------------
 // Returns a map of margin related CSS properties and their values.
 // @param  $bpt         Breakpoint as a $settings key;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings.
-// -----------------------------------------------------------------------------
-@function margin($bpt, $gutter-out, $position: null) {
-    // Get a map of margin values.
-    $margin: spacing($bpt, $gutter-out);
+// @see    3.2 elsass
+@function oui-margin($bpt, $gutter-out, $position: null) {
+  // Get a map of margin values.
+  $margin: oui-spacing($bpt, $gutter-out);
 
-    // Alterate the $margin map values with $position.
-    @if $position {
-        $margin: position($margin, $position);
+  // Alterate the $margin map values with $position.
+  @if $position {
+    $margin: oui-position($margin, $position);
+  }
+
+  $out: (); // Prepare the output.
+  // Get the margin shorthand or each margin side value.
+  @if map-has-key($margin, 'global') {
+    $out: map-merge($out, (margin: map-get($margin, 'global')));
+  } @else {
+    @each $side, $val in $margin {
+      $out: map-merge($out, (margin-#{$side}: $val));
     }
+  }
 
-    $out: (); // Prepare the output.
-    // Get the margin shorthand or each margin side value.
-    @if map-has-key($margin, 'global') {
-        $out: map-merge($out, (margin: map-get($margin, 'global')));
-    } @else {
-        @each $side, $val in $margin {
-            $out: map-merge($out, (margin-#{$side}: $val));
-        }
-    }
-
-    @return $out;
+  @return $out;
 }
 
-// 4.5 spacing
-// -----------------------------------------------------------------------------
+// 4.5 oui-spacing
+// ---------------
 // Return a map of spacing values from $spacing.
-// @param  $bpt      Breakpoint as a $settings key;
+// @param  $bpt      Breakpoint;
 // @param  $spacing  Margin/padding value(s) or ratio(s) of the breakpoint spacings.
-// -----------------------------------------------------------------------------
-@function spacing($bpt, $spacing) {
-    // Get the breakpoint related spacing values as a calculation base.
-    $bpt-settings: map-get($settings, $bpt);
-    $base: map-get($bpt-settings, 'vertical-spacing') map-get($bpt-settings, 'horizontal-spacing');;
+// @see    4.3 oui-padding, 4.4 oui-margin
+@function oui-spacing($bpt, $spacing) {
+  // Get the breakpoint related spacing values as a calculation base.
+  $bpt-settings: map-get($settings, $bpt);
+  $base: map-get($bpt-settings, 'vertical-gutter') map-get($bpt-settings, 'horizontal-gutter');;
 
-    // Set each side margin.
-    $sides: 'top', 'right', 'bottom', 'left';
+  // Set each side margin.
+  $sides: 'top', 'right', 'bottom', 'left';
 
-    @if type-of($spacing) == map {
-        $new-spacing: null;
-        @each $side in $sides {
-            @if map-has-key($spacing, $side) {
-                $val: map-get($spacing, $side);
-                $new-spacing: if($new-spacing == null, $val, append($new-spacing, $val));
-            } @else {
-                $new-spacing: if($new-spacing == null, false, append($new-spacing, false));
-            }
-        }
-        $spacing: $new-spacing;
-    } @else if type-of($spacing) == list and length($spacing) == 2 {
-        $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
-    } @else if type-of($spacing) != list {
-        $spacing: $spacing $spacing $spacing $spacing;
+  @if type-of($spacing) == map {
+    $new-spacing: null;
+    @each $side in $sides {
+      @if map-has-key($spacing, $side) {
+        $val: map-get($spacing, $side);
+        $new-spacing: if($new-spacing == null, $val, append($new-spacing, $val));
+      } @else {
+        $new-spacing: if($new-spacing == null, false, append($new-spacing, false));
+      }
     }
+    $spacing: $new-spacing;
+  } @else if type-of($spacing) == list and length($spacing) == 2 {
+    $spacing: nth($spacing, 1) nth($spacing, 2) nth($spacing, 1) nth($spacing, 2);
+  } @else if type-of($spacing) != list {
+    $spacing: $spacing $spacing $spacing $spacing;
+  }
 
-    $spacings: ();
+  $spacings: ();
 
-    @for $i from 1 through length($spacing) {
-        $val: nth($spacing, $i);
-        @if $val != false {
-            // Get the CSS value.
-            $base-i: if($i == 1 or $i == 3, nth($base, 1), nth($base, 2));
-            $spacing-val: spacing-val($base-i, $val);
-            // Build the map.
-            $spacings: map-merge($spacings, (#{nth($sides, $i)}: $spacing-val));
-        }
+  @for $i from 1 through length($spacing) {
+    $val: nth($spacing, $i);
+    @if $val != false {
+      // Get the CSS value.
+      $base-i: if($i == 1 or $i == 3, nth($base, 1), nth($base, 2));
+      $spacing-val: oui-spacing-val($base-i, $val);
+      // Build the map.
+      $spacings: map-merge($spacings, (#{nth($sides, $i)}: $spacing-val));
     }
+  }
 
-    // Set a margin shorthand if possible.
-    $top: map-get($spacings, 'top');
-    $right: map-get($spacings, 'right');
+  // Set a margin shorthand if possible.
+  $top: map-get($spacings, 'top');
+  $right: map-get($spacings, 'right');
 
-    @if $top and $top == map-get($spacings, 'bottom') and
-        $right and $right == map-get($spacings, 'left') {
-        @if $top == $right {
-            $spacings: map-merge($spacings, ('global': $top));
-        } @else {
-            $spacings: map-merge($spacings, ('global': $top $right));
-        }
+  @if $top and $top == map-get($spacings, 'bottom') and
+    $right and $right == map-get($spacings, 'left') {
+    @if $top == $right {
+      $spacings: map-merge($spacings, ('global': $top));
+    } @else {
+      $spacings: map-merge($spacings, ('global': $top $right));
     }
+  }
 
-    @return $spacings;
+  @return $spacings;
 }
 
-// 4.6 spacing-val
-// -----------------------------------------------------------------------------
+// 4.6 oui-spacing-val
+// -------------------
 // Return a css value.
 // @param  $base  A CSS value used as a calculation base;
-// @param  $val   A $spacing value.
-// -----------------------------------------------------------------------------
-@function spacing-val($base: null, $val: null) {
-    $spacing: null;
+// @param  $val   $spacing value.
+// @see    4.5 oui-spacing
+@function oui-spacing-val($base: null, $val: null) {
+  $spacing: null;
 
-    @if unitless($val) {
-        $spacing: if($val == 0, $val, $val * ($base)); // Multiply the $base val.
-    } @else {
-        $spacing: $val; // Use a custom spacing value.
-    }
+  @if unitless($val) {
+    $spacing: if($val == 0, $val, $val * ($base)); // Multiply the $base val.
+  } @else {
+    $spacing: $val; // Use a custom spacing value.
+  }
 
-    @return $spacing;
+  @return $spacing;
 }
 
-// 4.7 position
-// -----------------------------------------------------------------------------
+// 4.7 oui-position
+// ----------------
 // Atlterate margins according to the $position value.
-// @param   $margin    Map returned by spacing(),
-// @param   $position  Mixin argument.
-// -----------------------------------------------------------------------------
-@function position($margin, $position) {
-    $side: null;
-    $val: null;
+// @param   $margin    Margins map as returned by oui-spacing(),
+// @param   $position  elsass mixin argument.
+// @see     3.2 elsass
+@function oui-position($margin, $position) {
+  $side: null;
+  $val: null;
 
-    @if $position == 'center' {
-        $margin: map-merge($margin, ('right': auto, 'left': auto));
-        // Set or reset a margin shorthand if possible.
-        $margin-top: map-get($margin, 'top');
-        @if $margin-top and $margin-top == map-get($margin, 'bottom') {
-            $global: if($margin-top == 'auto', auto, $margin-top auto);
-            $margin: map-merge($margin, ('global': $global));
-        }
-    } @else {
-        // Margin shorthand won't be useful anymore.
-        @if map-has-key($margin, 'global') {
-            $margin: map-remove($margin, 'global');
-        }
-        @if $position == 'pull' {
-            $margin: map-merge($margin, ('right': auto));
-        } @else if $position == 'push' {
-            $margin: map-merge($margin, ('left': auto));
-        } @else if type-of($position) == number {
-            // Prepare $position to be added, or soustracted if negative.
-            $operator: if($position == abs($position), '+', '-');
-            $position: percentage(abs($position));
-            // Set the margin-left value.
-            $out: map-get($margin, 'left');
-            @if $out and $out != 0 {
-                $val: calc(#{$out} #{$operator} #{$position});
-            } @else {
-                $val: #{$operator}$position;
-            }
-            $margin: map-merge($margin, ('left': #{$val}));
-        }
+  @if $position == 'center' {
+    $margin: map-merge($margin, ('right': auto, 'left': auto));
+    // Set or reset a margin shorthand if possible.
+    $margin-top: map-get($margin, 'top');
+    @if $margin-top and $margin-top == map-get($margin, 'bottom') {
+      $global: if($margin-top == 'auto', auto, $margin-top auto);
+      $margin: map-merge($margin, ('global': $global));
     }
+  } @else {
+    // Margin shorthand won't be useful anymore.
+    @if map-has-key($margin, 'global') {
+      $margin: map-remove($margin, 'global');
+    }
+    @if $position == 'pull' {
+      $margin: map-merge($margin, ('right': auto));
+    } @else if $position == 'push' {
+      $margin: map-merge($margin, ('left': auto));
+    } @else if type-of($position) == number {
+      $margin-left: map-get($margin, 'left');
+      $position: percentage($position);
+      $abs-position: abs($position);
+      $comparable: comparable($margin-left, $position);
+      @if $comparable {
+        @if $position == $abs-position {
+          $val: $margin-left + $abs-position;
+        } @else {
+          $val: $margin-left - $abs-position;
+        }
+      } @else {
+        @if $position == $abs-position {
+          $val: calc(#{$margin-left} + #{$abs-position});
+        } @else {
+          $val: calc(#{$margin-left} - #{$abs-position});
+        }
+      }
+      $margin: map-merge($margin, ('left': #{$val}));
+    }
+  }
 
-    @return $margin;
+  @return $margin;
 }
 
-// 4.8 bpts
-// -----------------------------------------------------------------------------
-// Returns a list of breakpoints explicitly or implicitly set in the elsass mixin.
+// 4.8 oui-bpts-set
+// ----------------
+// Returns a list of breakpoints.
 // @param   $from  Breakpoint;
 // @param   $to    Breakpoint.
-// -----------------------------------------------------------------------------
-@function bpts-set($from: null, $to: null) {
-    // Get the position of each breakpoint in the $settings map.
-    $bpts: map-keys($settings);
-    $from: if($from, index($bpts, $from), 1);
-    $to: if($to, index($bpts, $to), length($bpts));
+// @see     3.2 elsass
+@function oui-bpts-set($from: null, $to: null) {
+  // Get the position of each breakpoint in the $settings map.
+  $from: if($from, index($BPTS, $from), 1);
+  $to: if($to, index($BPTS, $to), length($BPTS));
 
-    $out: null; // Prepare the output.
-    // Get a list of the breakpoints set explicitly and implicitly.
-    @for $i from $from through $to {
-        $bpt: nth($bpts, $i);
-        $out: if($out, append($out, $bpt), $bpt);
-    }
+  $out: null; // Prepare the output.
+  // Get a list of the breakpoints set explicitly and implicitly.
+  @for $i from $from through $to {
+    $bpt: nth($BPTS, $i);
+    $out: if($out, append($out, $bpt), $bpt);
+  }
 
-    @return $out;
+  @return $out;
 }
