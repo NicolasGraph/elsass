@@ -1,6 +1,4 @@
-// -----------------------------------------------------------------------------
 // Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
-// -----------------------------------------------------------------------------
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // -----------------------------------------------------------------------------
@@ -12,8 +10,30 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// children
-// -----------------------------------------------------------------------------
+// 1. Settings
+// 1.1 Default mixin argument values
+// 2. Mixin
+// 2.1 children
+
+// 1. Settings
+// ===========
+
+// 1.1 Default mixin argument values
+// ---------------------------------
+$oui-children: (
+  'media'     : $BPT-MIN,
+  'flow'      : null,
+  'width'     : 1,
+  'gutter-in' : .5,
+  'gutter-out': .5,
+  'position'  : null,
+) !default;
+
+// 2. Mixin
+// ========
+
+// 2.1 children
+// ------------
 // Generate whatever responsive element you need.
 // @param  $media       Breakpoint(s);
 // @param  $flow        "flex-row", "flex-grid" or false;
@@ -23,45 +43,48 @@
 // @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint spacings;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
 // @param  $position    "pull", "push", "center" or ratio of the container width.
-// -----------------------------------------------------------------------------
 @mixin children(
-    $media: null,
-    $flow: null,
-    $widths: null,
-    $gutter: null,
-    $position: null,
-    $padding: null) {
+  $media     : map-get($elsass, 'media'),
+  $flow      : map-get($elsass, 'flow'),
+  $widths    : map-get($elsass, 'width'),
+  $gutter-in : map-get($elsass, 'gutter-in'),
+  $gutter-out: map-get($elsass, 'gutter-out'),
+  $position  : map-get($elsass, 'position'))
+{
 
-    // Separate valid widths from the optional repeat scheme.
-    $repeat: null;
-    $valid-widths: null;
+  // Separate valid widths from the optional repeat scheme.
+  $repeat: null;
+  $valid-widths: null;
 
-    @each $width in $widths {
-        @if type-of($width) == string {
-            $repeat: $width;
-        } @else {
-            $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
-        }
+  @each $width in $widths {
+    @if type-of($width) == string {
+      $repeat: $width;
+    } @else {
+      $valid-widths: if($valid-widths, append($valid-widths, $width), $width);
+    }
+  }
+
+  $widths: $valid-widths;
+
+  // Iterate over $widths to call elsass mixin on defined children.
+  $children: length($widths);
+
+  @for $child from 1 through $children {
+    $nth: ':nth-child(#{$children}n+#{$child})'; // Default targeted child.
+
+    @if $repeat == "no-repeat" {
+      $nth: $child;
+    } @else if $repeat == "repeat-first" {
+      $nth: if($child == $children, ':last-child', ':nth-child(n+#{$child})');
+    } @else if $repeat == "repeat-last" {
+      $nth: if($child != $children, ':first-child', ':nth-child(n+#{$child})');
     }
 
-    $widths: $valid-widths;
-
-    // Iterate over $widths to call elsass mixin on defined children.
-    $children: length($widths);
-
-    @for $child from 1 through $children {
-        $nth: #{$children}n+#{$child}; // Default targeted child.
-        @if $repeat == "no-repeat" {
-            $nth: #{$child};
-        } @else if $repeat == "repeat-last" {
-            $nth: if($child != $children, #{$child}, n+#{$child});
-        }
-
-        > :nth-child(#{$nth}) {
-            $width: nth($widths, $child);
-            @include elsass($media, $flow, $width, $gutter, $position, $padding) {
-                @content;
-            }
-        }
+    #{$nth} {
+      $width: nth($widths, $child);
+      @include elsass($media, $flow, $width, $gutter-in, $gutter-out, $position) {
+        @content;
+      }
     }
+  }
 }
