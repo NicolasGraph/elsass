@@ -20,7 +20,7 @@
 
 // 1.1 Default mixin argument values
 // ---------------------------------
-$oui-children: (
+$elsass-children: (
   'media'     : $BPT-MIN,
   'flow'      : null,
   'width'     : 1,
@@ -43,14 +43,42 @@ $oui-children: (
 // @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint spacings;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint spacings;
 // @param  $position    "pull", "push", "center" or ratio of the container width.
-@mixin children(
-  $media     : map-get($elsass, 'media'),
-  $flow      : map-get($elsass, 'flow'),
-  $widths    : map-get($elsass, 'width'),
-  $gutter-in : map-get($elsass, 'gutter-in'),
-  $gutter-out: map-get($elsass, 'gutter-out'),
-  $position  : map-get($elsass, 'position'))
+@mixin elsass-children(
+  $media     : null,
+  $flow      : null,
+  $widths    : null,
+  $gutter-in : null,
+  $gutter-out: null,
+  $position  : null)
 {
+
+  // Set/reset arguments according to values/default values.
+  $args: (
+    'media'     : $media,
+    'flow'      : $flow,
+    'widths'    : $widths,
+    'gutter-in' : $gutter-in,
+    'gutter-out': $gutter-out,
+    'position'  : $position,
+  );
+
+  $default: null;
+
+  @each $arg, $val in $args {
+    @if ($val == true or $val == '…') or ($val == null and $default) {
+      $args: map-merge($args, ($arg: map-get($elsass-children, $arg)));
+      @if not $default and $val == '…' {
+        $default: true;
+      }
+    }
+  }
+
+  $media     : map-get($args, 'media');
+  $flow      : map-get($args, 'flow');
+  $widths    : map-get($args, 'width');
+  $gutter-in : map-get($args, 'gutter-in');
+  $gutter-out: map-get($args, 'gutter-out');
+  $position  : map-get($args, 'position');
 
   // Separate valid widths from the optional repeat scheme.
   $repeat: null;
