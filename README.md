@@ -86,8 +86,8 @@ To enable argument default values, you can set their values to `true`, or set it
 
   | Value         | Description                                                                              |
   |---------------|------------------------------------------------------------------------------------------|
-  | `true`        | Enables the default argument default value                                               |
-  | `"…"`         | Enables the default default for the current argument and the following non defined ones. |
+  | `true`        | Enables the argument default value.                                                      |
+  | `"…"`         | Enables the default value for the current argument and the following non defined ones.   |
   | Breakpoint(s) | Uses the `$settings` map to get or calculate the `min-` and `max-width`.                 |
   | CSS value(s)  | Applies this value to the media-query `min-` or `max-width`.                             |
   | `false`       | Disables the media-query or skips `min-width` if a second value is set.                  |
@@ -112,8 +112,8 @@ To enable argument default values, you can set their values to `true`, or set it
 
   | Value   | Description                                                                              |
   |---------|------------------------------------------------------------------------------------------|
-  | `true`  | Enables the default argument default value                                               |
-  | `"…"`   | Enables the default default for the current argument and the following non defined ones. |
+  | `true`  | Enables the argument default value.                                                      |
+  | `"…"`   | Enables the default value for the current argument and the following non defined ones.   |
   | Ratio   | Calculates the element `width` (gutter included) based on the container `width`.         |
   | `"max"` | Applies a `width` of 100%  and a responsive `max-width`.                                 |
   | `false` | Disables `width` and `max-width`.                                                        |
@@ -130,8 +130,8 @@ To enable argument default values, you can set their values to `true`, or set it
 
   | Value                     | Description                                                                               |
   |---------------------------|-------------------------------------------------------------------------------------------|
-  | `true`                    | Enables the default argument default value                                                |
-  | `"…"`                     | Enables the default default for the current argument and the following non defined ones.  |
+  | `true`                    | Enables the argument default value.                                                       |
+  | `"…"`                     | Enables the default value for the current argument and the following non defined ones.    |
   | Ratio(s)                  | Multiplies the gutter value of the related padding side(s).                               |
   | CSS value(s)              | Set this value as the related gutter/padding side(s) .                                    |
   | `(`side`:` ratio/value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
@@ -151,9 +151,9 @@ To enable argument default values, you can set their values to `true`, or set it
 
   | Value                     | Description                                                                               |
   |---------------------------|-------------------------------------------------------------------------------------------|
-  | `true`                    | Enables the default argument default value                                                |
+  | `true`                    | Enables the argument default value.                                                       |
   | `silent`                  | Alterates the width according to the default argument value without affecting any margin. |
-  | `"…"`                     | Enables the default default for the current argument and the following non defined ones.  |
+  | `"…"`                     | Enables the default value for the current argument and the following non defined ones.    |
   | Ratio(s)                  | Multiplies the gutter value of the related margin side(s).                                |
   | CSS value(s)              | Set this value as the related gutter/margin side(s) .                                     |
   | `(`side`:` ratio/value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
@@ -171,8 +171,8 @@ To enable argument default values, you can set their values to `true`, or set it
 
   | Value          | Description                                                                              |
   |----------------|------------------------------------------------------------------------------------------|
-  | `true`         | Enables the default argument default value                                               |
-  | `"…"`          | Enables the default default for the current argument and the following non defined ones. |
+  | `true`         | Enables the argument default value.                                                      |
+  | `"…"`          | Enables the default value for the current argument and the following non defined ones.   |
   | Ratio          | Adds the related percentage to the left margin to push the element.                      |
   | Negative ratio | Soustract the related percentage from the left margin to push the element.               |
   | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.                    |
