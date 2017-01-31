@@ -1,6 +1,7 @@
 # elsass responsive grid builder
 
-[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and "semantic" grid builder using [flexbox](//caniuse.com/#feat=flexbox). It does also use [calc()](//caniuse.com/#search=calc) as long as you use the `$gutter-out-out` mixin argument.
+[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and _semantic_ grid builder using [flexbox](//caniuse.com/#feat=flexbox).  
+It does also use [calc()](//caniuse.com/#search=calc) when needed.  
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Contents
@@ -9,7 +10,7 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 * [Usage](#usage)
 * [Settings](#settings)
 * [Usage](#usage)
-* [this mixin](#this-mixin)
+* [mixin](#mixin)
 * [Examples / demos](#examples--demos)
 * [Add-ons](#add-ons)
 * [Credits](#credits)
@@ -128,14 +129,14 @@ To enable argument default values, you can set their values to `true`, or set it
   Set paddings from a single value or a list of two or four values (as for the CSS padding rule).  
   Different type of values can be used in a list.
 
-  | Value               | Description                                                                            |
-  |---------------------|----------------------------------------------------------------------------------------|
-  | `true`              | Enables the argument default value.                                                    |
-  | `"…"`               | Enables the default value for the current argument and the following non defined ones. |
-  | Ratio(s)            | Multiplies the gutter value of the related padding side(s).                            |
-  | CSS value(s)        | Set this value as the related gutter/padding side(s) .                                 |
-  | `(`side`:` value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                  |
-  | `false`             | Disables gutter as padding for the related side(s).                                    |
+  | Value                 | Description                                                                            |
+  |-----------------------|----------------------------------------------------------------------------------------|
+  | `true`                | Enables the argument default value.                                                    |
+  | `"…"`                 | Enables the default value for the current argument and the following non defined ones. |
+  | Ratio(s)              | Multiplies the gutter value of the related padding side(s).                            |
+  | CSS value(s)          | Set this value as the related gutter/padding side(s) .                                 |
+  | `("`side`":` value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                  |
+  | `false`               | Disables gutter as padding for the related side(s).                                    |
 
   ```scss
   @include elsass("s" "l", "row wrap", 1/2, .5) { … }; // Half gutter as padding all around.
@@ -156,7 +157,7 @@ To enable argument default values, you can set their values to `true`, or set it
   | `"…"`                    | Enables the default value for the current argument and the following non defined ones.    |
   | Ratio(s)                 | Multiplies the gutter value of the related margin side(s).                                |
   | CSS value(s)             | Set this value as the related gutter/margin side(s) .                                     |
-  | `(`side`:` value`)`      | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
+  | `("`side`":` value`)`    | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
   | `("silent":` value(s)`)` | Alterates the width according to the provided value(s) without affecting any margin.      |
   | `false`                  | Disables gutter as padding for the related side(s).                                       |
 
@@ -190,6 +191,8 @@ To enable argument default values, you can set their values to `true`, or set it
 
 ### Simple responsive grid
 
+#### HTML
+
 ```html
 <ul class="catalog">
   <li class="catalog_product catalog_product--first"></li>
@@ -204,6 +207,8 @@ To enable argument default values, you can set their values to `true`, or set it
   <li class="catalog_product"></li>
 </ul>
 ```
+
+#### SCSS
 
 ```scss
 .catalog {
@@ -230,6 +235,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 
 ### Metro-UI-like responsive grid
 
+#### HTML
+
 ```html
 <main class="page">
   <article class="page_post post">
@@ -244,6 +251,8 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
   <aside class="page_sidebar"></aside>
 </div>
 ```
+
+#### SCSS
 
 ```sass
 .page {
@@ -317,7 +326,7 @@ You can also build CSS grids or whatever you need.
 
 ### Author
 
-[Nicolas Morand](https://twitter.com/NicolasGraph), graphic designer and front-end developer in Strasbourg, France.
+[Nicolas Morand](https://twitter.com/NicolasGraph), designer and front-end developer in Strasbourg, France.  
 _Pardon my frenglish…_
 
 ### Licence
