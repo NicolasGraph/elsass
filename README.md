@@ -128,14 +128,14 @@ To enable argument default values, you can set their values to `true`, or set it
   Set paddings from a single value or a list of two or four values (as for the CSS padding rule).  
   Different type of values can be used in a list.
 
-  | Value                     | Description                                                                               |
-  |---------------------------|-------------------------------------------------------------------------------------------|
-  | `true`                    | Enables the argument default value.                                                       |
-  | `"…"`                     | Enables the default value for the current argument and the following non defined ones.    |
-  | Ratio(s)                  | Multiplies the gutter value of the related padding side(s).                               |
-  | CSS value(s)              | Set this value as the related gutter/padding side(s) .                                    |
-  | `(`side`:` ratio/value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
-  | `false`                   | Disables gutter as padding for the related side(s).                                       |
+  | Value               | Description                                                                            |
+  |---------------------|----------------------------------------------------------------------------------------|
+  | `true`              | Enables the argument default value.                                                    |
+  | `"…"`               | Enables the default value for the current argument and the following non defined ones. |
+  | Ratio(s)            | Multiplies the gutter value of the related padding side(s).                            |
+  | CSS value(s)        | Set this value as the related gutter/padding side(s) .                                 |
+  | `(`side`:` value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                  |
+  | `false`             | Disables gutter as padding for the related side(s).                                    |
 
   ```scss
   @include elsass("s" "l", "row wrap", 1/2, .5) { … }; // Half gutter as padding all around.
@@ -149,15 +149,16 @@ To enable argument default values, you can set their values to `true`, or set it
   Set margins from a value or a list of two or four values (as for the CSS margin rule).  
   It also alterates the width if provided, by soustracting the right and left margins from it.
 
-  | Value                     | Description                                                                               |
-  |---------------------------|-------------------------------------------------------------------------------------------|
-  | `true`                    | Enables the argument default value.                                                       |
-  | `silent`                  | Alterates the width according to the default argument value without affecting any margin. |
-  | `"…"`                     | Enables the default value for the current argument and the following non defined ones.    |
-  | Ratio(s)                  | Multiplies the gutter value of the related margin side(s).                                |
-  | CSS value(s)              | Set this value as the related gutter/margin side(s) .                                     |
-  | `(`side`:` ratio/value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
-  | `false`                   | Disables gutter as padding for the related side(s).                                       |
+  | Value                    | Description                                                                               |
+  |--------------------------|-------------------------------------------------------------------------------------------|
+  | `true`                   | Enables the argument default value.                                                       |
+  | `"silent"`               | Alterates the width according to the default argument value without affecting any margin. |
+  | `"…"`                    | Enables the default value for the current argument and the following non defined ones.    |
+  | Ratio(s)                 | Multiplies the gutter value of the related margin side(s).                                |
+  | CSS value(s)             | Set this value as the related gutter/margin side(s) .                                     |
+  | `(`side`:` value`)`      | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
+  | `("silent":` value(s)`)` | Alterates the width according to the provided value(s) without affecting any margin.      |
+  | `false`                  | Disables gutter as padding for the related side(s).                                       |
 
   ```scss
   @include elsass("s" "l", "row wrap", 1/2, 1/2) { … }; // Half gutter as margin all around.
@@ -169,15 +170,15 @@ To enable argument default values, you can set their values to `true`, or set it
 - `$position`  
   Alterates margins to pull, push or center the element.
 
-  | Value          | Description                                                                              |
-  |----------------|------------------------------------------------------------------------------------------|
-  | `true`         | Enables the argument default value.                                                      |
-  | `"…"`          | Enables the default value for the current argument and the following non defined ones.   |
-  | Ratio          | Adds the related percentage to the left margin to push the element.                      |
-  | Negative ratio | Soustract the related percentage from the left margin to push the element.               |
-  | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.                    |
-  | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.                     |
-  | `"center"`     | Centers the element by setting the right an left margins to `auto`.                      |
+  | Value          | Description                                                                            |
+  |----------------|----------------------------------------------------------------------------------------|
+  | `true`         | Enables the argument default value.                                                    |
+  | `"…"`          | Enables the default value for the current argument and the following non defined ones. |
+  | Ratio          | Adds the related percentage to the left margin to push the element.                    |
+  | Negative ratio | Soustract the related percentage from the left margin to push the element.             |
+  | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.                  |
+  | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.                   |
+  | `"center"`     | Centers the element by setting the right an left margins to `auto`.                    |
 
   ```scss
   @include elsass("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
