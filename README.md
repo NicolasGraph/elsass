@@ -76,14 +76,20 @@ $elsass: (
 @include elsass($media, $flow, $width, $gutter-out, $position, $gutter-in);
 ```
 
+#### Arguments
+
+To enable argument default values, you can set their values to `true`, or set it to `…`. This second value will enable the default value for each non defined following arguments.
+
 - `$media` applies a media-query around the generated CSS to build responsive layouts.  
   It accepts a single value or list of two values to set the media-query `min-` and `max-width`.
 
-  | Value      | Description                                                              |
-  |------------|--------------------------------------------------------------------------|
-  | Breakpoint | Uses the `$settings` map to get or calculate the `min-` and `max-width`. |
-  | CSS value  | Applies this value to the media-query `min-` or `max-width`.             |
-  | `false`    | Disables the media-query or skips `min-width` if a second value is set.  |
+  | Value         | Description                                                                              |
+  |---------------|------------------------------------------------------------------------------------------|
+  | `true`        | Enables the default argument default value                                               |
+  | `"…"`         | Enables the default default for the current argument and the following non defined ones. |
+  | Breakpoint(s) | Uses the `$settings` map to get or calculate the `min-` and `max-width`.                 |
+  | CSS value(s)  | Applies this value to the media-query `min-` or `max-width`.                             |
+  | `false`       | Disables the media-query or skips `min-width` if a second value is set.                  |
 
   ```scss
   @include elsass("s") { … }; // or…
@@ -94,8 +100,6 @@ $elsass: (
 - `$flow` set `flex-direction`, `flex-wrap` or `flex-flow`.  
     It accepts a single value or a list of two values.
 
-    …
-
     ```scss
     @include elsass("s" "l", row-reverse) { … }; // or…
     @include elsass($flow: row-reverse wrap) { … };
@@ -103,10 +107,13 @@ $elsass: (
 
 - `$width` set the element width (gutter included).
 
-    | Value  | Description                                                                       |
-    |--------|-----------------------------------------------------------------------------------|
-    | Ratio  | Calculates the element `width` (gutter included) based on the container `width`.  |
-    | `true` | Applies a `width` of 100%  and a responsive `max-width`.                          |
+    | Value   | Description                                                                              |
+    |---------|------------------------------------------------------------------------------------------|
+    | `true`  | Enables the default argument default value                                               |
+    | `"…"`   | Enables the default default for the current argument and the following non defined ones. |
+    | Ratio   | Calculates the element `width` (gutter included) based on the container `width`.         |
+    | `"max"` | Applies a `width` of 100%  and a responsive `max-width`.                                 |
+    | `false` | Disables `width` and `max-width`.                                                        |
 
     ```scss
     @include elsass("s" "l", "row wrap", 1/2) { … }; // or…
@@ -116,12 +123,14 @@ $elsass: (
 
 - `$gutter-in` set paddings from a value or a list of two or four values (as for the CSS padding rule).
 
-    | Value     | Description                                                                              |
-    |-----------|------------------------------------------------------------------------------------------|
-    | `false`   | Disables gutter as padding for the related side(s).                                      |
-    | Ratio     | Multiplies the gutter value of the related margin side(s).                               |
-    | CSS value | Set this value as the related gutter/margin side(s) .                                    |
-    | `silent`  | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
+    | Value        | Description                                                                               |
+    |--------------|-------------------------------------------------------------------------------------------|
+    | `true`       | Enables the default argument default value                                                |
+    | `silent`     | Alterates the width according to the default argument value without affecting any margin. |
+    | `"…"`        | Enables the default default for the current argument and the following non defined ones.  |
+    | Ratio(s)     | Multiplies the gutter value of the related margin side(s).                                |
+    | CSS value(s) | Set this value as the related gutter/margin side(s) .                                     |
+    | `false`      | Disables gutter as padding for the related side(s).                                       |
 
     ```scss
     @include elsass("s" "l", "row wrap", 1/2, .5) { … }; // Half gutter as padding all around.
@@ -134,12 +143,14 @@ $elsass: (
 - `$gutter-out` set margins from a value or a list of two or four values (as for the CSS margin rule).  
     It also alterates the element width if provided, by soustracting the right and left margin from it.
 
-    | Value     | Description                                                                              |
-    |-----------|------------------------------------------------------------------------------------------|
-    | `false`   | Disables gutter as margin for the related side(s).                                       |
-    | Ratio     | Multiplies the gutter value of the related margin side(s).                               |
-    | CSS value | Set this value as the related gutter/margin side(s) .                                    |
-    | `silent`  | Alterates the width without affecting any margin (see [Example / demo](#example--demo)). |
+    | Value        | Description                                                                               |
+    |--------------|-------------------------------------------------------------------------------------------|
+    | `true`       | Enables the default argument default value                                                |
+    | `silent`     | Alterates the width according to the default argument value without affecting any margin. |
+    | `"…"`        | Enables the default default for the current argument and the following non defined ones.  |
+    | Ratio(s)     | Multiplies the gutter value of the related margin side(s).                                |
+    | CSS value(s) | Set this value as the related gutter/margin side(s) .                                     |
+    | `false`      | Disables gutter as margin for the related side(s).                                        |
 
     ```scss
     @include elsass("s" "l", "row wrap", 1/2, 1/2) { … }; // Half gutter as margin all around.
@@ -150,13 +161,15 @@ $elsass: (
 
 - `$position` alterates margins to pull, push or center the element.
 
-    | Value          | Description                                                                       |
-    |----------------|-----------------------------------------------------------------------------------|
-    | Ratio          | Adds the related percentage to the left margin to push the element.               |
-    | Negative ratio | Soustract the related percentage from the left margin to push the element.        |
-    | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.             |
-    | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.              |
-    | `"center"`     | Centers the element by setting the right an left margins to `auto`.               |
+    | Value          | Description                                                                              |
+    |----------------|------------------------------------------------------------------------------------------|
+    | `true`         | Enables the default argument default value                                               |
+    | `"…"`          | Enables the default default for the current argument and the following non defined ones. |
+    | Ratio          | Adds the related percentage to the left margin to push the element.                      |
+    | Negative ratio | Soustract the related percentage from the left margin to push the element.               |
+    | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.                    |
+    | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.                     |
+    | `"center"`     | Centers the element by setting the right an left margins to `auto`.                      |
 
     ```scss
     @include elsass("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
