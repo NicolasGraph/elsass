@@ -148,7 +148,7 @@ html { box-sizing: border-box; }
   $position  : null)
 {
 
-  // Set/reset arguments according to values/default values. 
+  // Set/reset arguments according to values/default values.
   $args: (
     'media'     : $media,
     'flow'      : $flow,
@@ -176,25 +176,18 @@ html { box-sizing: border-box; }
   $gutter-out: map-get($args, 'gutter-out');
   $position  : map-get($args, 'position');
 
-  $elsass: elsass($media, $flow, $width, $gutter-in, $gutter-out, $position);
-  $bpts: map-keys($elsass);
+  $map: elsass($media, $flow, $width, $gutter-in, $gutter-out, $position);
+  $bpts: map-keys($map);
   $max-bpt: type-of($media) == list;
-
   // Generate CSS by iterating CSS per breakpoint.
-  @each $bpt, $css in $elsass {
-    @if $bpt == nth($bpts, 1) {
-      $to-bpt: nth($bpts, length($bpts));
-      @include elsass-bpt($bpt, if($max-bpt, $to-bpt, false)) {
-        @each $prop, $val in map-get($elsass, $bpt) {
+  @each $bpt-min, $submap in $map {
+    @each $bpt-max, $bpt-css in $submap {
+      @include elsass-bpt($bpt-min, $bpt-max) {
+        @each $prop, $val in $bpt-css {
           #{$prop}: #{$val};
         }
-        @content;
-      }
-      $css: if($max-bpt, map-remove($elsass, $to-bpt), $elsass);
-    } @else {
-      @include elsass-bpt($bpt) {
-        @each $prop, $val in map-get($elsass, $bpt) {
-          #{$prop}: #{$val};
+        @if $bpt-min == nth($bpts, 1) {
+          @content;
         }
       }
     }
@@ -225,9 +218,18 @@ html { box-sizing: border-box; }
   // List breakpoints explicitly and implicitly set.
   $bpts-set: elsass-bpts-set($min-bpt, $max-bpt);
 
-  $css: (); // To store CSS properties and values per breakpoint.
-
+  $map: (); // To store CSS properties and values per breakpoint.
   @each $bpt in $bpts-set {
+
+    $i: index($bpts-set, $bpt);
+    $bpt-next: null;
+
+    @if $i == length($bpts-set) {
+      $bpt-next: if($max-bpt, nth($BPTS, index($BPTS, $bpt) + 1), false);
+    } @else {
+      $bpt-next: nth($bpts-set, $i + 1);
+    }
+
     $bpt-css: (); // To store the current breakpoint CSS.
 
     $silent-gutter: null;
@@ -271,26 +273,33 @@ html { box-sizing: border-box; }
     }
 
     // Iterate breakpoint CSS to remove useless properties.
-    @each $bpt-prop, $bpt-val in $bpt-css {
-      // Iterate stored CSS per breakpoint.
-      @each $stored-bpt, $stored-css in $css {
-        @if map-has-key($stored-css, $bpt-prop) {
-          @if map-get($stored-css, $bpt-prop) == $bpt-val {
-            // Remove duplicated CSS.
-            $bpt-css: map-remove($bpt-css, $bpt-prop);
-          } @else {
-            // Re-merge CSS as it was maybe removed.
-            $bpt-css: map-merge($bpt-css, ($bpt-prop: $bpt-val));
+    @if $map == () {
+      $map: ($bpt: ($bpt-next: $bpt-css));
+    } @else {
+      $new-css: null;
+      @each $bpt-prop, $bpt-val in $bpt-css {
+        @each $stored-min, $stored-submap in $map {
+          @each $stored-max, $stored-css in $stored-submap {
+            @if $stored-max == $bpt {
+              @if map-get($stored-css, $bpt-prop) == $bpt-val {
+                // Remove duplicated CSS from $bpt-css.
+                $bpt-css: map-remove($bpt-css, $bpt-prop);
+                // Remove duplicated CSS from $map.
+                $stored-css: map-remove($stored-css, $bpt-prop);
+                // store duplicated CSS in $new-css.
+                $new-css: if($new-css, map-merge($new-css, ($bpt-prop: $bpt-val)), ($bpt-prop: $bpt-val));
+                $imi: map-merge(map-get($map, $stored-min), ($stored-max: $stored-css, $bpt-next: $new-css));
+                $map: map-merge($map, ($stored-min: ($imi)));
+              }
+              $map: map-merge($map, ($bpt: ($bpt-next: $bpt-css)));
+            }
           }
         }
       }
     }
-
-    // Store tidy breakpoint related CSS.
-    $css: map-merge($css, ($bpt: $bpt-css));
   }
 
-  @return $css;
+  @return $map;
 }
 
 // 4.2 elsass-flex
@@ -574,14 +583,16 @@ html { box-sizing: border-box; }
 // @see     3.2 elsass
 @function elsass-bpts-set($from: null, $to: null) {
   // Get the position of each breakpoint in the $settings map.
-  $from: if($from, index($BPTS, $from), 1);
-  $to: if($to, index($BPTS, $to), length($BPTS));
+  $bpt-min: if($from, index($BPTS, $from), 1);
+  $bpt-max: if($to, index($BPTS, $to), length($BPTS));
 
   $out: null; // Prepare the output.
   // Get a list of the breakpoints set explicitly and implicitly.
-  @for $i from $from through $to {
-    $bpt: nth($BPTS, $i);
-    $out: if($out, append($out, $bpt), $bpt);
+  @for $i from $bpt-min through $bpt-max {
+    @if not $to or $i != index($BPTS, $to) {
+      $bpt: nth($BPTS, $i);
+      $out: if($out, append($out, $bpt), $bpt);
+    }
   }
 
   @return $out;
