@@ -176,18 +176,25 @@ html { box-sizing: border-box; }
   $gutter-out: map-get($args, 'gutter-out');
   $position  : map-get($args, 'position');
 
-  $map: elsass($media, $flow, $width, $gutter-in, $gutter-out, $position);
-  $bpts: map-keys($map);
-  $max-bpt: type-of($media) == list;
   // Generate CSS by iterating CSS per breakpoint.
-  @each $bpt-min, $submap in $map {
-    @each $bpt-max, $bpt-css in $submap {
-      @include elsass-bpt($bpt-min, $bpt-max) {
-        @each $prop, $val in $bpt-css {
-          #{$prop}: #{$val};
-        }
-        @if $bpt-min == nth($bpts, 1) {
-          @content;
+
+  // Get the provided breakpoints.
+  $min-bpt: if(nth($media, 1), nth($media, 1), $BPT-MIN);
+  $max-bpt: if(type-of($media) == list, nth($media, 2), false);
+  @include elsass-bpt($min-bpt, $max-bpt) {
+    @content;
+  }
+
+  @if $flow or $width or $gutter-in or $gutter-out or $position {
+    $map: elsass($media, $flow, $width, $gutter-in, $gutter-out, $position);
+    $bpts: map-keys($map);
+
+    @each $bpt-min, $submap in $map {
+      @each $bpt-max, $bpt-css in $submap {
+        @include elsass-bpt($bpt-min, $bpt-max) {
+          @each $prop, $val in $bpt-css {
+            #{$prop}: #{$val};
+          }
         }
       }
     }
