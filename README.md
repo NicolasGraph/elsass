@@ -1,6 +1,6 @@
-# elsass responsive grid builder
+# el-sass responsive grid builder
 
-[elsass](//github.com/NicolasGraph/elsass) is a quite light Sass powered CSS responsive and _semantic_ grids builder using [flexbox](//caniuse.com/#feat=flexbox).  
+[el-sass](//github.com/NicolasGraph/el-sass) is a quite light Sass powered CSS responsive and _semantic_ grids builder using [flexbox](//caniuse.com/#feat=flexbox).  
 It does also use [calc()](//caniuse.com/#search=calc) when needed.  
 Click these features for support informations via [caniuse.com](//caniuse.com/).
 
@@ -25,15 +25,15 @@ Click these features for support informations via [caniuse.com](//caniuse.com/).
 
 ## Usage
 
-Import `elsass.scss` in your main `.scss` file.
+Import `el-sass.scss` in your main `.scss` file.
 
 ```scss
-@import "elsass/core/elsass";
+@import "el-sass/core/el-sass";
 ```
 
 ## Settings
 
-You can customize some elsass variable values on the top of `elsass.scss`.
+You can customize some el-sass variable values on the top of `el-sass.scss`.
 It can also be done in a different file if you prefer.
 
 ### Layout settings
@@ -55,28 +55,28 @@ $settings: (
 );
 ```
 
-### elsass mixin default argument values
+### el-sass mixin default argument values
 
 ```scss
-$elsass: (
+$el-sass: (
   'media'     : $BPT-MIN,
   'flow'      : null,
   'width'     : 1,
   'gutter-in' : .5,
   'gutter-out': .5,
-  'position'  : null,
+  'shift'     : null,
 );
 ```
 
 ## Mixin
 
-### elsass
+### el-sass
 
-elsass is a multipurpose mixin able to build responsive containers, flex grids and grids items.
+el-sass is a multipurpose mixin able to build responsive containers, flex grids and grids items.
 It can also be used to easily build other mixins.
 
 ```scss
-@include elsass($media, $flow, $width, $gutter-out, $position, $gutter-in);
+@include el-sass($media, $flow, $width, $gutter-out, $shift, $gutter-in);
 ```
 
 #### Arguments
@@ -85,10 +85,13 @@ An arguments need to be set to `true` to enable its default value.
 `"…"` can be used to enable the default value of the current argument and the following non defined ones.
 
 ```scss
-@include elsass("…"); // Set each argument to its default value.
+@include el-sass("…"); // Set each argument to its default value.
 ```
 
 - ##### `$media`  
+
+  ###### Description
+
   Applies a media-query around the generated CSS to build responsive layouts.  
   It accepts a single value or list of two values to set the media-query `min-` and `max-width`.
 
@@ -102,47 +105,33 @@ An arguments need to be set to `true` to enable its default value.
   | CSS value(s)  | Applies this value to the media-query `min-` or `max-width`.                             |
   | `false`       | Disables the media-query or skips `min-width` if a second value is set.                  |
 
-  ###### Examples
-
-  ```scss
-  @include elsass("s") { … }; // Apply the generated CSS to all breakpoints (= false).
-  @include elsass("s" "l") { … }; // Apply the generated CSS to the "s" and "m" breakpoints.
-  @include elsass(false "l") { … }; // Apply the generated CSS to breakpoints smallest than "l".
-  ```
-
 - ##### `$flow`  
+
+  ###### Description
+
   Set `flex-direction`, `flex-wrap` or `flex-flow`.  
   It accepts a single value or a list of two values.
 
-  ###### Examples
-
-  ```scss
-  @include elsass("s" "l", row-reverse) { … }; // or…
-  @include elsass($flow: row-reverse wrap) { … };
-  ```
-
 - ##### `$width`  
+
+  ###### Description
+
   Set the element width (gutter included).
 
   ###### Values
 
-  | Value   | Description                                                                              |
-  |---------|------------------------------------------------------------------------------------------|
-  | `true`  | Enables the argument default value.                                                      |
-  | `"…"`   | Enables the default value for the current argument and the following non defined ones.   |
-  | Ratio   | Calculates the element `width` (gutter included) based on the container `width`.         |
-  | `"max"` | Applies a `width` of 100%  and a responsive `max-width`.                                 |
-  | `false` | Disables `width` and `max-width`.                                                        |
-
-  ###### Examples
-
-  ```scss
-  @include elsass("s" "l", "row wrap", 1/2) { … }; // or…
-  @include elsass("s" "l", "row wrap", .5) { … }; // or…
-  @include elsass($width: "max") { … };
-  ```
+  | Value   | Description                                                                            |
+  |---------|----------------------------------------------------------------------------------------|
+  | `true`  | Enables the argument default value.                                                    |
+  | `"…"`   | Enables the default value for the current argument and the following non defined ones. |
+  | Ratio   | Calculates the element `width` (gutter included) based on the container `width`.       |
+  | `"max"` | Applies a `width` of 100% and a responsive `max-width`.                                |
+  | `false` | Disables `width` and `max-width`.                                                      |
 
 - ##### `$gutter-in`  
+
+  ###### Description
+
   Set paddings from a single value or a list of two or four values (as for the CSS padding rule).  
   Different type of values can be used in a list.
 
@@ -154,20 +143,13 @@ An arguments need to be set to `true` to enable its default value.
   | `"…"`                 | Enables the default value for the current argument and the following non defined ones. |
   | Ratio(s)              | Multiplies the gutter value of the related padding side(s).                            |
   | CSS value(s)          | Set this value as the related gutter/padding side(s) .                                 |
-  | `("`side`":` value`)` | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                  |
+  | `("`side`":` value`)` | Set a defined side gutter.                                                             |
   | `false`               | Disables gutter as padding for the related side(s).                                    |
 
-  ###### Examples
-
-  ```scss
-  @include elsass("s" "l", "row wrap", 1/2, .5) { … }; // Half gutter as padding all around.
-  @include elsass("s" "l", "row wrap", 1/2, ("silent": .5)) { … }; // Alterates the element width without affecting any margin.
-  @include elsass("s" "l", "row wrap", 1/2, false -.5) { … }; // Half nested gutter on right and left.
-  @include elsass("s" "l", "row wrap", 1/2, (left: 1)) { … }; // Full gutter on the left padding side.
-  @include elsass($gutter-in: 1px 2px 3px 4px) { … }; // Usual padding CSS values.
-  ```
-
 - ##### `$gutter-out`  
+
+  ###### Description
+
   Set margins from a value or a list of two or four values (as for the CSS margin rule).  
   It also alterates the width if provided, by soustracting the right and left margins from it.
 
@@ -180,41 +162,27 @@ An arguments need to be set to `true` to enable its default value.
   | `"…"`                    | Enables the default value for the current argument and the following non defined ones.    |
   | Ratio(s)                 | Multiplies the gutter value of the related margin side(s).                                |
   | CSS value(s)             | Set this value as the related gutter/margin side(s) .                                     |
-  | `("`side`":` value`)`    | Set a defined side gutter. (`false .5 false false` = `("right": .5)`)                     |
+  | `("`side`":` value`)`    | Set a defined side gutter.                                                                |
   | `("silent":` value(s)`)` | Alterates the width according to the provided value(s) without affecting any margin.      |
   | `false`                  | Disables gutter as padding for the related side(s).                                       |
 
-  ###### Examples
+- ##### `$shift`  
 
-  ```scss
-  @include elsass("s" "l", "row wrap", 1/2, 1/2) { … }; // Half gutter as margin all around.
-  @include elsass("s" "l", "row wrap", 1/2, false -.5) { … }; // Half gutter nested on right and left.
-  @include elsass("s" "l", "row wrap", 1/2, (right: 1)) { … }; // Full gutter on the right margin side.
-  @include elsass($gutter-out: 1px 2px 3px 4px) { … }; // Usual CSS values.
-  ```
+  ###### Description
 
-- ##### `$position`  
-  Alterates margins to pull, push or center the element.
+  Alterates margins to positionate the element.
 
   ###### Values
 
   | Value          | Description                                                                            |
   |----------------|----------------------------------------------------------------------------------------|
   | `true`         | Enables the argument default value.                                                    |
-  | `"…"`          | Enables the default value for the current argument and the following non defined ones. |
-  | Ratio          | Adds the related percentage to the left margin to push the element.                    |
-  | Negative ratio | Soustract the related percentage from the left margin to pull the element.             |
   | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.                  |
-  | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.                   |
   | `"center"`     | Centers the element by setting the right an left margins to `auto`.                    |
-
-  ###### Examples
-
-  ```scss
-  @include elsass("s" "l", "row wrap", 1/2, true, 1/2) { … }; // or…
-  @include elsass("s" "l", "row wrap", 1/2, true, -1/2) { … }; // or…
-  @include elsass($position: "center") { … };
-    ```
+  | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.                   |
+  | Ratio (`true`) | Push or pull (if negative) the element according to the container width ratio.
+                     If `true` is appended as a second value, it will enable an _apply to next_ option,
+                     pulling or pushing the following elements                                              |
 
 ## Examples / demos
 
@@ -223,38 +191,38 @@ An arguments need to be set to `true` to enable its default value.
 #### HTML
 
 ```html
-<ul class="catalog">
-  <li class="catalog__product catalog__product--first"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
-  <li class="catalog__product"></li>
+<ul class="staff">
+  <li class="staff__person staff__person--lead"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
+  <li class="staff__person"></li>
 </ul>
 ```
 
 #### SCSS
 
 ```scss
-.catalog {
-  @include elsass("…", $position: "center") {
+.staff {
+  @include el-sass("…", $shift: "center") {
     list-style: none;
     background: #eee;
   }
 
-  &__product {
+  &__person {
     border: 1px solid #ddd;
-    @include elsass("s" "l", false, 1/2, "…");
-    @include elsass("l", false, 1/4, "…");
+    @include el-sass("s" "l", false, 1/2, "…");
+    @include el-sass("l", false, 1/4, "…");
 
-    &--first {
+    &--lead {
       background: #fff;
-      @include elsass("s" "l", false, 1, "silent");
-      @include elsass("l", false, 1/2, "silent");
+      @include el-sass("s" "l", false, 1, "silent");
+      @include el-sass("l", false, 1/2, "silent");
     }
   }
 }
@@ -294,41 +262,41 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 ```sass
 .page {
   background: #eee;
-  @include elsass("…", $position: "center");
-  @include elsass("s" "m", column, $gutter-out: "silent");
+  @include el-sass("…", $shift: "center");
+  @include el-sass("s" "m", column, $gutter-out: "silent");
 
   &__post {
-    @include elsass("s" "l", false, 1);
-    @include elsass("l", false, 2/3);
+    @include el-sass("s" "l", false, 1);
+    @include el-sass("l", false, 2/3);
   }
 
   &__sidebar {
     border: 1px solid #ddd;
-    @include elsass("s" "l", false, 1, "…");
-    @include elsass("l", false, 1/3, "…");
+    @include el-sass("s" "l", false, 1, "…");
+    @include el-sass("l", false, 1/3, "…");
   }
 }
 
 .post {
-  @include elsass("s" "m", column);
-  @include elsass("m", true);
+  @include el-sass("s" "m", column);
+  @include el-sass("m", true);
 
   &__infos {
-    @include elsass("s" "m", false, 1);
-    @include elsass("m", false, 1/2);
+    @include el-sass("s" "m", false, 1);
+    @include el-sass("m", false, 1/2);
   }
 
   &__image {
     border: 1px solid #ddd;
     background: #fff;
-    @include elsass("s" "m", false, 1, "…");
-    @include elsass("m", false, 1/2, "…");
+    @include el-sass("s" "m", false, 1, "…");
+    @include el-sass("m", false, 1/2, "…");
   }
 
   &__body,
   &__footer {
     border: 1px solid #ddd;
-    @include elsass("s", false, 1, "…");
+    @include el-sass("s", false, 1, "…");
   }
 
   &__body {
@@ -337,15 +305,15 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/0a4b4870f20b9540
 }
 
 .infos {
-  @include elsass("s" "m", row);
-  @include elsass("m", column);
+  @include el-sass("s" "m", row);
+  @include el-sass("m", column);
 
   &__title,
   &__description {
     border: 1px solid #ddd;
     flex-grow: 1;
-    @include elsass("s" "m", false, 1/2, "…");
-    @include elsass("m", false, 1, "…");
+    @include el-sass("s" "m", false, 1/2, "…");
+    @include el-sass("m", false, 1, "…");
   }
 }
 ```
@@ -354,10 +322,10 @@ See and resize on [Sassmeister](http://www.sassmeister.com/gist/2722430257d50d32
 
 ## Add-ons
 
-elsass is build to provide a generic multipurpose mixin which can be used as is or manipulated to build your owns.
+el-sass is build to provide a generic multipurpose mixin which can be used as is or manipulated to build your owns.
 You can also build CSS grids or whatever you need.
 
-* [elsass-children mixin](/add-ons/children): apply `elsass` mixin with multiple `width` values to children elements;
+* [el-sass-children mixin](/add-ons/children): apply `el-sass` mixin with multiple `width` values to children elements;
 
 ## Credits
 
