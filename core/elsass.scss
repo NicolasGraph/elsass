@@ -19,12 +19,12 @@
 // 2. CSS base
 // ===========
 
-// 3. Mixins
+// 3. Mixins (underscore for nested mixin)
 // =========
 // 3.1 _el-bpt
 // 3.2 el-sass
 
-// 4. Functions
+// 4. Functions (underscore for nested functions)
 // ============
 // 4.1 el-sass
 // 4.2 el-flex
@@ -78,7 +78,7 @@ $BPT-MIN: nth($BPTS, 1);  // Smallest breakpoint.
 $el-sass: (
   'media'     : $BPT-MIN,
   'flow'      : row wrap,
-  'width'     : 'max',
+  'width'     : 1 true,
   'gutter-in' : .5,
   'gutter-out': .5,
   'shift'     : null,
@@ -139,13 +139,10 @@ html { box-sizing: border-box; }
 // Generate whatever responsive element you need.
 // @param  $media       Breakpoint(s);
 // @param  $flow        flex-direction flex-wrap;
-// @param  $width       Ratio of the container width or true
-//                      to generate a width of 100%
-//                      and apply the breakpoint(s) related max-width;
-//                      followed by the responsive max-width provided in $settings.
+// @param  $width       width (ratio) max-width (true / CSS value);
 // @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint gaps;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint gaps;
-// @param  $shift    'pull', 'push', 'center' or ratio of the container width.
+// @param  $shift       'pull', 'push', 'center' or ratio of the container width.
 @mixin el-sass(
   $media     : null,
   $flow      : null,
@@ -252,8 +249,8 @@ html { box-sizing: border-box; }
         $width-out: map-get($gutter-out, 'silent');
       }
       $bpt-width: null;
-      @if $width == 'max' {
-        $bpt-width: el-width($bpt, 1, true, $width-out);
+      @if type-of($width) == list {
+        $bpt-width: el-width($bpt, nth($width, 1), nth($width, 2), $width-out);
       } @else {
         $bpt-width: el-width($bpt, $width, false, $width-out);
       }
@@ -456,7 +453,7 @@ html { box-sizing: border-box; }
 // -------------
 // Atlterate margins according to the $shift value.
 // @param  $margin    Margins map as returned by _el-gap(),
-// @param  $shift  elsass mixin argument.
+// @param  $shift     elsass mixin argument.
 // @see    3.2 elsass
 @function _el-shift($margin, $shift) {
   $shifts: ();
@@ -588,7 +585,7 @@ html { box-sizing: border-box; }
 // 4.10 _el-check
 // --------------
 // Return an error message if an argument value is not valid.
-// @see  ## el-sass
+// @see  3.2 el-sass
 @function _el-check(
   $media     : null,
   $flow      : null,
@@ -608,8 +605,14 @@ html { box-sizing: border-box; }
     }
   }
 
-  @if $width and $width != 'max' and type-of($width) != number {
-    @error '#{&}: "#{$width}" is not a valid value for $width.';
+  @if $width {
+    $width: nth($width, 1);
+    $max-width: if(type-of($width) == list, nth($width, 2), false);
+    @if (type-of($media) == list and length($media) > 2) or
+        ($width and $width != 'max' and type-of($width) != number) or
+        ($max-width and $max-width != true and type-of($width) != number) {
+      @error '#{&}: "#{$width}" is not a valid value for $width.';
+    }
   }
 
   @if $flow {
