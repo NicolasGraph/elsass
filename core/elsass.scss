@@ -142,7 +142,8 @@ html { box-sizing: border-box; }
 // @param  $width       width (ratio) max-width (true / CSS value);
 // @param  $gutter-in   Padding value(s) or ratio(s) of the breakpoint gaps;
 // @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint gaps;
-// @param  $shift       'pull', 'push', 'center' or ratio of the container width.
+// @param  $shift       'pull', 'push', 'center' or ratio of the container width
+//                      optionally followed by true to pull or push next items.
 @mixin el-sass(
   $media     : null,
   $flow      : null,
@@ -259,7 +260,11 @@ html { box-sizing: border-box; }
 
     // Get and store CSS margin related properties and values.
     @if $gutter-out {
-      $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter-out, $shift));
+      @if type-of($shift) == list {
+        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter-out, nth($shift, 1), nth($shift, 2)));
+      } @else {
+        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter-out, $shift));
+      }
     }
 
     // Get and store CSS padding related properties and values.
@@ -327,18 +332,18 @@ html { box-sizing: border-box; }
 // 4.3 el-width
 // ------------
 // Returns a map of needed width related CSS properties and their values.
-// @param  $bpt         Breakpoint as a $settings key;
-// @param  $width       Width value or ratio of the container width;
-// @param  $max-width   Max width value or true to use the breakpoint settings;
-// @param  $gutter-out  Margin value(s) or ratio(s) of the breakpoint gaps;
+// @param  $bpt        Breakpoint as a $settings key;
+// @param  $width      Width value or ratio of the container width;
+// @param  $max-width  Max width value or true to use the breakpoint settings;
+// @param  $gutter     Margin value(s) or ratio(s) of the breakpoint gaps;
 // @see    3.2 elsass
-@function el-width($bpt, $width, $max-width: null, $gutter-out: null) {
+@function el-width($bpt: null, $width: null, $max-width: null, $gutter: null) {
   $width-out: null;
   $abs-out: null;
 
   // Get a margin value to subtract.
-  @if ($width or $max-width) and $gutter-out {
-    $margin: _el-gap($bpt, $gutter-out);
+  @if ($width or $max-width) and $gutter {
+    $margin: _el-gap($bpt, $gutter);
     $right: map-get($margin, 'right');
     @if $right and $right != 0 {
       $width-out: $right;
@@ -387,7 +392,7 @@ html { box-sizing: border-box; }
 // @param  $bpt     Breakpoint as a $settings key;
 // @param  $gutter  Padding value(s) or ratio(s) of the breakpoint gaps.
 // @see    3.2 elsass
-@function el-padding($bpt, $gutter) {
+@function el-padding($bpt: null, $gutter: null) {
   // Get a map of padding values per side.
   $padding: _el-gap-shorthand(_el-gap($bpt, $gutter));
 
@@ -407,10 +412,12 @@ html { box-sizing: border-box; }
 // 4.5 el-margin
 // -------------
 // Returns a map of margin related CSS properties and their values.
-// @param  $bpt     Breakpoint as a $settings key;
-// @param  $gutter  Margin value(s) or ratio(s) of the breakpoint gaps.
+// @param  $bpt         Breakpoint as a $settings key;
+// @param  $gutter      Margin value(s) or ratio(s) of the breakpoint gaps.
+// @param  $shift       'pull', 'push', 'center' or ratio of the container width
+// @param  $shift-next  boolean.
 // @see    3.2 elsass
-@function el-margin($bpt, $gutter, $shift: null) {
+@function el-margin($bpt: null, $gutter: null, $shift: null, $shift-next: null) {
   // Prepare silent gutter variables.
   $silent: null;
 
@@ -429,7 +436,7 @@ html { box-sizing: border-box; }
 
   // Alterate $margin according to $shift.
   @if $shift {
-    $shift: _el-shift($margin, $shift);
+    $shift: _el-shift($margin, $shift, $shift-next);
     $margin: if($silent, $shift, map-merge($margin, $shift));
   }
 
@@ -452,16 +459,17 @@ html { box-sizing: border-box; }
 // 4.6 _el-shift
 // -------------
 // Atlterate margins according to the $shift value.
-// @param  $margin    Margins map as returned by _el-gap(),
-// @param  $shift     elsass mixin argument.
+// @param  $margin      Margins map as returned by _el-gap(),
+// @param  $shift       'pull', 'push', 'center' or ratio of the container width
+// @param  $shift-next  boolean.
 // @see    3.2 elsass
-@function _el-shift($margin, $shift) {
+@function _el-shift($margin: null, $shift: null, $shift-next: null) {
   $shifts: ();
 
-  @if type-of(nth($shift, 1)) == number {
-    $shift-left: percentage(nth($shift, 1));
+  @if type-of($shift) == number {
+    $shift-left: percentage($shift);
     $shifts: map-merge($shifts, ('left': $shift-left));
-    @if type-of($shift) != list {
+    @if not $shift-next {
       $shifts: map-merge($shifts, ('right': -$shift-left));
     }
   } @else if $shift == 'center' or $shift == 'pull' or $shift == 'push' {
@@ -502,8 +510,8 @@ html { box-sizing: border-box; }
 // Return a map of gap values from $gap.
 // @param  $bpt  Breakpoint;
 // @param  $gap  Margin/padding value(s) or ratio(s) of the breakpoint gaps.
-// @see    4.3 el-padding, 4.4 el-margin
-@function _el-gap($bpt, $gap) {
+// @see    4.4 el-padding, 4.5 el-margin
+@function _el-gap($bpt: null, $gap: null) {
   // Get $gap as a four values list.
   $sides: 'top', 'right', 'bottom', 'left';
 
@@ -544,8 +552,8 @@ html { box-sizing: border-box; }
 // ---------------------
 // Return a map of gap values from $gap.
 // @param  $gap  Margin/padding value(s) or ratio(s) of the breakpoint gaps.
-// @see    4.9 _el-gap
-@function _el-gap-shorthand($gap) {
+// @see    4.7 _el-gap
+@function _el-gap-shorthand($gap: null) {
   // Set a gap shorthand if possible.
   $top: map-get($gap, 'top');
   $right: map-get($gap, 'right');
@@ -654,7 +662,7 @@ html { box-sizing: border-box; }
     $next: if(type-of($shift) == list, nth($shift, 2), false);
     @if (type-of($shift) == list and length($shift) > 2) or
         ($to != 'push' and $to != 'center' and ($next and type-of($to) != number)) or
-        $next and (($to > 0 and $next != 'push-next') or ($to < 0 and $next != 'pull-next')) {
+        $next and $next != true {
       @error '#{&}: "#{$shift}" is not a valid value for $shift.';
     }
   }
