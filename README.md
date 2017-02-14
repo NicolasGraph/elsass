@@ -180,9 +180,7 @@ An arguments need to be set to `true` to enable its default value.
   | `"pull"`       | Pulls the element on the right side by applying `margin-right: auto`.                  |
   | `"center"`     | Centers the element by setting the right an left margins to `auto`.                    |
   | `"push"`       | Pushes the element on the left side by applying `margin-left: auto`.                   |
-  | Ratio (`true`) | Push or pull (if negative) the element according to the container width ratio.
-                     If `true` is appended as a second value, it will enable an _apply to next_ option,
-                     pulling or pushing the following elements                                              |
+  | Ratio (`true`) | Push or pull (if negative) the element according to the container width ratio. If `true` is appended as a second value, it will enable an _apply to next_ option, pulling or pushing the following elements         |
 
 ## Examples / demos
 
