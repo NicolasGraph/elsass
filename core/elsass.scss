@@ -72,6 +72,7 @@ $settings: (
 // --------------------
 $BPTS: map-keys($settings); // Breakpoints list.
 $BPT-MIN: nth($BPTS, 1);  // Smallest breakpoint.
+$SIDES: 'top', 'right', 'bottogm', 'left';
 
 // 1.3 Default mixin argument values
 // ---------------------------------
@@ -513,15 +514,13 @@ html { box-sizing: border-box; }
 // @see    4.4 el-padding, 4.5 el-margin
 @function _el-gap($bpt: null, $gap: null) {
   // Get $gap as a four values list.
-  $sides: 'top', 'right', 'bottom', 'left';
-
   @if type-of($gap) == number {
     $gap: $gap $gap $gap $gap;
   } @else if type-of($gap) == list and length($gap) == 2 {
     $gap: nth($gap, 1) nth($gap, 2) nth($gap, 1) nth($gap, 2);
   } @else if type-of($gap) == map {
     $new-gap: null;
-    @each $side in $sides {
+    @each $side in $SIDES {
       $val: if(map-has-key($gap, $side), map-get($gap, $side), false);
       $new-gap: if($new-gap == null, $val, append($new-gap, $val));
     }
@@ -541,7 +540,7 @@ html { box-sizing: border-box; }
           $val: $val * map-get($bpt-settings, 'gutter-width');
         }
       }
-      $out: map-merge($out, (#{nth($sides, $i)}: $val));
+      $out: map-merge($out, (#{nth($SIDES, $i)}: $val));
     }
   }
 
@@ -642,9 +641,8 @@ html { box-sizing: border-box; }
     $vals-type: type-of($vals);
     @if $vals {
       @if $vals-type == map {
-        $sides: 'top', 'right', 'bottom', 'left';
         @each $side, $val in $vals {
-          @if (not index($sides, $side)) or ($val and type-of($val) != number) {
+          @if (not index($SIDES, $side)) or ($val and type-of($val) != number) {
             @error '#{&}: "#{$vals}" is not a valid value for $#{$gutter}.';
           }
         }
