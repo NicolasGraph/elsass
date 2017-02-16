@@ -641,7 +641,14 @@ html { box-sizing: border-box; }
   @each $gutter, $vals in $gutters {
     $vals-type: type-of($vals);
     @if $vals {
-      @if $vals-type == list {
+      @if $vals-type == map {
+        $sides: 'top', 'right', 'bottom', 'left';
+        @each $side, $val in $vals {
+          @if (not index($sides, $side)) or ($val and type-of($val) != number) {
+            @error '#{&}: "#{$vals}" is not a valid value for $#{$gutter}.';
+          }
+        }
+      } @else if $vals-type == list {
         @if length($vals) != 2 and length($vals) != 4 {
           @error '#{&}: "#{$vals}" is not a valid value for $#{$gutter}.';
         } @else {
