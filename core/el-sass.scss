@@ -72,7 +72,7 @@ $settings: (
 // --------------------
 $BPTS: map-keys($settings); // Breakpoints list.
 $BPT-MIN: nth($BPTS, 1);  // Smallest breakpoint.
-$SIDES: 'top', 'right', 'bottogm', 'left';
+$SIDES: 'top', 'right', 'bottom', 'left';
 
 // 1.3 Default mixin argument values
 // ---------------------------------
@@ -103,13 +103,17 @@ html { box-sizing: border-box; }
 // @param  $from  breakpoint or min-width value;
 // @param  $to    breakpoint or max-width value.
 // @see    3.2 elsass
-@mixin _el-bpt($from: null, $to: null) {
+@mixin _el-bpt(
+  $from: null,
+  $to: null
+) {
+
   $mq: null; // Media-query
 
   // Set a media-query min-width if $from is set
   // and not the first breakpoint.
   @if $from and $from != $BPT-MIN {
-    @if map-has-key($settings, $from) {
+    @if index($BPTS, $from) {
       $from-settings: map-get($settings, $from);
       $from: map-get($from-settings, 'device-min-width');
     }
@@ -118,7 +122,7 @@ html { box-sizing: border-box; }
 
   // Set a media-query max-width if needed.
   @if $to {
-    @if map-has-key($settings, $to) {
+    @if index($BPTS, $to) {
       $to-settings: map-get($settings, $to);
       $to: map-get($to-settings, 'device-min-width') - 1;
     }
@@ -241,15 +245,30 @@ html { box-sizing: border-box; }
 
     $bpt-css: (); // To store the current breakpoint CSS.
 
+    // Get and store CSS flex related properties and values.
+    @if $flow {
+      $dir: if($flow, nth($flow, 1), false);
+      $wrap: if(type-of($flow) == list, nth($flow, 2), false);
+      $bpt-css: map-merge($bpt-css, el-flex($dir, $wrap));
+    }
+
     // Get and store CSS width related properties and values.
-    @if $width {
-      $width-out: $gutter-out;
+    $width-out: null;
+    $silent: false;
+
+    @if $gutter-out {
       @if $gutter-out == 'silent' {
+        $silent: true;
         $width-out: map-get($el-sass, 'gutter-out');
-      } @else if type-of($gutter-out) == map and
-                 map-has-key($gutter-out, 'silent') {
+      } @else if type-of($gutter-out) == map and map-has-key($gutter-out, 'silent') {
+        $silent: true;
         $width-out: map-get($gutter-out, 'silent');
+      } @else {
+        $width-out: $gutter-out;
       }
+    }
+
+    @if $width {
       $bpt-width: null;
       @if type-of($width) == list {
         $bpt-width: el-width($bpt, nth($width, 1), nth($width, 2), $width-out);
@@ -259,25 +278,19 @@ html { box-sizing: border-box; }
       $bpt-css: map-merge($bpt-css, $bpt-width);
     }
 
-    // Get and store CSS margin related properties and values.
-    @if $gutter-out {
-      @if type-of($shift) == list {
-        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter-out, nth($shift, 1), nth($shift, 2)));
-      } @else {
-        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter-out, $shift));
-      }
-    }
-
     // Get and store CSS padding related properties and values.
     @if $gutter-in {
       $bpt-css: map-merge($bpt-css, el-padding($bpt, $gutter-in));
     }
 
-    // Get and store CSS flex related properties and values.
-    @if $flow {
-      $dir: if($flow, nth($flow, 1), false);
-      $wrap: if(type-of($flow) == list, nth($flow, 2), false);
-      $bpt-css: map-merge($bpt-css, el-flex($dir, $wrap));
+    // Get and store CSS margin related properties and values.
+    @if ($gutter-out and not $silent) or $shift {
+      $gutter: if($silent, false, $gutter-out);
+      @if type-of($shift) == list {
+        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter, nth($shift, 1), nth($shift, 2)));
+      } @else {
+        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter, $shift));
+      }
     }
 
     // Reduce and store each breakpoint related CSS.
@@ -317,6 +330,7 @@ html { box-sizing: border-box; }
 // @param  $wrap  CSS flex-wrap value;
 // @see    3.2 elsass
 @function el-flex($dir: null, $wrap: null) {
+
   $out: (display: flex); // Prepare the output.
 
   @if ($dir and $dir != row) and ($wrap and $wrap != nowrap) {
@@ -338,7 +352,13 @@ html { box-sizing: border-box; }
 // @param  $max-width  Max width value or true to use the breakpoint settings;
 // @param  $gutter     Margin value(s) or ratio(s) of the breakpoint gaps;
 // @see    3.2 elsass
-@function el-width($bpt: null, $width: null, $max-width: null, $gutter: null) {
+@function el-width(
+  $bpt: null,
+  $width: null,
+  $max-width: null,
+  $gutter: null
+) {
+
   $width-out: null;
   $abs-out: null;
 
@@ -419,26 +439,18 @@ html { box-sizing: border-box; }
 // @param  $shift-next  boolean.
 // @see    3.2 elsass
 @function el-margin($bpt: null, $gutter: null, $shift: null, $shift-next: null) {
-  // Prepare silent gutter variables.
-  $silent: null;
 
-  @if $gutter == 'silent' or
-     (type-of($gutter) == map and map-has-key($gutter, 'silent')) {
-    $silent: true;
-    @if $gutter == 'silent' {
-      $gutter: map-get($el-sass, 'gutter-out');
-    } @else {
-      $gutter: map-get($gutter, 'silent');
-    }
-  }
+  $margin: null;
 
   // Get a map of margin values per side.
-  $margin: _el-gap($bpt, $gutter);
+  @if $gutter {
+    $margin: _el-gap($bpt, $gutter);
+  }
 
   // Alterate $margin according to $shift.
   @if $shift {
     $shift: _el-shift($margin, $shift, $shift-next);
-    $margin: if($silent, $shift, map-merge($margin, $shift));
+    $margin: if($margin, map-merge($margin, $shift), $shift);
   }
 
   // Get a margin shorthand if possible.
@@ -604,10 +616,12 @@ html { box-sizing: border-box; }
 
   @if $media {
     $min: nth($media, 1);
+    $i-min: if($min, index($BPTS, $min), 1);
     $max: if(type-of($media) == list, nth($media, 2), false);
+    $i-max: if($max, index($BPTS, $max), 1);
     @if (type-of($media) == list and length($media) > 2) or
-        ($min and not map-has-key($settings, $min) and type-of($min) != number) or
-        ($max and not map-has-key($settings, $max) and type-of($max) != number) {
+        ($min and not $i-min and type-of($min) != number) or
+        ($max and $i-max <= $i-min and type-of($max) != number) {
       @error '#{&}: "#{$media}" is not a valid value for $media.';
     }
   }
