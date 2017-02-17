@@ -32,8 +32,8 @@
 // 4.4 el-padding
 // 4.5 el-margin
 // 4.6 _el-shift
-// 4.7 _el-gap
-// 4.8 _el-gap-shorthand
+// 4.7 el-gap
+// 4.8 _el-shorthand
 // 4.9 _el-bpts-set
 // 4.10 _el-check
 
@@ -45,26 +45,22 @@
 $settings: (
   's': (                          // Each key is a custom breakpoint.
     'container-max-width': 480px, // Max-width to optionally apply to containers.
-    'gutter-height'      : 24px,
-    'gutter-width'       : 16px,
+    'gutter-base'        : 24px,
   ),
   'm': (
     'device-min-width'   : 640px, // Media-query min-width (useless for the first breakpoint).
     'container-max-width': 800px,
-    'gutter-height'      : 32px,
-    'gutter-width'       : 24px,
+    'gutter-base'        : 32px,
   ),
   'l': (
     'device-min-width'   : 1024px,
     'container-max-width': 1000px,
-    'gutter-height'      : 40px,
-    'gutter-width'       : 32px,
+    'gutter-base'        : 40px,
   ),
   'xl': (
     'device-min-width'   : 1440px,
     'container-max-width': 1280px,
-    'gutter-height'      : 48px,
-    'gutter-width'       : 40px,
+    'gutter-base'        : 48px,
   )
 ) !default;
 
@@ -73,6 +69,10 @@ $settings: (
 $BPTS: map-keys($settings); // Breakpoints list.
 $BPT-MIN: nth($BPTS, 1);  // Smallest breakpoint.
 $SIDES: 'top', 'right', 'bottom', 'left';
+$INDEX-TOP: index($SIDES, 'top');
+$INDEX-RIGHT: index($SIDES, 'right');
+$INDEX-BOTTOM: index($SIDES, 'bottom');
+$INDEX-LEFT: index($SIDES, 'left');
 
 // 1.3 Default mixin argument values
 // ---------------------------------
@@ -158,7 +158,7 @@ html { box-sizing: border-box; }
   $shift     : null
 ) {
 
-  // Set/reset arguments according to values/default values.
+  // Set arguments to their default values if needed.
   $args: (
     'media'     : $media,
     'flow'      : $flow,
@@ -179,6 +179,7 @@ html { box-sizing: border-box; }
     }
   }
 
+  // Check arguments values.
   $check: _el-check($args...);
 
   // Get the provided breakpoints.
@@ -253,43 +254,98 @@ html { box-sizing: border-box; }
     }
 
     // Get and store CSS width related properties and values.
-    $width-out: null;
     $silent: false;
 
     @if $gutter-out {
       @if $gutter-out == 'silent' {
-        $silent: true;
-        $width-out: map-get($el-sass, 'gutter-out');
+        $silent: map-get($el-sass, 'gutter-out');
       } @else if type-of($gutter-out) == map and map-has-key($gutter-out, 'silent') {
-        $silent: true;
-        $width-out: map-get($gutter-out, 'silent');
-      } @else {
-        $width-out: $gutter-out;
+        $silent: map-get($gutter-out, 'silent');
       }
     }
 
     @if $width {
-      $bpt-width: null;
-      @if type-of($width) == list {
-        $bpt-width: el-width($bpt, nth($width, 1), nth($width, 2), $width-out);
-      } @else {
-        $bpt-width: el-width($bpt, $width, false, $width-out);
+      $gaps: false false false false;
+      @if $gutter-out {
+        $gaps: _el-gaps(if($silent, $silent, $gutter-out));
       }
-      $bpt-css: map-merge($bpt-css, $bpt-width);
+      @each $val in $width {
+        $prop: if(index($width, $val) == 1, width, max-width);
+        $val: el-width($bpt, $val, nth($gaps, $INDEX-RIGHT), nth($gaps, $INDEX-LEFT));
+        $bpt-css: map-merge($bpt-css, (#{$prop}: $val));
+      }
     }
 
     // Get and store CSS padding related properties and values.
     @if $gutter-in {
-      $bpt-css: map-merge($bpt-css, el-padding($bpt, $gutter-in));
+      $gaps: _el-gaps($gutter-in);
+      $vals: null;
+      @each $gap in $gaps {
+        $val: if($gap == false, false, el-gap($bpt, $gap));
+        $vals: if($vals == null, $val, append($vals, $val));
+      }
+      $shorthand: _el-shorthand(
+        nth($vals, $INDEX-TOP),
+        nth($vals, $INDEX-RIGHT),
+        nth($vals, $INDEX-BOTTOM),
+        nth($vals, $INDEX-LEFT)
+      );
+      @if $shorthand {
+        $bpt-css: map-merge($bpt-css, (padding: $shorthand));
+      } @else {
+        @each $val in $vals {
+          @if $val != false {
+            $side: nth($SIDES, index($vals, $val));
+            $bpt-css: map-merge($bpt-css, (padding-#{$side}: $val));
+          }
+        }
+      }
     }
 
-    // Get and store CSS margin related properties and values.
-    @if ($gutter-out and not $silent) or $shift {
-      $gutter: if($silent, false, $gutter-out);
-      @if type-of($shift) == list {
-        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter, nth($shift, 1), nth($shift, 2)));
+    // Get and store CSS padding related properties and values.
+    @if $gutter-out {
+      $gaps: if($silent, false false false false, _el-gaps($gutter-out));
+      $shifts: ();
+      @if $shift {
+        @if type-of($shift) == number {
+          $shift-left: percentage($shift);
+          $shifts: map-merge($shifts, ('left': $shift-left));
+          @if not $shift-next {
+            $shifts: map-merge($shifts, ('right': -$shift-left));
+          }
+        } @else if $shift == 'center' or $shift == 'pull' or $shift == 'push' {
+          @if $shift == 'center' or $shift == 'pull' {
+            $shifts: map-merge($shifts, ('right': auto));
+          }
+          @if $shift == 'center' or $shift == 'push' {
+            $shifts: map-merge($shifts, ('left': auto));
+          }
+        }
+      }
+      $vals: null;
+      @for $i from 1 through length($SIDES) {
+        $alt: null;
+        @if map-has-key($shifts, nth($SIDES, $i)) {
+          $alt: map-get($shifts, nth($SIDES, $i));
+        }
+        $val: el-gap($bpt, nth($gaps, $i), $alt);
+        $vals: if($vals == null, $val, append($vals, $val));
+      }
+      $shorthand: _el-shorthand(
+        nth($vals, $INDEX-TOP),
+        nth($vals, $INDEX-RIGHT),
+        nth($vals, $INDEX-BOTTOM),
+        nth($vals, $INDEX-LEFT)
+      );
+      @if $shorthand {
+        $bpt-css: map-merge($bpt-css, (margin: $shorthand));
       } @else {
-        $bpt-css: map-merge($bpt-css, el-margin($bpt, $gutter, $shift));
+        @each $val in $vals {
+          @if $val != false {
+            $side: nth($SIDES, index($vals, $val));
+            $bpt-css: map-merge($bpt-css, (margin-#{$side}: $val));
+          }
+        }
       }
     }
 
@@ -308,7 +364,7 @@ html { box-sizing: border-box; }
               $to-css: map-remove($to-css, $prop);
               // Store duplicated CSS.
               $new-css: map-merge($new-css, ($prop: $val));
-              // Merge
+              // Merge new CSS.
               $new-to-map: ($bpt: $to-css, $bpt-next: $new-css);
               $to-map: map-merge(map-get($out, $bpt-min), $new-to-map);
               $out: map-merge($out, ($bpt-min: ($to-map)));
@@ -355,227 +411,129 @@ html { box-sizing: border-box; }
 @function el-width(
   $bpt: null,
   $width: null,
-  $max-width: null,
-  $gutter: null
+  $gutter-right: null,
+  $gutter-left: null
 ) {
 
   $width-out: null;
   $abs-out: null;
 
   // Get a margin value to subtract.
-  @if ($width or $max-width) and $gutter {
-    $margin: _el-gap($bpt, $gutter);
-    $right: map-get($margin, 'right');
+  @if $gutter-right {
+    $right: el-gap($bpt, $gutter-right);
     @if $right and $right != 0 {
       $width-out: $right;
     }
-    $left: map-get($margin, 'left');
+  }
+
+  @if $gutter-left {
+    $left: el-gap($bpt, $gutter-left);
     @if $left and $left != 0 {
       $width-out: if($width-out, $width-out + $left, $left);
     }
     $abs-out: if($width-out, abs($width-out), null);
   }
 
-  @if $width and unitless($width) {
+  @if type-of($width) == number and unitless($width) {
     $width: percentage($width);
-  }
-
-  @if $max-width == true {
-    $max-width: map-get(map-get($settings, $bpt), 'container-max-width');
+  } @else if $width == true {
+    $width: map-get(map-get($settings, $bpt), 'container-max-width');
   }
 
   $out: ();
   // Calculate width and max-width values according to margins.
-  @each $prop, $val in (width: $width, max-width: $max-width) {
-    @if $val {
+
       @if $width-out {
         $calc: null;
-        @if comparable($val, $width-out) {
-          $calc: if($width-out == $abs-out, $val - $abs-out, $val + $abs-out);
+        @if comparable($width, $width-out) {
+          $calc: if($width-out == $abs-out, $width - $abs-out, $width + $abs-out);
         } @else {
-          @warn 'Using calc() as CSS value for' + #{$prop};
           $operator: if($width-out == $abs-out, '-', '+');
-          $calc: calc(#{$val} #{$operator} #{$abs-out});
+          $calc: calc(#{$width} #{$operator} #{$abs-out});
         }
-        $out: map-merge($out, (#{$prop}: $calc));
+        $out: $calc;
       } @else {
-        $out: map-merge($out, (#{$prop}: $val));
+        $out: $width;
       }
-    }
-  }
+
 
   @return $out;
 }
 
-// 4.4 el-padding
-// --------------
-// Returns a map of padding related CSS properties and their values.
-// @param  $bpt     Breakpoint as a $settings key;
-// @param  $gutter  Padding value(s) or ratio(s) of the breakpoint gaps.
-// @see    3.2 elsass
-@function el-padding($bpt: null, $gutter: null) {
-  // Get a map of padding values per side.
-  $padding: _el-gap-shorthand(_el-gap($bpt, $gutter));
 
-  $out: ();
-  // Get the padding shorthand or each margin side value.
-  @if map-has-key($padding, 'global') {
-    $out: map-merge($out, (padding: map-get($padding, 'global')));
-  } @else {
-    @each $side, $val in $padding {
-      $out: map-merge($out, (padding-#{$side}: $val));
-    }
-  }
-
-  @return $out;
-}
-
-// 4.5 el-margin
-// -------------
-// Returns a map of margin related CSS properties and their values.
-// @param  $bpt         Breakpoint as a $settings key;
-// @param  $gutter      Margin value(s) or ratio(s) of the breakpoint gaps.
-// @param  $shift       'pull', 'push', 'center' or ratio of the container width
-// @param  $shift-next  boolean.
-// @see    3.2 elsass
-@function el-margin($bpt: null, $gutter: null, $shift: null, $shift-next: null) {
-
-  $margin: null;
-
-  // Get a map of margin values per side.
-  @if $gutter {
-    $margin: _el-gap($bpt, $gutter);
-  }
-
-  // Alterate $margin according to $shift.
-  @if $shift {
-    $shift: _el-shift($margin, $shift, $shift-next);
-    $margin: if($margin, map-merge($margin, $shift), $shift);
-  }
-
-  // Get a margin shorthand if possible.
-  $margin: _el-gap-shorthand($margin);
-
-  $out: ();
-  // Get the margin shorthand or each margin side value.
-  @if map-has-key($margin, 'global') {
-    $out: map-merge($out, (margin: map-get($margin, 'global')));
-  } @else {
-    @each $side, $val in $margin {
-      $out: map-merge($out, (margin-#{$side}: $val));
-    }
-  }
-
-  @return $out;
-}
-
-// 4.6 _el-shift
-// -------------
-// Atlterate margins according to the $shift value.
-// @param  $margin      Margins map as returned by _el-gap(),
-// @param  $shift       'pull', 'push', 'center' or ratio of the container width
-// @param  $shift-next  boolean.
-// @see    3.2 elsass
-@function _el-shift($margin: null, $shift: null, $shift-next: null) {
-  $shifts: ();
-
-  @if type-of($shift) == number {
-    $shift-left: percentage($shift);
-    $shifts: map-merge($shifts, ('left': $shift-left));
-    @if not $shift-next {
-      $shifts: map-merge($shifts, ('right': -$shift-left));
-    }
-  } @else if $shift == 'center' or $shift == 'pull' or $shift == 'push' {
-    @if $shift == 'center' or $shift == 'pull' {
-      $shifts: map-merge($shifts, ('right': auto));
-    }
-    @if $shift == 'center' or $shift == 'push' {
-      $shifts: map-merge($shifts, ('left': auto));
-    }
-  }
-
-  $out: ();
-
-  @each $side, $shift in $shifts {
-    @if $shift {
-      $val: $shift;
-      @if type-of($shift) == number {
-        $gap: map-get($margin, #{$side});
-        $abs: abs($shift);
-        // Calculate the new left margin value directly or via calc().
-        @if comparable($gap, $shift) {
-          $val: if($shift == $abs, $gap + $abs, $gap - $abs);
-        } @else {
-          @warn 'Using calc() as CSS value for margin-#{$side}.';
-          $o: if($shift == $abs, '+', '-');
-          $val: calc(#{$gap} #{$o} #{$abs});
-        }
-      }
-      $out: map-merge($out, (#{$side}: $val));
-    }
-  }
-
-  @return $out;
-}
-
-// 4.7 _el-gap
+// 4.7 el-gap
 // -----------
 // Return a map of gap values from $gap.
 // @param  $bpt  Breakpoint;
 // @param  $gap  Margin/padding value(s) or ratio(s) of the breakpoint gaps.
 // @see    4.4 el-padding, 4.5 el-margin
-@function _el-gap($bpt: null, $gap: null) {
+@function _el-gaps($gap: null) {
+  $gaps: null;
   // Get $gap as a four values list.
   @if type-of($gap) == number {
-    $gap: $gap $gap $gap $gap;
+    $gaps: $gap $gap $gap $gap;
   } @else if type-of($gap) == list and length($gap) == 2 {
-    $gap: nth($gap, 1) nth($gap, 2) nth($gap, 1) nth($gap, 2);
+    $gaps: nth($gap, 1) nth($gap, 2) nth($gap, 1) nth($gap, 2);
   } @else if type-of($gap) == map {
-    $new-gap: null;
     @each $side in $SIDES {
       $val: if(map-has-key($gap, $side), map-get($gap, $side), false);
-      $new-gap: if($new-gap == null, $val, append($new-gap, $val));
+      $gaps: if($gaps == null, $val, append($new-gap, $val));
     }
-    $gap: $new-gap;
+  } @else {
+    $gaps: $gap;
   }
 
-  $out: (); // To store each gap side and its value.
-  // Set each gap side value.
-  @for $i from 1 through length($gap) {
-    $val: nth($gap, $i);
-    @if $val != false {
-      @if unitless($val) {
-        $bpt-settings: map-get($settings, $bpt);
-        @if ($i == 1 or $i == 3) {
-          $val: $val * map-get($bpt-settings, 'gutter-height');
-        } @else {
-          $val: $val * map-get($bpt-settings, 'gutter-width');
-        }
-      }
-      $out: map-merge($out, (#{nth($SIDES, $i)}: $val));
-    }
-  }
-
-  @return $out;
+  @return $gaps;
 }
 
-// 4.8 _el-gap-shorthand
-// ---------------------
-// Return a map of gap values from $gap.
-// @param  $gap  Margin/padding value(s) or ratio(s) of the breakpoint gaps.
-// @see    4.7 _el-gap
-@function _el-gap-shorthand($gap: null) {
-  // Set a gap shorthand if possible.
-  $top: map-get($gap, 'top');
-  $right: map-get($gap, 'right');
 
-  @if $top and $top == map-get($gap, 'bottom') and
-    $right and $right == map-get($gap, 'left') {
-    $global: if($top == $right, $top, $top $right);
-    $gap: map-merge($gap, ('global': $global));
+@function el-gap($bpt: null, $gap: null, $shift: null, $shift-next: null) {
+
+  @if $gap and unitless($gap) {
+    $gap: $gap * map-get(map-get($settings, $bpt), 'gutter-base');
+  }
+
+  @if $shift {
+    @if type-of($shift) == number {
+      $abs: abs($shift);
+      $operator: if($shift == $abs, '+', '-');
+      $gap: el-calc($gap, $abs, $operator);
+    } @else {
+      $gap: $shift;
+    }
   }
 
   @return $gap;
+}
+
+@function el-calc($gap: null, $shift: null, $operator: null) {
+  $calc: null;
+  @if type-of($shift) == number {
+    // Calculate the new left margin value directly or via calc().
+    @if comparable($gap, $shift) {
+      $calc: $gap #{$operator} $shift;
+    } @else {
+      $calc: calc(#{$gap} #{$operator} #{$shift});
+    }
+  }
+
+  @return $calc;
+}
+
+// 4.8 _el-shorthand
+// ---------------------
+// Return a map of gap values from $gap.
+// @param  $gap  Margin/padding value(s) or ratio(s) of the breakpoint gaps.
+// @see    4.7 el-gap
+@function _el-shorthand($top: null, $right: null, $bottom: null, $left: null) {
+
+  $shorthand: null;
+
+  @if $top and $top == $bottom and $right and $right == $left {
+    $shorthand: if($top == $right, $top, $top $right);
+  }
+
+  @return $shorthand;
 }
 
 // 4.9 _el-bpts-set
