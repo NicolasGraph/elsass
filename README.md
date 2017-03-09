@@ -1,6 +1,6 @@
 # elsass responsive grid builder
 
-[el-sass](//github.com/NicolasGraph/elsass) is a Sass powered CSS responsive and _semantic_ grids builder.  
+[elsass](https://nicolasgraph.github.io/elsass/) is a Sass powered CSS responsive and _semantic_ grids builder.  
 
 ## Features
 
