@@ -1,0 +1,22 @@
+{
+  "name": "elsass",
+  "version": "0.1.0-alpha",
+  "description": "Sass powered responsive grid builder.",
+  "author": "Nicolas Morand <contact@nicolasmorand.com>",
+  "main": "core/_elsass.scss",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nicolasgraph/el-sass.git"
+  },
+  "keywords": [
+    "layout",
+    "grid",
+    "sass",
+    "responsive",
+    "semantic",
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nicolasgraph/elsass/issues"
+  }
+}

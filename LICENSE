@@ -1,27 +1,6 @@
-# elsass responsive grid builder
+MIT License
 
-[el-sass](//github.com/NicolasGraph/elsass) is a Sass powered CSS responsive and _semantic_ grids builder.  
-
-## Features
-
-* Unlimited columns width;
-* unlimited custom breakpoints;
-* highly customizable gutters;
-* add-ons;
-* etc.
-
-## Credits
-
-### Author
-
-[Nicolas Morand](https://twitter.com/NicolasGraph), designer and front-end developer in Strasbourg, France.  
-_Pardon my frenglish…_
-
-### Licence
-
-This project is distributed under the [MIT licence](https://opensource.org/licenses/MIT).
-
-Copyright (c) 2017 [Nicolas Morand](https://twitter.com/NicolasGraph)
+Copyright (c) 2016 Nicolas Morand aka @NicolasGraph
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
