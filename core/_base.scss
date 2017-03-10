@@ -11,8 +11,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ////
-/// Basic functions.
-/// @group Essential
+/// @group Base
 ////
 
 // 1. SETTINGS
@@ -34,25 +33,25 @@
 /// @prop  {Map} global -
 ///        (optional) Media-queries agnostic settings.
 /// @prop  {Length} global.gutter-length -
-///        Gutter length.
+///        Media-queries agnostic gutter length.
 /// @prop  {Map} responsive -
 ///        Media-queries related settings.
 /// @prop  {Map} responsive.bpt -
 ///        Map of a breakpoint related settings
-///        where the breakpoint name is the key.
+///        where using the breakpoint name as key.
 /// @prop  {Length} responsive.bpt.device-min-width -
-///        Media-query related min-width
+///        Breakpoint related media-query min-width
 ///        (also used to calculate the previous breakpoint max-width).  
 ///        This map item is useless for the smallest breakpoint.
 /// @prop  {Length} responsive.bpt.container-max-width -
-///        Container max-width.
+///        Breakpoint related container max-width.
 /// @prop  {Length} responsive.bpt.gutter-length -
-///        Gutter length.
+///        Breakpoint related gutter length.
 $elsass-settings: (
-  'global': (                       // Media-queries agnostic data.
+  'global': (                       // Media-queries agnostic settings.
     'gutter-length'        : null,  // Gutter length.
   ),
-  'responsive': (                   // Media-queries related data.
+  'responsive': (                   // Media-queries related settings.
     's': (                          // Custom breakpoint name.
       'container-max-width': 480px, // Max-width to optionally apply to containers.
       'gutter-length'      : 24px,  // Gutter length.
@@ -94,7 +93,7 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 ///          media-query min-width related breakpoint name or `<length>`;
 /// @param   {String | Number} $to -
 ///          media-query max-width related breakpoint name or `<length>`;
-/// @output  Media-query wrapping `@content` | `@content`;
+/// @output  `@content` wrapped in a media-query or `@content` only;
 /// @example scss - SCSS
 ///          .foo {
 ///             elsass-media('m', 'l') { width: 25%; }
@@ -139,14 +138,15 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 
 // 3.1 elsass-width
 // ----------------
-/// Calculate width by substracting potential gutters used as margin.
+/// Calculate width by substracting potential right and left gutters used as margin.
 /// @param   {Number | String} $width -
-///          Length, ratio of the container width or breakpoint name.
+///          Ratio of the container width, breakpoint name
+///          (use the `$elsass-settings` related 'container-max-width') or `<length>`.
 /// @param   {Number | List | Map} $gutter-width -
-///          Sum or list of the right and left gutter lengths or ratios.  
-///          A one item long map with a breakpoint name as key can be used
-///          for responsive gutters.  
-///          A single breakpoint name will pick the related gutter length.
+///          Sum or list of the right and left gutter ratios or lengths.  
+///          A one item long map using a breakpoint name as key can be provided
+///          to use this breakpoint related gutter length as the ratio base.  
+///          A single breakpoint can be used as a shorthand of `('breakpoint': 1)`.
 /// @return  {Number} `<length>` (via `calc()` if needed).
 /// @example scss - SCSS
 ///          width: elsass-width(1/4, 'm');
@@ -209,12 +209,12 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 // -----------------
 /// Calculate a gutter length.
 /// @param   {Number | String | Map} $gutter -
-///          Gutter length or ratio of the set gutter length;
-///          A ratio value can be provided through a one item long map
-///          with a breakpoint name as key to use responsive gutters;
-///          A single breakpoint can be enter as a shorthand of `('breakpoint': 1)`.
+///          Gutter ratio or length.  
+///          A one item long map using a breakpoint name as key can be provided
+///          to use this breakpoint related gutter length as the ratio base.  
+///          A single breakpoint can be used as a shorthand of `('breakpoint': 1)`.
 /// @param   {Number | Length} $shift -
-///          Length or ratio or the container width to add or substract;
+///          Ratio the container width or `<length>` to add or substract;
 /// @return  {Number} `<length>`
 /// @example scss - SCSS
 ///          margin-right: elsass-gutter(('m': 0.5));

@@ -11,7 +11,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ////
-/// Main mixin.
 /// @group Main
 ////
 
@@ -34,21 +33,11 @@
 
 // 1.1 Default mixin argument values
 // ---------------------------------
-/// [`elsass` mixin](#main-mixin-elsass) 'enabled' argument values.  
 /// Set any `elsass` mixin argument to `true` to enable the
 /// [`$elsass-args`](#main-variable-elsass-args) related value.  
 /// Use `"…"` to enable the current and the following non defined arguments value.
 /// @type Map
-/// @prop {List} media -
-///       `elsass` mixin `$media` argument value if enable.
-/// @prop {List} width -
-///       `elsass` mixin `$width` argument value if enable.
-/// @prop {List | Map} gutter-in -
-///       `elsass` mixin `$gutter-in` argument value if enable.
-/// @prop {List | Map} gutter-out -
-///       `elsass` mixin `$gutter-out` argument value if enable.
-/// @prop {List} shift -
-///       `elsass` mixin `$shift` argument value if enable.
+/// @see {mixin} elsass
 $elsass-args: (
   'media'     : $BPT-MIN,
   'width'     : 1 true,
