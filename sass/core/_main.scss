@@ -64,7 +64,8 @@ $elsass-args: (
 /// @param   {List} $width -
 ///          Container width ratio or `<length>` used as CSS width value.  
 ///          A second item is able to set the max-width via the following values :
-///          `true` (uses the media-query related container max-width) or `<length>`
+///          `true` (uses `$elsass-settings` global/responsive container max-width('s))
+///          or `<length>`
 ///          (used as is).
 /// @param   {List | Map} $gutter-in -
 ///          Up to four gutter ratio(s) or `<length>` to set the padding all around.  
