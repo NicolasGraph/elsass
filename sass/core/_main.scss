@@ -54,7 +54,7 @@ $elsass-args: (
 /// Help to wrap `@content` and arguments related CSS
 /// in tidy media-queries to manage your responsive grid.  
 /// `$elsass-settings` based values (max-width, gutters) try
-/// to global settings before to fallback to responsive settings.  
+/// to use global settings before to fallback to responsive settings.  
 /// Set any `elsass` mixin argument to `true` to enable the
 /// [`$elsass-args`](#main-variable-elsass-args) related value.  
 /// Use `"…"` to enable the current and the following non defined arguments value.
