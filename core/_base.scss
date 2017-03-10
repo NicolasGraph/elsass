@@ -48,8 +48,9 @@
 /// @prop  {Length} responsive.bpt.gutter-length -
 ///        Breakpoint related gutter length.
 $elsass-settings: (
-  'global': (                       // Media-queries agnostic settings.
-    'gutter-length'        : null,  // Gutter length.
+  'global': (                    // Media-queries agnostic settings.
+    'gutter-length'      : null, // Gutter length.
+    'container-max-width': null, // Max-width to optionally apply to containers.
   ),
   'responsive': (                   // Media-queries related settings.
     's': (                          // Custom breakpoint name.
@@ -78,6 +79,7 @@ $elsass-settings: (
 // --------------------
 $GLOBAL    : if(map-has-key($elsass-settings, 'global'), map-get($elsass-settings, 'global'), null);
 $GUTTER    : if($GLOBAL and map-has-key($GLOBAL, 'gutter-length'), map-get($GLOBAL, 'gutter-length'), null);
+$MAX-WIDTH : if($GLOBAL and map-has-key($GLOBAL, 'container-max-width'), map-get($GLOBAL, 'container-max-width'), null);
 $RESPONSIVE: map-get($elsass-settings, 'responsive');
 $BPTS      : map-keys($RESPONSIVE); /// Breakpoints list.
 $BPT-MIN   : nth($BPTS, 1); /// Smallest breakpoint.
@@ -159,7 +161,11 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 @function elsass-width($width: null, $gutter-width: null) {
 
   @if type-of($width) == string {
-    $width: map-get(map-get($RESPONSIVE, $width), 'container-max-width');
+    @if $width == 'max' {
+      $width: $MAX-WIDTH;
+    } @else {
+      $width: map-get(map-get($RESPONSIVE, $width), 'container-max-width');
+    }
   } @else if unitless($width) {
     $width: percentage($width);
   }

@@ -229,7 +229,11 @@ $elsass-args: (
     @if $max-width {
       $val: $max-width;
       @if $max-width == true {
-        $val: map-get(map-get($RESPONSIVE, $bpt), 'container-max-width');
+        @if $MAX-WIDTH {
+          $val: $MAX-WIDTH;
+        } @else {
+          $val: map-get(map-get($RESPONSIVE, $bpt), 'container-max-width');
+        }
       }
       $val: elsass-width($val, if($gap-width, ($bpt: $gap-width), false));
       $bpt-css: map-merge($bpt-css, (max-width: $val));
