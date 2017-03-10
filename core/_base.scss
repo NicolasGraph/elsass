@@ -142,8 +142,9 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 // ----------------
 /// Calculate width by substracting potential right and left gutters used as margin.
 /// @param   {Number | String} $width -
-///          Ratio of the container width, breakpoint name
-///          (use the `$elsass-settings` related 'container-max-width') or `<length>`.
+///          Ratio of the container width or `<length>`.  
+///          Enter `'max'` or a breakpoint name to use the global/responsive
+///          container max width defined through `$elsass-settings`.
 /// @param   {Number | List | Map} $gutter-width -
 ///          Sum or list of the right and left gutter ratios or lengths.  
 ///          A one item long map using a breakpoint name as key can be provided
