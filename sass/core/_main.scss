@@ -15,7 +15,8 @@
 ////
 
 // 1. SETTINGS
-// 1.1 Default mixin argument values
+// 1.1 Default gutter type
+// 1.2 Default mixin argument values
 // 2. MIXIN
 // 2.1 elsass
 // 3. FUNCTIONS
@@ -31,7 +32,15 @@
 // 1. SETTINGS
 // ===========
 
-// 1.1 Default mixin argument values
+// 1.1 Default gutter type
+// -----------------------
+/// Set gutters as padding (`'in'`) or margin (`'out'`) by default.
+/// Can be override in the `elsass` mixin `$gutter` argument through a map of `'in'` and/or `'out'` values.
+/// @type String
+/// @see {mixin} elsass
+$elsass-gutter-type: 'out'; // Default gutter type: in (padding) or out (margin).
+
+// 1.2 Default mixin argument values
 // ---------------------------------
 /// Set any `elsass` mixin argument to `true` to enable the
 /// [`$elsass-args`](#main-variable-elsass-args) related value.  
@@ -39,11 +48,10 @@
 /// @type Map
 /// @see {mixin} elsass
 $elsass-args: (
-  'media'     : $BPT-MIN,
-  'width'     : 1 true,
-  'gutter-in' : 0.5,
-  'gutter-out': 0.5,
-  'shift'     : null,
+  'media' : $BPT-MIN,
+  'width' : 1 true,
+  'gutter': 0.5,
+  'shift' : null,
 ) !default;
 
 // 2. MIXIN
@@ -67,14 +75,13 @@ $elsass-args: (
 ///          `true` (uses `$elsass-settings` global/responsive container max-width('s))
 ///          or `<length>`
 ///          (used as is).
-/// @param   {List | Map} $gutter-in -
-///          Up to four gutter ratio(s) or `<length>` to set the padding all around.  
-///          Set any unwanted padding to false (i.e. `$gutter-in: false .5`).  
+/// @param   {List | Map} $gutter -
+///          Up to four gutter ratio(s) or `<length>` to set the gutter all around.  
+///          Set any unwanted gutter side to false (i.e. `$gutter: false .5`).  
 ///          Alternatively, a map can be used to explicitly set one or more
-///          sides related padding value  (i.e. `$gutter-in: ('right': 1)`).  
-/// @param   {List | Map | String} $gutter-out -
-///          Set the margin all around; see `$gutter-in`.  
-///          `$gutter-out` also accept silent gutters to alterate the element width
+///          sides related gutter value  (i.e. `$gutter: ('right': 1)`).  
+///          Set the margin all around; see `$gutter`.  
+///          `'out'` gutter type also accept silent gutters to alterate the element width
 ///          without applying any margin. Use `"silent"` or any valid value
 ///          via a map using `"silent"` as key.
 /// @param   {List} $shift -
@@ -110,20 +117,18 @@ $elsass-args: (
 ///            }
 ///          }
 @mixin elsass(
-  $media     : null,
-  $width     : null,
-  $gutter-in : null,
-  $gutter-out: null,
-  $shift     : null
+  $media : null,
+  $width : null,
+  $gutter: null,
+  $shift : null
 ) {
 
   // Set arguments to their default values if needed.
   $args: (
-    'media'     : $media,
-    'width'     : $width,
-    'gutter-in' : $gutter-in,
-    'gutter-out': $gutter-out,
-    'shift'     : $shift,
+    'media' : $media,
+    'width' : $width,
+    'gutter': $gutter,
+    'shift' : $shift,
   );
 
   $default: false;
@@ -174,11 +179,10 @@ $elsass-args: (
 /// and their values from elsass mixin arguments.
 /// @access Private
 @function _elsass(
-  $media     : null,
-  $width     : null,
-  $gutter-in : null,
-  $gutter-out: null,
-  $shift     : null
+  $media : null,
+  $width : null,
+  $gutter: null,
+  $shift : null
 ) {
   $out: null;
 
@@ -193,19 +197,37 @@ $elsass-args: (
     $width: nth($width, 1);
   }
 
-  $shift-next: false;
+  $gutter-in: null;
+  $gutter-out: null;
 
-  @if type-of($shift) == list {
-    $shift-next: nth($shift, 2);
-    $shift: nth($shift, 1);
+  @if type-of($gutter) != map {
+    @if $elsass-gutter-type == 'in' {
+      $gutter-in: $gutter;
+    } @else {
+      $gutter-out: $gutter;
+    }
+  } @else {
+    @if map-has-key($gutter, 'in') {
+      $gutter-in: map-get($gutter, 'in');
+    }
+    @if map-has-key($gutter, 'out') {
+      $gutter-out: map-get($gutter, 'out');
+    }
   }
-
+  
   $gap-width: false;
 
   @if $gutter-out {
     $silent: _elsass-gutter-silent($gutter-out);
     $gaps: _elsass-gutter-map(if($silent, $silent, $gutter-out));
     $gap-width: if($gaps, map-get($gaps, 'right') map-get($gaps, 'left'), false);
+  }
+
+  $shift-next: false;
+
+  @if type-of($shift) == list {
+    $shift-next: nth($shift, 2);
+    $shift: nth($shift, 1);
   }
 
   // Get and store each breakpoint related CSS.
