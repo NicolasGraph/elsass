@@ -220,7 +220,7 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 ///          A one item long map using a breakpoint name as key can be provided
 ///          to use this breakpoint related gutter length as the ratio base.  
 ///          A single breakpoint can be used as a shorthand of `('breakpoint': 1)`.
-/// @param   {Number | Length} $shift -
+/// @param   {Number | Length} $offset -
 ///          Ratio the container width or `<length>` to add or substract;
 /// @return  {Number} `<length>`
 /// @example scss - SCSS
@@ -233,7 +233,7 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 ///          /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass-settings. */
 ///          margin-right: 2.5%;
 ///          margin-left: 27.5%;
-@function elsass-gutter($gutter: null, $shift: null) {
+@function elsass-gutter($gutter: null, $offset: null) {
 
   @if $gutter {
     @if type-of($gutter) == map {
@@ -247,18 +247,18 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
     }
   }
 
-  @if $shift {
+  @if $offset {
 
-    @if unitless($shift) {
-      $shift: percentage($shift);
+    @if unitless($offset) {
+      $offset: percentage($offset);
     }
 
     @if $gutter {
-      $abs: abs($shift);
+      $abs: abs($offset);
       @if comparable($gutter, $abs) {
-        $gutter: if($shift == $abs, $gutter + $abs, $gutter - $abs);
+        $gutter: if($offset == $abs, $gutter + $abs, $gutter - $abs);
       } @else {
-        @if $shift == $abs {
+        @if $offset == $abs {
           $gutter: calc(#{$gutter} + #{$abs});
         } @else {
           $gutter: calc(#{$gutter} - #{$abs});
@@ -267,5 +267,5 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
     }
   }
 
-  @return if($gutter, $gutter, $shift);
+  @return if($gutter, $gutter, $offset);
 }

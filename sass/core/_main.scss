@@ -25,7 +25,7 @@
 // 3.3 _elsass-gutter-silent
 // 3.4 _elsass-gutter-map
 // 3.5 _elsass-gutter-css
-// 3.6 _elsass-shift-map
+// 3.6 _elsass-offset-map
 // 3.7 _elsass-gutter-short
 // 3.8 _elsass-merge-bpt
 
@@ -51,7 +51,7 @@ $elsass-args: (
   'media' : $BPT-MIN,
   'width' : 1 true,
   'gutter': 0.5,
-  'shift' : null,
+  'offset': null,
 ) !default;
 
 // 2. MIXIN
@@ -84,7 +84,7 @@ $elsass-args: (
 ///          `'out'` gutter type also accept silent gutters to alterate the element width
 ///          without applying any margin. Use `"silent"` or any valid value
 ///          via a map using `"silent"` as key.
-/// @param   {List} $shift -
+/// @param   {List} $offset -
 ///          Container width ratio to push or pull (if negative) the element,
 ///          optionally followed by true to pull or push next items.
 /// @output  Arguments relative CSS and `@content` wrapped in tidy media-queries.
@@ -120,7 +120,7 @@ $elsass-args: (
   $media : null,
   $width : null,
   $gutter: null,
-  $shift : null
+  $offset: null
 ) {
 
   // Set arguments to their default values if needed.
@@ -128,7 +128,7 @@ $elsass-args: (
     'media' : $media,
     'width' : $width,
     'gutter': $gutter,
-    'shift' : $shift,
+    'offset': $offset,
   );
 
   $default: false;
@@ -182,7 +182,7 @@ $elsass-args: (
   $media : null,
   $width : null,
   $gutter: null,
-  $shift : null
+  $offset: null
 ) {
   $out: null;
 
@@ -223,11 +223,11 @@ $elsass-args: (
     $gap-width: if($gaps, map-get($gaps, 'right') map-get($gaps, 'left'), false);
   }
 
-  $shift-next: false;
+  $offset-next: false;
 
-  @if type-of($shift) == list {
-    $shift-next: nth($shift, 2);
-    $shift: nth($shift, 1);
+  @if type-of($offset) == list {
+    $offset-next: nth($offset, 2);
+    $offset: nth($offset, 1);
   }
 
   // Get and store each breakpoint related CSS.
@@ -272,8 +272,8 @@ $elsass-args: (
       }
     }
 
-    @if $gutter-out or $shift {
-      $bpt-gutter: _elsass-gutter-css($bpt, $gutter-out, $shift, $shift-next);
+    @if $gutter-out or $offset {
+      $bpt-gutter: _elsass-gutter-css($bpt, $gutter-out, $offset, $offset-next);
       @if map-has-key($bpt-gutter, 'shorthand') {
         $shorthand: map-get($bpt-gutter, 'shorthand');
         $bpt-css: map-merge($bpt-css, (margin: $shorthand));
@@ -380,20 +380,20 @@ $elsass-args: (
 /// @param  {Breakpoint} $bpt;
 /// @param  {Breakpoint | Ratio | Lentgth} $gutter
 ///         Breakpoint related gutter ratio(s) or CSS value(s);
-/// @param  {Ratio} $shift;
-/// @param  {Bool} $shift-next;
+/// @param  {Ratio} $offset;
+/// @param  {Bool} $offset-next;
 /// @return {Map | false} Map of side values | false.
 @function _elsass-gutter-css(
-  $bpt       : null,
-  $gutter    : null,
-  $shift     : null,
-  $shift-next: null
+  $bpt        : null,
+  $gutter     : null,
+  $offset     : null,
+  $offset-next: null
 ) {
   $out: ();
   $silent: _elsass-gutter-silent($gutter);
   $shorthand: null;
 
-  @if $gutter or $shift {
+  @if $gutter or $offset {
     // Get a map of each side $gutter value
     $gaps: false false false false;
 
@@ -401,16 +401,16 @@ $elsass-args: (
       $gaps: _elsass-gutter-map(if($silent, $silent, $gutter));
     }
 
-    // Get a map of each side $shift value.
-    $shifts: if($shift, _elsass-shift-map($shift, $shift-next), false);
+    // Get a map of each side $offset value.
+    $offsets: if($offset, _elsass-offset-map($offset, $offset-next), false);
 
     // Get a map of each margin side value.
     $vals: ();
     $val: null;
 
     @each $side in $SIDES {
-      @if not $silent or ($shifts and map-has-key($shifts, $side)) { 
-        $alt: if($shifts, map-get($shifts, $side), false);
+      @if not $silent or ($offsets and map-has-key($offsets, $side)) { 
+        $alt: if($offsets, map-get($offsets, $side), false);
         @if not $alt or type-of($alt) == number {
           $gap: map-get($gaps, $side);
           $val: elsass-gutter(if($gap and not $GUTTER, ($bpt: $gap), $gap), $alt);
@@ -438,30 +438,30 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.6 _elsass-shift-map
+// 3.6 _elsass-offset-map
 // ---------------------
 /// Returns a map of needed flex related CSS properties and their values.
 /// @access  Private
-/// @param   {Ratio | 'pull' | 'push' | 'center'} $shift;
-/// @param   {Bool} $shift-next;
-/// @return  {Map | false} Map of shift value(s) per side | false.
+/// @param   {Ratio | 'pull' | 'push' | 'center'} $offset;
+/// @param   {Bool} $offset-next;
+/// @return  {Map | false} Map of offset value(s) per side | false.
 /// @example scss -
-///          _elsass-shift-map(-1/4);
+///          _elsass-offset-map(-1/4);
 ///          // (left: -1/4, right: 1/4)
-@function _elsass-shift-map($shift: null, $shift-next: null) {
+@function _elsass-offset-map($offset: null, $offset-next: null) {
   $out: false;
 
-  @if type-of($shift) == number {
-    $shift-left: $shift;
-    $out: if($out, map-merge($out, ('left': $shift-left)), ('left': $shift-left));
-    @if $shift-next {
-      $out: map-merge($out, ('right': -$shift-left));
+  @if type-of($offset) == number {
+    $offset-left: $offset;
+    $out: if($out, map-merge($out, ('left': $offset-left)), ('left': $offset-left));
+    @if $offset-next {
+      $out: map-merge($out, ('right': -$offset-left));
     }
   } @else {
-    @if $shift == 'center' or $shift == 'pull' {
+    @if $offset == 'center' or $offset == 'pull' {
       $out: if($out, map-merge($out, ('right': auto)), ('right': auto));
     }
-    @if $shift == 'center' or $shift == 'push' {
+    @if $offset == 'center' or $offset == 'push' {
       $out: if($out, map-merge($out, ('left': auto)), ('left': auto));
     }
   }
