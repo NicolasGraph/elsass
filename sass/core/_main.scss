@@ -80,10 +80,11 @@ $elsass-args: (
 ///          Set any unwanted gutter side to false (i.e. `$gutter: false .5`).  
 ///          Alternatively, a map can be used to explicitly set one or more
 ///          sides related gutter value  (i.e. `$gutter: ('right': 1)`).  
-///          Set the margin all around; see `$gutter`.  
 ///          `'out'` gutter type also accept silent gutters to alterate the element width
 ///          without applying any margin. Use `"silent"` or any valid value
-///          via a map using `"silent"` as key.
+///          via a map using `"silent"` as key.  
+///          You can override the default gutter type by providing the previous
+///          value(s) through a map using gutter type(s) (`'in'`/`'out'`) as key(s). 
 /// @param   {List} $offset -
 ///          Container width ratio to push or pull (if negative) the element,
 ///          optionally followed by true to pull or push next items.
