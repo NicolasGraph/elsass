@@ -38,7 +38,7 @@
 /// Can be override in the `elsass` mixin `$gutter` argument through a map of `'in'` and/or `'out'` values.
 /// @type String
 /// @see {mixin} elsass
-$elsass-gutter-type: 'out'; // Default gutter type: in (padding) or out (margin).
+$elsass-gutter-type: 'out' !default; // Default gutter type: in (padding) or out (margin).
 
 // 1.2 Default mixin argument values
 // ---------------------------------
