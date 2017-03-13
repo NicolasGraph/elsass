@@ -327,7 +327,7 @@ $elsass-args: (
   $out: false;
 
   @if $gutter == 'silent' {
-    $out: map-get($elsass-args, 'gutter-out');
+    $out: map-get($elsass-args, 'gutter');
   } @else if type-of($gutter) == map and map-has-key($gutter, 'silent') {
     $out: map-get($gutter, 'silent');
   }
