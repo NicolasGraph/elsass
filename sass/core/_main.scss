@@ -14,50 +14,22 @@
 /// @group Main
 ////
 
-// 1. SETTINGS
-// 1.1 Default gutter type
-// 1.2 Default mixin argument values
-// 2. MIXIN
-// 2.1 elsass
-// 3. FUNCTIONS
-// 3.1 _elsass
-// 3.2 _elsass-bpts-set
-// 3.3 _elsass-gutter-silent
-// 3.4 _elsass-gutter-map
-// 3.5 _elsass-gutter-css
-// 3.6 _elsass-offset-map
-// 3.7 _elsass-gutter-short
-// 3.8 _elsass-merge-bpt
+// 1. MIXIN
+// 1.1 elsass
+// 2. FUNCTIONS
+// 2.1 _elsass
+// 2.2 _elsass-bpts-set
+// 2.3 _elsass-gutter-silent
+// 2.4 _elsass-gutter-map
+// 2.5 _elsass-gutter-css
+// 2.6 _elsass-offset-map
+// 2.7 _elsass-gutter-short
+// 2.8 _elsass-merge-bpt
 
-// 1. SETTINGS
-// ===========
-
-// 1.1 Default gutter type
-// -----------------------
-/// Set gutters as padding (`'in'`) or margin (`'out'`) by default.
-/// Can be override in the `elsass` mixin `$gutter` argument through a map of `'in'` and/or `'out'` values.
-/// @type String
-/// @see {mixin} elsass
-$elsass-gutter-type: 'out' !default; // Default gutter type: in (padding) or out (margin).
-
-// 1.2 Default mixin argument values
-// ---------------------------------
-/// Set any `elsass` mixin argument to `true` to enable the
-/// [`$elsass-args`](#main-variable-elsass-args) related value.  
-/// Use `"…"` to enable the current and the following non defined arguments value.
-/// @type Map
-/// @see {mixin} elsass
-$elsass-args: (
-  'media' : $BPT-MIN,
-  'width' : 1 true,
-  'gutter': 0.5,
-  'offset': null,
-) !default;
-
-// 2. MIXIN
+// 1. MIXIN
 // ========
 
-// 2.1 elsass
+// 1.1 elsass
 // ----------
 /// Help to wrap `@content` and arguments related CSS
 /// in tidy media-queries to manage your responsive grid.  
@@ -171,10 +143,10 @@ $elsass-args: (
   }
 }
 
-// 3. FUNCTIONS
+// 2. FUNCTIONS
 // ============
 
-// 3.1 _elsass
+// 2.1 _elsass
 // -----------
 /// Returns a map of needed CSS properties
 /// and their values from elsass mixin arguments.
@@ -292,7 +264,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.2 _elsass-bpts-set
+// 2.2 _elsass-bpts-set
 // --------------------
 /// Get a list of breakpoints explicitly and implicitly set.
 /// @access  Private
@@ -318,7 +290,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.3 _elsass-gutter-silent
+// 2.3 _elsass-gutter-silent
 // -------------------------
 /// Returns a map of needed flex related CSS properties and their values.
 /// @access Private
@@ -336,7 +308,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.4 _elsass-gutter-map
+// 2.4 _elsass-gutter-map
 // ----------------------
 /// Return a map of side values from a single value
 /// or a list of two or four values — like padding/margin values.
@@ -374,7 +346,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.5 _elsass-gutter-css
+// 2.5 _elsass-gutter-css
 // ----------------------
 /// Returns a map of needed flex related CSS properties and their values.
 /// @access Private
@@ -439,7 +411,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.6 _elsass-offset-map
+// 2.6 _elsass-offset-map
 // ---------------------
 /// Returns a map of needed flex related CSS properties and their values.
 /// @access  Private
@@ -470,7 +442,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.7 _elsass-gutter-short
+// 2.7 _elsass-gutter-short
 // ------------------------
 /// Returns a padding/margin shorthand value from four side values if possible.
 /// @access  Private
@@ -497,7 +469,7 @@ $elsass-args: (
   @return $out;
 }
 
-// 3.8 _elsass-merge-bpt
+// 2.8 _elsass-merge-bpt
 // ---------------------
 /// Merge map of CSS stored per media-queries related breakpoints
 /// in a way to optimize the outpout.

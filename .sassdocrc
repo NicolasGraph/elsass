@@ -1,5 +1,6 @@
 basePath: https://github.com/nicolasgraph/elsass
 dest: ./docs
 groups:
-  Base: "Base"
-  Main: "Main"
+  Config: "Configuration"
+  Main: "Main tool"
+  Misc: "Others"
