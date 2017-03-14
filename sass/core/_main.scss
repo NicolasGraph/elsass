@@ -180,7 +180,10 @@
   $gutter-in: null;
   $gutter-out: null;
 
-  @if type-of($gutter) != map {
+  @if type-of($gutter) != map or
+    not map-has-key($gutter, 'in') or
+    not map-has-key($gutter, 'out')
+  {
     @if $elsass-gutter-type == 'in' {
       $gutter-in: $gutter;
     } @else {
@@ -200,7 +203,13 @@
   @if $gutter-out {
     $silent: _elsass-gutter-silent($gutter-out);
     $gaps: _elsass-gutter-map(if($silent, $silent, $gutter-out));
-    $gap-width: if($gaps, map-get($gaps, 'right') map-get($gaps, 'left'), false);
+    @if $gaps {
+      @each $gap in (map-get($gaps, 'right'), map-get($gaps, 'left')) {
+        @if $gap {
+          $gap-width: if($gap-width, append($gap-width, $gap), $gap);
+        }
+      }
+    }
   }
 
   $offset-next: false;
@@ -338,7 +347,7 @@
     $vals: null;
     @each $side in $SIDES {
       $val: if(map-has-key($gap, $side), map-get($gap, $side), false);
-      $vals: if($vals == null, $val, append($new-gap, $val));
+      $vals: if($vals == null, $val, append($vals, $val));
     }
     $gap: $vals;
   }
@@ -392,7 +401,7 @@
         $alt: if($offsets, map-get($offsets, $side), false);
         @if not $alt or type-of($alt) == number {
           $gap: map-get($gaps, $side);
-          $val: elsass-gutter(if($gap and not $GUTTER, ($bpt: $gap), $gap), $alt);
+          $val: elsass-gutter(if($gap  and not $GUTTER, ($bpt: $gap), $gap), $alt);
         } @else {
           $val: $alt;
         }
