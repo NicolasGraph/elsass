@@ -35,60 +35,68 @@
 /// in tidy media-queries to manage your responsive grid.  
 /// `$elsass-settings` based values (max-width, gutters) try
 /// to use global settings before to fallback to responsive settings.  
-/// Set any `elsass` mixin argument to `true` to enable the
-/// [`$elsass-args`](#main-variable-elsass-args) related value.  
-/// Use `"…"` to enable the current and the following non defined arguments value.
-/// @param   {List} $media -
-///          Media-query min and/or max-width related breakpoint names.  
-///          Use `false` as the first item to disable the media-query min-width.
-/// @param   {List} $width -
-///          Container width ratio or `<length>` used as CSS width value.  
-///          A second item is able to set the max-width via the following values :
-///          `true` (uses `$elsass-settings` global/responsive container max-width('s))
-///          or `<length>`
-///          (used as is).
-/// @param   {List | Map} $gutter -
-///          Up to four gutter ratio(s) or `<length>` to set the gutter all around.  
-///          Set any unwanted gutter side to false (i.e. `$gutter: false .5`).  
-///          Alternatively, a map can be used to explicitly set one or more
-///          sides related gutter value  (i.e. `$gutter: ('right': 1)`).  
-///          `'out'` gutter type also accept silent gutters to alterate the element width
-///          without applying any margin. Use `"silent"` or any valid value
-///          via a map using `"silent"` as key.  
-///          You can override the default gutter type by providing the previous
-///          value(s) through a map using gutter type(s) (`'in'`/`'out'`) as key(s). 
-/// @param   {List} $offset -
-///          Container width ratio to push or pull (if negative) the element,
-///          optionally followed by true to pull or push next items.
-/// @output  Arguments relative CSS and `@content` wrapped in tidy media-queries.
+///
+/// In addition to the argument values described below, `$elsass-args` values can be enabled through:
+/// - `true` to enable the related argument value;
+/// - `'…'` to enable the current and the following non defined argument values.
+/// @param {List} $media - 
+///   Defines the media-query/ies to generate and the related
+///   settings to use based on the following list of values: 
+///   1. Media-query min-width related breakpoint name or `false`;
+///   2. Media-query max-width related breakpoint name if needed.
+/// @param {List} $width -
+///   Defines the element `width` and/or `max-witdh`
+///   through a list of the following values:
+///   1. Width as container width ratio or `<length>`;
+///   2. max-width via one of the following values:
+///     - `true`, to use the `$elsass-settings`
+///        global/responsive container max-width('s);
+///     - `<length>`, used as is.
+/// @param {List | Map} $gutter -
+///   Applies gutters as padding and/or margin based on the provided gutter type(s).  
+///
+///   The following valid values can be provided as is, using the default gutter type,
+///   or through a map using one or both of the gutter types as key(s):
+///   - Up to four gutter ratios or `<length>` sorted in the same way
+///     as the padding or margin shorthand value and where
+///     any unwanted side(s) related gutter can be set to `false`;
+///   - Map of sides related gutter ratios or `<length>`.
+///
+///
+///   `$gutter` also helps to calculate the element width when using the `'out'` gutter type.  
+///   To alterate the width value without applying any margin, silent gutters can be used through:
+///   - `"silent"`;
+///   - any of the previous value via a map using `"silent"` as key.
+/// @param {List} $offset -
+///   Container width ratio to push or pull (if negative) the element,
+///   optionally followed by true to pull or push next items.
+/// @output Arguments relative CSS and `@content` wrapped in tidy media-queries.
 /// @example scss - SCSS
-///          .foo {
-///            @include elsass('s' 'l', 1/4, '…') {
-///              background: #eee;
-///            }
-///          }
+///   .foo {
+///     @include elsass('s' 'l', 1/4, '…') {
+///       background: #eee;
+///     }
+///   }
 /// @example css - CSS output
-///          /* Assuming $elsass-settings and $elsass-args are untouched. */
-///          @media screen and (max-width: 639px) {
-///            .foo {
-///              width: calc(25% - 24px);
-///              padding: 12px;
-///              margin: 12px;
-///            }
-///          }
-///          @media screen and (max-width: 1023px) {
-///            .foo {
-///              box-sizing: border-box;
-///              background: #eee;
-///            }
-///          }
-///          @media screen and (min-width: 640px) and (max-width: 1023px) {
-///            .foo {
-///              width: calc(25% - 32px);
-///              padding: 16px;
-///              margin: 16px;
-///            }
-///          }
+///   /* Assuming $elsass-settings and $elsass-args are untouched. */
+///   @media screen and (max-width: 639px) {
+///     .foo {
+///       width: calc(25% - 24px);
+///       margin: 12px;
+///     }
+///   }
+///   @media screen and (max-width: 1023px) {
+///     .foo {
+///       box-sizing: border-box;
+///       background: #eee;
+///     }
+///   }
+///   @media screen and (min-width: 640px) and (max-width: 1023px) {
+///     .foo {
+///       width: calc(25% - 32px);
+///       margin: 16px;
+///     }
+///   }
 @mixin elsass(
   $media : null,
   $width : null,
@@ -150,7 +158,6 @@
 // -----------
 /// Returns a map of needed CSS properties
 /// and their values from elsass mixin arguments.
-/// @access Private
 @function _elsass(
   $media : null,
   $width : null,
@@ -266,15 +273,15 @@
 
 // 2.2 _elsass-bpts-set
 // --------------------
-/// Get a list of breakpoints explicitly and implicitly set.
-/// @access  Private
-/// @param   {Breakpoint} $from;
-/// @param   {Breakpoint} $to;
-/// @return  {List | false} Breakpoints list | false;
+/// Get a list of breakpoints
+/// explicitly and implicitly set.
+/// @param {Breakpoint} $from;
+/// @param {Breakpoint} $to;
+/// @return {List | false} Breakpoints list | false;
 /// @example scss -
-///          _elsass-bpts-set('s', 'l')
-///          // Assuming valid bpts are 's', 'm', 'l' and 'xl';
-///          // 's' 'm' 'l'
+///   _elsass-bpts-set('s', 'l')
+///   // Assuming valid bpts are 's', 'm', 'l' and 'xl';
+///   // 's' 'm' 'l'
 @function _elsass-bpts-set($from: null, $to: null) {
   $out: false;
   $i-from: if($from, index($BPTS, $from), 1);
@@ -292,9 +299,9 @@
 
 // 2.3 _elsass-gutter-silent
 // -------------------------
-/// Returns a map of needed flex related CSS properties and their values.
-/// @access Private
-/// @param  {…} $gutter CSS flex-wrap value;
+/// Returns a map of needed flex related
+/// CSS properties and their values.
+/// @param {…} $gutter CSS flex-wrap value;
 /// @return {List | false} Silent gutter value | false.
 @function _elsass-gutter-silent($gutter: null) {
   $out: false;
@@ -312,13 +319,12 @@
 // ----------------------
 /// Return a map of side values from a single value
 /// or a list of two or four values — like padding/margin values.
-/// @access  Private
-/// @param   {List} $gap -
-///          Single value or list of two or four values;
-/// @return  {Map | false} Map of side values | false.
+/// @param {List} $gap -
+///   Single value or list of two or four values;
+/// @return {Map | false} Map of side values | false.
 /// @example scss -
-///          _elsass-gutter-map(false .5);
-///          // (top: false, left: .5, bottom: false, $right: .5)
+///   _elsass-gutter-map(false .5);
+///   // (top: false, left: .5, bottom: false, $right: .5)
 @function _elsass-gutter-map($gap: null) {
   $out: false;
 
@@ -348,13 +354,13 @@
 
 // 2.5 _elsass-gutter-css
 // ----------------------
-/// Returns a map of needed flex related CSS properties and their values.
-/// @access Private
-/// @param  {Breakpoint} $bpt;
-/// @param  {Breakpoint | Ratio | Lentgth} $gutter
-///         Breakpoint related gutter ratio(s) or CSS value(s);
-/// @param  {Ratio} $offset;
-/// @param  {Bool} $offset-next;
+/// Returns a map of needed flex related
+/// CSS properties and their values.
+/// @param {Breakpoint} $bpt;
+/// @param {Breakpoint | Ratio | Lentgth} $gutter
+///   Breakpoint related gutter ratio(s) or CSS value(s);
+/// @param {Ratio} $offset;
+/// @param {Bool} $offset-next;
 /// @return {Map | false} Map of side values | false.
 @function _elsass-gutter-css(
   $bpt        : null,
@@ -413,14 +419,15 @@
 
 // 2.6 _elsass-offset-map
 // ---------------------
-/// Returns a map of needed flex related CSS properties and their values.
+/// Returns a map of needed flex related
+/// CSS properties and their values.
 /// @access  Private
-/// @param   {Ratio | 'pull' | 'push' | 'center'} $offset;
-/// @param   {Bool} $offset-next;
-/// @return  {Map | false} Map of offset value(s) per side | false.
+/// @param {Ratio | 'pull' | 'push' | 'center'} $offset;
+/// @param {Bool} $offset-next;
+/// @return {Map | false} Map of offset value(s) per side | false.
 /// @example scss -
-///          _elsass-offset-map(-1/4);
-///          // (left: -1/4, right: 1/4)
+///   _elsass-offset-map(-1/4);
+///   // (left: -1/4, right: 1/4)
 @function _elsass-offset-map($offset: null, $offset-next: null) {
   $out: false;
 
@@ -444,16 +451,16 @@
 
 // 2.7 _elsass-gutter-short
 // ------------------------
-/// Returns a padding/margin shorthand value from four side values if possible.
-/// @access  Private
-/// @param   {Number} $top - Top gutter length.
-/// @param   {Number} $right - Right gutter length.
-/// @param   {Number} $bottom - Bottom gutter length.
-/// @param   {Number} $left - Left gutter length.
-/// @return  {Number | false} Shorthand value | false.
+/// Returns a padding/margin shorthand value
+/// from four side values if possible.
+/// @param {Number} $top - Top gutter length.
+/// @param {Number} $right - Right gutter length.
+/// @param {Number} $bottom - Bottom gutter length.
+/// @param {Number} $left - Left gutter length.
+/// @return {Number | false} Shorthand value | false.
 /// @example scss
-///          _elsass-gutter-short(10px, auto, 10px, auto);
-///          // 10px auto
+///   _elsass-gutter-short(10px, auto, 10px, auto);
+///   // 10px auto
 @function _elsass-gutter-short(
   $top   : null,
   $right : null,
@@ -471,20 +478,19 @@
 
 // 2.8 _elsass-merge-bpt
 // ---------------------
-/// Merge map of CSS stored per media-queries related breakpoints
-/// in a way to optimize the outpout.
-/// @access  Private
-/// @param   {Map} $out
-///          Map of CSS stored per media-queries relative breakpoints;
-/// @param   {Map} $map
-///          Map of the following breapoint CSS;
-/// @return  {Map} Map of CSS per media-queries.
+/// Merge map of CSS stored per media-queries related
+/// breakpoints in a way to optimize the outpout.
+/// @param {Map} $out
+///   Map of CSS stored per media-queries relative breakpoints;
+/// @param {Map} $map
+///   Map of the following breapoint CSS;
+/// @return {Map} Map of CSS per media-queries.
 /// @example scss -
-///          $out: (s: (m: (width: 25%, margin: 10px)));
-///          $bpt-map: (m: (l: (width: 25%, margin: 15px)));
-///          elsass-merge($out, $bpt-map);
-///          // (s: (m: (margin: 10px), l: (width: 25%)),
-///          //  m: (l: (margin: 15px)));
+///   $out: (s: (m: (width: 25%, margin: 10px)));
+///   $bpt-map: (m: (l: (width: 25%, margin: 15px)));
+///   elsass-merge($out, $bpt-map);
+///   // (s: (m: (margin: 10px), l: (width: 25%)),
+///   //  m: (l: (margin: 15px)));
 @function _elsass-merge-bpt($out, $bpt-map) {
   $new-css: ();
 

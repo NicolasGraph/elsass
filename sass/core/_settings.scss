@@ -26,24 +26,26 @@
 // 1.1 Layout
 // ----------
 /// Media-queries agnostic and media-queries related settings.
-/// @type  Map
-/// @prop  {Map} global -
-///        (optional) Media-queries agnostic settings.
-/// @prop  {Length} global.gutter-length -
-///        Media-queries agnostic gutter length.
-/// @prop  {Map} responsive -
-///        Media-queries related settings.
-/// @prop  {Map} responsive.bpt -
-///        Map of a breakpoint related settings
-///        where using the breakpoint name as key.
-/// @prop  {Length} responsive.bpt.device-min-width -
-///        Breakpoint related media-query min-width
-///        (also used to calculate the previous breakpoint max-width).  
-///        This map item is useless for the smallest breakpoint.
-/// @prop  {Length} responsive.bpt.container-max-width -
-///        Breakpoint related container max-width.
-/// @prop  {Length} responsive.bpt.gutter-length -
-///        Breakpoint related gutter length.
+/// @type Map
+/// @prop {Map} global -
+///   (optional) Media-queries agnostic settings.
+/// @prop {Length} global.gutter-length -
+///   (optional) Media-queries agnostic gutter length.
+/// @prop {Length} global.container-max-width -
+///   (optional) Media-queries agnostic related container max-width.
+/// @prop {Map} responsive -
+///   Media-queries related settings.
+/// @prop {Map} responsive.bpt -
+///   Map of a breakpoint related settings
+///   where using the breakpoint name as key.
+/// @prop {Length} responsive.bpt.device-min-width -
+///   Breakpoint related media-query min-width
+///   (also used to calculate the previous breakpoint max-width).  
+///   This map item is useless for the smallest breakpoint.
+/// @prop {Length} responsive.bpt.container-max-width -
+///   Breakpoint related container max-width.
+/// @prop {Length} responsive.bpt.gutter-length -
+///   Breakpoint related gutter length.
 $elsass-settings: (
   'global': (                    // Media-queries agnostic settings.
     'gutter-length'      : null, // Gutter length.
@@ -77,11 +79,12 @@ $elsass-settings: (
 
 // 2.1 Default gutter type
 // -----------------------
-/// Set gutters as padding (`'in'`) or margin (`'out'`) by default.
-/// Can be override in the `elsass` mixin `$gutter` argument through a map of `'in'` and/or `'out'` values.
+/// Set gutters as padding (`'in'`) or margin (`'out'`) by default.  
+/// Can be overriden in the `elsass` mixin `$gutter` argument
+/// through a map of `'in'` and/or `'out'` values.
 /// @type String
 /// @see {mixin} elsass
-$elsass-gutter-type: 'out' !default; // Default gutter type: in (padding) or out (margin).
+$elsass-gutter-type: 'out' !default;
 
 // 2.2 Enabled mixin argument values
 // ---------------------------------
