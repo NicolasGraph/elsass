@@ -43,9 +43,9 @@
 ///   (also used to calculate the previous breakpoint max-width).  
 ///   This map item is useless for the smallest breakpoint.
 /// @prop {Length} responsive.bpt.container-max-width -
-///   Breakpoint related container max-width.
+///   (optional) Breakpoint related container max-width.
 /// @prop {Length} responsive.bpt.gutter-length -
-///   Breakpoint related gutter length.
+///   (optional) Breakpoint related gutter length.
 $elsass-settings: (
   'global': (                    // Media-queries agnostic settings.
     'gutter-length'      : null, // Gutter length.
@@ -80,16 +80,17 @@ $elsass-settings: (
 // 2.1 Default gutter type
 // -----------------------
 /// Set gutters as padding (`'in'`) or margin (`'out'`) by default.  
-/// Can be overriden in the `elsass` mixin `$gutter` argument
-/// through a map of `'in'` and/or `'out'` values.
+/// Can be overriden via the `elsass` mixin `$gutter` argument
+/// through a map using one or both of the gutter types as key(s).
 /// @type String
 /// @see {mixin} elsass
 $elsass-gutter-type: 'out' !default;
 
 // 2.2 Enabled mixin argument values
 // ---------------------------------
-/// Set any `elsass` mixin argument to `true` to enable the `$elsass-args` related value.  
-/// Use `"…"` to enable the current and the following non defined arguments value.
+/// Stores usual `elsass` mixin argument values to be easily enable through:
+/// - `true` to enable the related argument value;
+/// - `'…'` to enable the current and the following non defined argument values.
 /// @type Map
 /// @see {mixin} elsass
 $elsass-args: (
