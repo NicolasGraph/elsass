@@ -1,0 +1,101 @@
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// ------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+////
+/// @group Config
+////
+
+// 1. BASE
+// 1.1 Layout
+// 2. MAIN
+// 2.1 Default gutter type-of
+// 2.2 Enabled mixin argument values
+
+// 1. BASE
+// =======
+
+// 1.1 Layout
+// ----------
+/// Media-queries agnostic and media-queries related settings.
+/// @type Map
+/// @prop {Map} global -
+///   (optional) Media-queries agnostic settings.
+/// @prop {Length} global.gutter-length -
+///   (optional) Media-queries agnostic gutter length.
+/// @prop {Length} global.container-max-width -
+///   (optional) Media-queries agnostic related container max-width.
+/// @prop {Map} responsive -
+///   Media-queries related settings.
+/// @prop {Map} responsive.bpt -
+///   Map of a breakpoint related settings
+///   where using the breakpoint name as key.
+/// @prop {Length} responsive.bpt.device-min-width -
+///   Breakpoint related media-query min-width
+///   (also used to calculate the previous breakpoint max-width).  
+///   This map item is useless for the smallest breakpoint.
+/// @prop {Length} responsive.bpt.container-max-width -
+///   (optional) Breakpoint related container max-width.
+/// @prop {Length} responsive.bpt.gutter-length -
+///   (optional) Breakpoint related gutter length.
+$elsass-settings: (
+  'global': (                    // Media-queries agnostic settings.
+    'gutter-length'      : null, // Gutter length.
+    'container-max-width': null, // Max-width to optionally apply to containers.
+  ),
+  'responsive': (                   // Media-queries related settings.
+    's': (                          // Custom breakpoint name.
+      'container-max-width': 480px, // Max-width to optionally apply to containers.
+      'gutter-length'      : 24px,  // Gutter length.
+    ),
+    'm': (
+      'device-min-width'   : 640px, // Media-query min-width; useless for the first bpt.
+      'container-max-width': 800px,
+      'gutter-length'      : 32px,
+    ),
+    'l': (
+      'device-min-width'   : 1024px,
+      'container-max-width': 1000px,
+      'gutter-length'      : 40px,
+    ),
+    'xl': (
+      'device-min-width'   : 1440px,
+      'container-max-width': 1280px,
+      'gutter-length'      : 48px,
+    )
+  )
+) !default;
+
+// 2. MAIN
+// =======
+
+// 2.1 Default gutter type
+// -----------------------
+/// Set gutters as padding (`'in'`) or margin (`'out'`) by default.  
+/// Can be overriden via the `elsass` mixin `$gutter` argument
+/// through a map using one or both of the gutter types as key(s).
+/// @type String
+/// @see {mixin} elsass
+$elsass-gutter-type: 'out' !default;
+
+// 2.2 Enabled mixin argument values
+// ---------------------------------
+/// Stores usual `elsass` mixin argument values to be easily enable through:
+/// - `true` to enable the related argument value;
+/// - `'…'` to enable the current and the following non defined argument values.
+/// @type Map
+/// @see {mixin} elsass
+$elsass-args: (
+  'media' : false,
+  'width' : 1 true,
+  'gutter': 0.5,
+  'offset': null,
+) !default;
