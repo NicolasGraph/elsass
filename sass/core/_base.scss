@@ -24,13 +24,15 @@
 // 1. CONSTANTS
 // ============
 
-$GLOBAL    : if(map-has-key($elsass-settings, 'global'), map-get($elsass-settings, 'global'), null);
-$GUTTER    : if($GLOBAL and map-has-key($GLOBAL, 'gutter-length'), map-get($GLOBAL, 'gutter-length'), null);
-$MAX-WIDTH : if($GLOBAL and map-has-key($GLOBAL, 'container-max-width'), map-get($GLOBAL, 'container-max-width'), null);
-$RESPONSIVE: map-get($elsass-settings, 'responsive');
-$BPTS      : map-keys($RESPONSIVE); /// Breakpoints list.
-$BPT-MIN   : nth($BPTS, 1); /// Smallest breakpoint.
-$SIDES     : 'top', 'right', 'bottom', 'left';
+$ELSASS-GLOB       : map-get($elsass, 'global');
+$ELSASS-COLS       : map-get($ELSASS-GLOB, 'columns');
+$ELSASS-GUTTER     : map-get($ELSASS-GLOB, 'gutter');
+$ELSASS-GUTTER-BASE: if(map-has-key($ELSASS-GLOB, 'gutter-length'), map-get($ELSASS-GLOB, 'gutter-length'), null);
+$ELSASS-MAX-WIDTH  : if(map-has-key($ELSASS-GLOB, 'container-max-width'), map-get($ELSASS-GLOB, 'container-max-width'), null);
+$ELSASS-RESP       : map-get($elsass, 'responsive');
+$ELSASS-BPTS       : map-keys($ELSASS-RESP); /// Breakpoints list.
+$ELSASS-BPT-MIN    : nth($ELSASS-BPTS, 1); /// Smallest breakpoint.
+$ELSASS-SIDES      : 'top', 'right', 'bottom', 'left';
 
 // 2. MIXIN
 // ========
@@ -38,7 +40,7 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 // 2.1 elsass-media
 // ----------------
 /// Wrap `@content` in a media-query.
-/// @param {String | Number} $from [$BPT-MIN] -
+/// @param {String | Number} $from [$ELSASS-BPT-MIN] -
 ///   media-query min-width related breakpoint name or `<length>`;
 /// @param {String | Number} $to -
 ///   media-query max-width related breakpoint name or `<length>`;
@@ -48,7 +50,7 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 ///     elsass-media('m', 'l') { width: 25%; }
 ///   }
 /// @example css - CSS output
-///   /* Assuming device min-widths for 'm' and 'l' breakpoints are set to 640px and 1024px through $elsass-settings. */
+///   /* Assuming device min-widths for 'm' and 'l' breakpoints are set to 640px and 1024px through $elsass. */
 ///   @media screen and (min-width: 640px) and (max-width: 1023px) {
 ///     .foo { width: 25%; }
 ///   }
@@ -56,17 +58,17 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
   $mq: false; // Media-query
 
   // Set a media-query min-width if $from is set and is not the first bpt.
-  @if $from and $from != $BPT-MIN {
-    @if index($BPTS, $from) {
-      $from: map-get(map-get($RESPONSIVE, $from), 'device-min-width');
+  @if $from and $from != $ELSASS-BPT-MIN {
+    @if index($ELSASS-BPTS, $from) {
+      $from: map-get(map-get($ELSASS-RESP, $from), 'device-min-width');
     }
     $mq: '(min-width: #{$from})';
   }
 
   // Set a media-query max-width if $to is set.
   @if $to {
-    @if index($BPTS, $to) {
-      $to: map-get(map-get($RESPONSIVE, $to), 'device-min-width') - 1;
+    @if index($ELSASS-BPTS, $to) {
+      $to: map-get(map-get($ELSASS-RESP, $to), 'device-min-width') - 1;
     }
     $mq: if($mq, $mq ' and ', '') '(max-width: #{$to})';
   }
@@ -90,7 +92,7 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 /// @param {Number | String} $width -
 ///   Ratio of the container width or `<length>`.  
 ///   Enter `'max'` or a breakpoint name to use the global/responsive
-///   container max width defined through `$elsass-settings`.
+///   container max width defined through `$elsass`.
 /// @param {Number | List | Map} $gutter-width -
 ///   Sum or list of the right and left gutter ratios or lengths.  
 ///   A one item long map using a breakpoint name as key can be provided
@@ -101,20 +103,22 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 ///   width: elsass-width(1/4, 'm');
 ///   /* = width: elsass-width(1/4, ('m': 1)); */
 /// @example css - CSS output
-///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass-settings. */
+///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass. */
 ///   width: calc(25% - 30px);
-///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass-settings. */
+///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass. */
 ///   width: 20%;
 @function elsass-width($width: null, $gutter-width: null) {
 
-  @if type-of($width) == string {
+  @if type-of($width) == list {
+    $width: percentage(nth($width, 1) / nth($width, 3));
+  } @else if type-of($width) == string {
     @if $width == 'max' {
-      $width: $MAX-WIDTH;
+      $width: $ELSASS-MAX-WIDTH;
     } @else {
-      $width: map-get(map-get($RESPONSIVE, $width), 'container-max-width');
+      $width: map-get(map-get($ELSASS-RESP, $width), 'container-max-width');
     }
   } @else if unitless($width) {
-    $width: percentage($width);
+    $width: percentage($width / $ELSASS-COLS);
   }
 
   $calc: null;
@@ -171,12 +175,12 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
 /// @return {Number} `<length>`
 /// @example scss - SCSS
 ///   margin-right: elsass-gutter(('m': 0.5));
-///   margin-left: elsass-gutter(('m': 0.5), 1/4);
+///   margin-left: elsass-gutter(('m': 0.5), 3);
 /// @example css - CSS output
-///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass-settings. */
+///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass. */
 ///   margin-right: 15px;
 ///   margin-left: calc(15px + 25%);
-///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass-settings. */
+///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass. */
 ///   margin-right: 2.5%;
 ///   margin-left: 27.5%;
 @function elsass-gutter($gutter: null, $offset: null) {
@@ -184,19 +188,21 @@ $SIDES     : 'top', 'right', 'bottom', 'left';
   @if $gutter {
     @if type-of($gutter) == map {
       $bpt: nth(map-keys($gutter), 1);
-      $gutter-length: map-get(map-get($RESPONSIVE, $bpt), 'gutter-length');
+      $gutter-length: map-get(map-get($ELSASS-RESP, $bpt), 'gutter-length');
       $gutter: map-get($gutter, $bpt) * $gutter-length;
-    } @else if map-has-key($RESPONSIVE, $gutter) {
-      $gutter: map-get(map-get($RESPONSIVE, $gutter), 'gutter-length');
+    } @else if map-has-key($ELSASS-RESP, $gutter) {
+      $gutter: map-get(map-get($ELSASS-RESP, $gutter), 'gutter-length');
     } @else if unitless($gutter) {
-      $gutter: $gutter * $GUTTER;
+      $gutter: $gutter * $ELSASS-GUTTER-BASE;
     }
   }
 
   @if $offset {
 
-    @if unitless($offset) {
-      $offset: percentage($offset);
+    @if type-of($offset) == number and unitless($offset) {
+      $offset: percentage($offset / $ELSASS-COLS);
+    } @else if type-of($offset) == list {
+      $offset: percentage(nth($offset, 1) / nth($offset, 3));
     }
 
     @if $gutter {

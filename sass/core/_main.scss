@@ -20,11 +20,12 @@
 // 2.1 _elsass
 // 2.2 _elsass-bpts-set
 // 2.3 _elsass-gutter-silent
-// 2.4 _elsass-gutter-map
-// 2.5 _elsass-gutter-css
-// 2.6 _elsass-offset-map
-// 2.7 _elsass-gutter-short
-// 2.8 _elsass-merge-bpt
+// 2.4 _elsass-parse-gutter
+// 2.5 _elsass-parse-behaviour
+// 2.6 _elsass-parse-offset
+// 2.7 _elsass-gutter-css
+// 2.8 _elsass-gutter-short
+// 2.9 _elsass-merge-bpt
 
 // 1. MIXIN
 // ========
@@ -33,52 +34,82 @@
 // ----------
 /// Help to wrap `@content` and arguments related CSS
 /// in tidy media-queries to manage your responsive grid.  
-/// `$elsass-settings` based values (max-width, gutters) try
+/// `$elsass` based values (max-width, gutters) try
 /// to use global settings before to fallback to responsive settings.  
 ///
-/// In addition to the argument values described below, `$elsass-args` values can be enabled through:
-/// - `true` to enable the related argument value;
-/// - `'…'` to enable the current and the following non defined argument values.
 /// @param {List} $media - 
 ///   Defines the media-query/ies to generate and the related
 ///   settings to use based on the following list of values: 
 ///   1. Media-query min-width related breakpoint name or `false`;
 ///   2. Media-query max-width related breakpoint name if needed.
 /// @param {List} $width -
-///   Defines the element `width` and/or `max-witdh`
-///   through a list of the following values:
-///   1. Width as container width ratio or `<length>`;
-///   2. max-width via one of the following values:
-///     - `true`, to use the `$elsass-settings`
-///        global/responsive container max-width('s);
-///     - `<length>`, used as is.
+///   Defines the element `width` and (optionally) `max-witdh` from the following values.
+///   - a number of columns, used as a divisor of the columns number set;
+///   - a number of columns followed by ` of ` and a columns number to override de one set.
+///   - `'max'`, to apply a `width` value of `100%` and a max width related to the settings.
 /// @param {List | Map} $gutter -
-///   Applies gutters as padding and/or margin based on the provided gutter type(s).  
+///   Applies gutters as padding (`'in'`) and/or margin (`'out'`) based on the following valid values.  
 ///
-///   The following valid values can be provided as is, using the default gutter type,
-///   or through a map using one or both of the gutter types as key(s):
-///   - Up to four gutter ratios or `<length>` sorted in the same way
-///     as the padding or margin shorthand value and where
-///     any unwanted side(s) related gutter can be set to `false`;
-///   - Map of sides related gutter ratios or `<length>`.
-///
+///   - A map of `'in'` and/or `'out'` gutter values as:
+///     - a map of sides related gutter ratios or `<length>`.
+///     - a list of up to four gutter ratios or `<length>` sorted in the same way
+///       as the padding or margin shorthand value and where
+///       any unwanted side(s) related gutter can be set to `no`;
+///   - A behaviour related keyword, optionally preceded by a type related keyword to override the default one.
+///     - overridding the default gutter value:
+///       - using the default value:
+///         - `'default'`: gutter applied according to the settings;
+///       - using neither margins or paddings:
+///         - `'none'`: no margins or gutters applied;
+///       - using margins:
+///         - `'before'`: full gutter length as the `margin-left` value;
+///         - `'after'`: full gutter length as the `margin-right` value;
+///         - `'outside'`: half gutter length as the right and left margins value;
+///         - `'all-out'`: half gutter length as the `margin` value;
+///       - using paddings:
+///         - `'start'`: full gutter length as the `padding-left` value;
+///         - `'end'`: full gutter length as the `padding-right` value;
+///         - `'inside'`: half gutter length as the right and left paddings value;
+///         - `'all-in'`: half gutter length as the `padding` value;
+///       - using both:
+///         - `'all-over'`: half gutter length as the `padding` and `margin` values;
+///     - alterating the gutter value through a defined behaviour:
+///       - `'nest'`: defines a negative margin according to the padding;
+///       - `'collapse'`: reset set margins/paddings values to 0;
+///       - `'overlay'`: reset the margins values as negative;
+///       - `'is-prefix'`: ;
+///       - `'is-suffix'`: ;
+///       - `'affix'`: ;
 ///
 ///   `$gutter` also helps to calculate the element width when using the `'out'` gutter type.  
-///   To alterate the width value without applying any margin, silent gutters can be used through:
-///   - `"silent"`;
-///   - any of the previous value via a map using `"silent"` as key.
+///   To alterate the width value without applying any margin, silent gutters can be used by replacing the `'out'` key by `'silent'`.
 /// @param {List} $offset -
 ///   Container width ratio to push or pull (if negative) the element,
 ///   optionally followed by true to pull or push next items.
+///   - A shorthand
+///     - using `paddings:
+///       - `'before'` number: width related padding on the left;
+///       - `'after'` number: width related padding on the right;
+///       - `'pull'`: `'auto'` as the margin-right value;
+///       - `'push'`: `'auto'` as the margin-left value;
+///       - `'center'`: `'auto'` as the right and left margins;
+///     - using margins:
+///       - `'start'` + number: width related padding on the left;
+///       - `'end'` + number: width related padding on the right;
+///   - A map of `'in'` and/or `'out'` offset values as:
+///     - a list of up to four gutter ratios or `<length>` sorted in the same way
+///       as the padding or margin shorthand value and where
+///       any unwanted side(s) related gutter can be set to `no`;
+///     - a map of sides related gutter ratios or `<length>`.
 /// @output Arguments relative CSS and `@content` wrapped in tidy media-queries.
 /// @example scss - SCSS
 ///   .foo {
-///     @include elsass('s' 'l', 1/4, '…') {
+///     @include elsass('s' 'l', 4) {
 ///       background: #eee;
 ///     }
 ///   }
 /// @example css - CSS output
-///   /* Assuming $elsass-settings and $elsass-args are untouched. */
+///   /* Assuming $elsass is untouched. */
 ///   @media screen and (max-width: 639px) {
 ///     .foo {
 ///       width: calc(25% - 24px);
@@ -98,37 +129,18 @@
 ///     }
 ///   }
 @mixin elsass(
-  $media : null,
-  $width : null,
-  $gutter: null,
+  $media : $ELSASS-BPT-MIN,
+  $width : $ELSASS-COLS,
+  $gutter: $ELSASS-GUTTER,
   $offset: null
 ) {
 
-  // Set arguments to their default values if needed.
-  $args: (
-    'media' : $media,
-    'width' : $width,
-    'gutter': $gutter,
-    'offset': $offset,
-  );
-
-  $default: false;
-
-  @each $arg, $val in $args {
-    @if ($val == true or $val == '…') or ($val == null and $default) {
-      $args: map-merge($args, ($arg: map-get($elsass-args, $arg)));
-      @if not $default and $val == '…' {
-        $default: true;
-      }
-    }
-  }
 
   // Get the provided breakpoints.
-  $media: map-get($args, 'media');
-  $from: if(nth($media, 1), nth($media, 1), $BPT-MIN);
+  $from: if(nth($media, 1), nth($media, 1), $ELSASS-BPT-MIN);
   $to: if(type-of($media) == list, nth($media, 2), false);
 
-  $css: _elsass($args...);
+  $css: _elsass($media, $width, $gutter, $offset);
 
   @if not map-has-key(map-get($css, $from), $to) {
     $from-map: map-merge(map-get($css, $from), ($to: ()));
@@ -164,60 +176,61 @@
   $gutter: null,
   $offset: null
 ) {
-  $out: null;
 
   $bpt-min: if(nth($media, 1), nth($media, 1), false);
   $bpt-max: if(type-of($media) == list, nth($media, 2), false);
   $bpts-set: _elsass-bpts-set($bpt-min, $bpt-max);
 
   $max-width: false;
+  $columns: null;
 
   @if type-of($width) == list {
-    $max-width: nth($width, 2);
-    $width: nth($width, 1);
+    $columns: nth($width, 3);
+  } @else if $width == 'max' {
+    $max-width: true;
+    $width: if($columns, $columns, $ELSASS-COLS);
   }
 
   $gutter-in: null;
   $gutter-out: null;
+  $silent: null;
+  $gutter-width: false;
 
-  @if type-of($gutter) != map or
-    not map-has-key($gutter, 'in') or
-    not map-has-key($gutter, 'out')
-  {
-    @if $elsass-gutter-type == 'in' {
-      $gutter-in: $gutter;
+  @if $gutter {
+    $gutters: if($gutter == 'none', (), _elsass-parse-gutter($gutter));
+    @if map-has-key($gutters, 'in') {
+      $gutter-in: map-get($gutters, 'in');
+    }
+    @if map-has-key($gutters, 'out') {
+      $gutter-out: map-get($gutters, 'out');
     } @else {
-      $gutter-out: $gutter;
+      $silent: true;
+      $gutter-out: map-get($gutters, 'silent');
     }
-  } @else {
-    @if map-has-key($gutter, 'in') {
-      $gutter-in: map-get($gutter, 'in');
-    }
-    @if map-has-key($gutter, 'out') {
-      $gutter-out: map-get($gutter, 'out');
-    }
-  }
-  
-  $gap-width: false;
 
-  @if $gutter-out {
-    $silent: _elsass-gutter-silent($gutter-out);
-    $gaps: _elsass-gutter-map(if($silent, $silent, $gutter-out));
-    @if $gaps {
-      @each $gap in (map-get($gaps, 'right'), map-get($gaps, 'left')) {
-        @if $gap {
-          $gap-width: if($gap-width, append($gap-width, $gap), $gap);
+    @if $gutter-out {
+      @each $val in (map-get($gutter-out, 'right'), map-get($gutter-out, 'left')) {
+        @if $val {
+          $gutter-width: if($gutter-width, append($gutter-width, $val), $val);
         }
       }
     }
   }
 
-  $offset-next: false;
+  $offset-in: null;
+  $offset-out: null;
 
-  @if type-of($offset) == list {
-    $offset-next: nth($offset, 2);
-    $offset: nth($offset, 1);
+  @if $offset {
+    $offsets: _elsass-parse-offset($offset, $columns);
+    @if map-has-key($offsets, 'out') {
+      $offset-out: map-get($offsets, 'out');
+    }
+    @if map-has-key($offsets, 'in') {
+      $offset-in: map-get($offsets, 'in');
+    }
   }
+
+  $out: null;
 
   // Get and store each breakpoint related CSS.
   @each $bpt in $bpts-set {
@@ -225,7 +238,7 @@
     $bpt-next: null;
 
     @if $i == length($bpts-set) {
-      $bpt-next: if($bpt-max, nth($BPTS, index($BPTS, $bpt) + 1), false);
+      $bpt-next: if($bpt-max, nth($ELSASS-BPTS, index($ELSASS-BPTS, $bpt) + 1), false);
     } @else {
       $bpt-next: nth($bpts-set, $i + 1);
     }
@@ -233,24 +246,21 @@
     $bpt-css: ();
 
     @if $width {
-      @if $gutter-out {
+      @if $gutter-out or $gutter-in {
         $bpt-css: map-merge($bpt-css, (box-sizing: border-box));
       }
-      $val: elsass-width($width, if($gap-width, ($bpt: $gap-width), false));
+      $val: elsass-width($width, if($gutter-width, ($bpt: $gutter-width), false));
       $bpt-css: map-merge($bpt-css, (width: $val));
     }
 
     @if $max-width {
-      $val: $max-width;
-      @if $max-width == true {
-        $val: if($MAX-WIDTH, 'max', $bpt);
-      }
-      $val: elsass-width($val, if($gap-width, ($bpt: $gap-width), false));
+      $val: if($ELSASS-MAX-WIDTH, 'max', $bpt);
+      $val: elsass-width($val, if($gutter-width, ($bpt: $gutter-width), false));
       $bpt-css: map-merge($bpt-css, (max-width: $val));
     }
 
-    @if $gutter-in {
-      $bpt-gutter: _elsass-gutter-css($bpt, $gutter-in);
+    @if $gutter-in or $offset-in {
+      $bpt-gutter: _elsass-gutter-css($bpt, $gutter-in, false, $offset-in);
       @if map-has-key($bpt-gutter, 'shorthand') {
         $shorthand: map-get($bpt-gutter, 'shorthand');
         $bpt-css: map-merge($bpt-css, (padding: $shorthand));
@@ -261,8 +271,8 @@
       }
     }
 
-    @if $gutter-out or $offset {
-      $bpt-gutter: _elsass-gutter-css($bpt, $gutter-out, $offset, $offset-next);
+    @if $gutter-out or $offset-out {
+      $bpt-gutter: _elsass-gutter-css($bpt, $gutter-out, $silent, $offset-out);
       @if map-has-key($bpt-gutter, 'shorthand') {
         $shorthand: map-get($bpt-gutter, 'shorthand');
         $bpt-css: map-merge($bpt-css, (margin: $shorthand));
@@ -293,12 +303,12 @@
 ///   // 's' 'm' 'l'
 @function _elsass-bpts-set($from: null, $to: null) {
   $out: false;
-  $i-from: if($from, index($BPTS, $from), 1);
-  $i-to: if($to, index($BPTS, $to), length($BPTS));
+  $i-from: if($from, index($ELSASS-BPTS, $from), 1);
+  $i-to: if($to, index($ELSASS-BPTS, $to), length($ELSASS-BPTS));
 
   @for $i from $i-from through $i-to {
-    @if not $to or $i != index($BPTS, $to) {
-      $bpt: nth($BPTS, $i);
+    @if not $to or $i != index($ELSASS-BPTS, $to) {
+      $bpt: nth($ELSASS-BPTS, $i);
       $out: if($out, append($out, $bpt), $bpt);
     }
   }
@@ -316,7 +326,7 @@
   $out: false;
 
   @if $gutter == 'silent' {
-    $out: map-get($elsass-args, 'gutter');
+    $out: $ELSASS-GUTTER;
   } @else if type-of($gutter) == map and map-has-key($gutter, 'silent') {
     $out: map-get($gutter, 'silent');
   }
@@ -324,44 +334,243 @@
   @return $out;
 }
 
-// 2.4 _elsass-gutter-map
+// 2.4 _elsass-parse-gutter
 // ----------------------
-/// Return a map of side values from a single value
-/// or a list of two or four values — like padding/margin values.
+/// Return a map of side values from the elsass mixin $gutter value.
 /// @param {List} $gap -
 ///   Single value or list of two or four values;
 /// @return {Map | false} Map of side values | false.
 /// @example scss -
-///   _elsass-gutter-map(false .5);
+///   _elsass-parse-gutter(false .5);
 ///   // (top: false, left: .5, bottom: false, $right: .5)
-@function _elsass-gutter-map($gap: null) {
-  $out: false;
+@function _elsass-parse-gutter($gutter: null) {
+  $silent: null;
+  $behaviour: null;
 
-  @if type-of($gap) == number {
-    $gap: $gap $gap $gap $gap;
-  } @else if type-of($gap) == list and length($gap) == 2 {
-    $gap: nth($gap, 1) nth($gap, 2) nth($gap, 1) nth($gap, 2);
-  } @else if type-of($gap) == list and length($gap) == 3 {
-    $gap: nth($gap, 1) nth($gap, 2) nth($gap, 3) nth($gap, 2);
-  } @else if type-of($gap) == map {
-    $vals: null;
-    @each $side in $SIDES {
-      $val: if(map-has-key($gap, $side), map-get($gap, $side), false);
-      $vals: if($vals == null, $val, append($vals, $val));
+  // Parse keywords.
+  @if type-of($gutter) == string or type-of($gutter) == list {
+    $type: nth($gutter, 1);
+
+    @if map-has-key(map-get($elsass-advanced, 'behaviour'), $type) {
+      $behaviour: $type;
+      $type: $ELSASS-GUTTER;
+    } @else {
+      @if length($gutter) == 2 {
+        $behaviour: nth($gutter, 2);
+      }
+      @if $type == 'default' {
+        $type: $ELSASS-GUTTER;
+      }
     }
-    $gap: $vals;
+
+    // Assign values according to $type.
+    @if type-of($type) == string {
+      $gutter: map-get(map-get($elsass-advanced, 'gutter'), $type);
+    } @else {
+      $gutter: $type;
+    }
   }
 
-  @each $side in $SIDES {
-    $i: index($SIDES, $side);
-    $val: nth($gap, $i);
-    $out: if($out, map-merge($out, ($side: $val)), ($side: $val));
+  // Get gutters map.
+  $out: false;
+
+  @each $pos, $vals in $gutter {
+
+    @if not $silent and $pos == 'out' and _elsass-gutter-silent($vals) {
+      $silent: true;
+      $vals: _elsass-gutter-silent($vals);
+    }
+
+    // Get a four values list from one to four values.
+    @if type-of($vals) == number {
+      $vals: $vals $vals $vals $vals;
+    } @else if type-of($vals) == list {
+      @if length($vals) == 2 {
+        $vals: nth($vals, 1) nth($vals, 2) nth($vals, 1) nth($vals, 2);
+      } @else if length($vals) == 3 {
+        $vals: nth($vals, 1) nth($vals, 2) nth($vals, 3) nth($vals, 2);
+      }
+    }
+
+    // Get a map of sides values.
+    @if type-of($vals) == list {
+      @each $side in $ELSASS-SIDES {
+        $i: index($ELSASS-SIDES, $side);
+        $val: nth($vals, $i);
+        @if type-of($val) == number {
+          $merge: ($side: $val);
+          @if $out {
+            @if map-has-key($out, $pos) {
+              $out: map-merge($out, ($pos: map-merge(map-get($out, $pos), $merge)));
+            } @else {
+              $out: map-merge($out, ($pos: $merge));
+            }
+          } @else {
+            $out: ($pos: $merge);
+          }
+        }
+      }
+    } @else {
+      $out: $vals;
+    }
+  }
+
+  // Alterate gutters according $behaviour.
+  @if $out and $behaviour {
+    $out: _elsass-parse-behaviour($out, $behaviour);
   }
 
   @return $out;
 }
 
-// 2.5 _elsass-gutter-css
+// 2.5 _elsass-parse-behaviour
+// ---------------------------
+/// Alterate a gutter of sides relative values
+/// according to a define behaviour.
+/// @param {map} $gutter -
+///   Single value or list of two or four values;
+/// @param {string} $behaviour -
+///   Behaviour related keyword from the elsass $gutter value;
+/// @return {Map} Map of sides related gutter values.
+@function _elsass-parse-behaviour($gutter, $behaviour) {
+  $out: $gutter;
+  $new: null;
+
+  $to: map-get(map-get($elsass-advanced, 'behaviour'), $behaviour);
+
+  // Alterate values.
+  @if $to == 'silent' {
+    $out: map-merge($gutter, ('out': ('silent': map-get($gutter, 'out'))));
+  } @else {
+    @each $pos, $vals in $to {
+      @if type-of($vals) != map {
+        $map: ();
+        @each $side in $ELSASS-SIDES {
+          $map: map-merge($map, ($side: $vals));
+        }
+        $vals: $map;
+      }
+
+      $new: ();
+
+      @each $side, $val in $vals {
+        $from: null;
+        $base: null;
+        $alt: $val;
+        @if type-of($val) == list {
+          $from: nth($val, 1);
+          $alt: nth($val, 2);
+
+          @if map-has-key($gutter, $from) and (map-has-key(map-get($gutter, $from), $side)) {
+            $base: map-get(map-get($gutter, $from), $side);
+            $new: map-merge($new, ($side: $base * $alt));
+          }
+        } @else {
+          @if map-has-key($gutter, $pos) and (map-has-key(map-get($gutter, $pos), $side)) {
+            $new: map-merge($new, ($side: $alt));
+          }
+        }
+      }
+      $merge: if(map-has-key($gutter, $pos), map-get($gutter, $pos), null);
+      $alt: ($pos: if($merge, map-merge(map-get($gutter, $pos), $new), $new));
+      $out: if($out, map-merge($out, $alt), $alt);
+    }
+    $out: map-merge($gutter, $out);
+  }
+
+  @return $out;
+}
+
+// 2.6 _elsass-parse-offset
+// ---------------------
+/// Returns a map of needed flex related
+/// CSS properties and their values.
+/// @access  Private
+/// @param {Ratio | 'pull' | 'push' | 'center'} $offset;
+/// @param {Bool} $offset-next;
+/// @return {Map | false} Map of offset value(s) per side | false.
+/// @example scss -
+///   _elsass-parse-offset(-1/4);
+///   // (left: -1/4, right: 1/4)
+@function _elsass-parse-offset($offset: null, $columns: null) {
+  $out: false;
+
+  @if type-of($offset) == map {
+    @each $pos, $vals in $offset {
+      @if type-of($vals) == number {
+        $vals: $vals $vals;
+      }
+      @if type-of($vals) == list {
+        @each $side in ('left', 'right') {
+          $i: index(('left', 'right'), $side);
+          $val: nth($vals, $i);
+          @if $val {
+            @if $out {
+              @if map-has-key($out, $pos) {
+                $pos: ($pos: map-merge(map-get($out, $pos), ($side: $val)));
+                $out: map-merge($out, $pos);
+              } @else {
+                $out: map-merge($out, ($pos: ($side: $val)));
+              }
+            } @else {
+              $out: ($pos: ($side: $val));
+            }
+          }
+        }
+      } @else {
+        $out: $offset;
+      }
+    }
+  } @else {
+    // Parse keywords.
+    $new: null;
+
+    @for $i from 1 through length($offset) {
+      $kw: nth($offset, $i);
+      $val: null;
+      @if $i < length($offset) and type-of(nth($offset, $i + 1)) == number {
+        $i: $i + 1;
+        $val: nth($offset, $i);
+      } @else {
+        $val: auto;
+      }
+
+      $positions: (
+        'in' : 'start' 'end',
+        'out': 'before' 'after' 'center' 'pull' 'push',
+      );
+
+      $sides: (
+        'left' : 'before' 'start' 'center' 'push',
+        'right': 'after' 'end' 'center' 'pull',
+      );
+
+      @each $pos, $keywords in $positions { 
+        @if index($keywords, $kw) {
+          @if $new and not map-has-key($new, $pos) {
+            $new: map-merge($new, ($pos: null));
+          } @else if not $new {
+            $new: ($pos: null);
+          }
+          @each $side, $keywords in $sides { 
+            @if index($keywords, $kw) {
+              @if map-get($new, $pos) {
+                $new: map-merge($new, ($pos: map-merge(map-get($new, $pos), ($side: $val))));
+              } @else {
+                $new: map-merge($new, ($pos: ($side: $val)));
+              }
+            }
+          }
+        }
+      }
+    }
+    $out: $new;
+  }
+
+  @return $out;
+}
+
+// 2.7 _elsass-gutter-css
 // ----------------------
 /// Returns a map of needed flex related
 /// CSS properties and their values.
@@ -372,93 +581,49 @@
 /// @param {Bool} $offset-next;
 /// @return {Map | false} Map of side values | false.
 @function _elsass-gutter-css(
-  $bpt        : null,
-  $gutter     : null,
-  $offset     : null,
-  $offset-next: null
+  $bpt    : null,
+  $gutter : null,
+  $silent : null,
+  $offset : null,
+  $columns: null
 ) {
   $out: ();
-  $silent: _elsass-gutter-silent($gutter);
   $shorthand: null;
 
-  @if $gutter or $offset {
-    // Get a map of each side $gutter value
-    $gaps: false false false false;
+  // Get a map of each margin side value.
+  $vals: ();
 
-    @if $gutter {
-      $gaps: _elsass-gutter-map(if($silent, $silent, $gutter));
-    }
-
-    // Get a map of each side $offset value.
-    $offsets: if($offset, _elsass-offset-map($offset, $offset-next), false);
-
-    // Get a map of each margin side value.
-    $vals: ();
-    $val: null;
-
-    @each $side in $SIDES {
-      @if not $silent or ($offsets and map-has-key($offsets, $side)) { 
-        $alt: if($offsets, map-get($offsets, $side), false);
-        @if not $alt or type-of($alt) == number {
-          $gap: map-get($gaps, $side);
-          $val: elsass-gutter(if($gap  and not $GUTTER, ($bpt: $gap), $gap), $alt);
-        } @else {
-          $val: $alt;
-        }
-        $vals: map-merge($vals, ($side: $val));
+  @each $side in $ELSASS-SIDES {
+    @if not $silent or ($offset and map-has-key($offset, $side)) { 
+      $off: if($offset, map-get($offset, $side), false);
+      $gutter-val: if($gutter, map-get($gutter, $side), false);
+      $val: null;
+      @if $off == auto {
+        $val: $off;
+      } @else {
+        $val: elsass-gutter(if($gutter-val and not $ELSASS-GUTTER-BASE, ($bpt: $gutter-val), $gutter-val), $off);
       }
-    }
-
-    $shorthand: if($silent, false, _elsass-gutter-short($vals...));
-
-    @if $shorthand {
-      $out: map-merge($out, ('shorthand': $shorthand));
-    } @else {
-      @each $side in $SIDES {
-        $val: map-get($vals, $side);
-        @if $val != false {
-          $out: map-merge($out, (#{$side}: $val));
-        }
-      }
+      $vals: map-merge($vals, ($side: $val));
     }
   }
 
-  @return $out;
-}
+  $shorthand: _elsass-gutter-short($vals...);
 
-// 2.6 _elsass-offset-map
-// ---------------------
-/// Returns a map of needed flex related
-/// CSS properties and their values.
-/// @access  Private
-/// @param {Ratio | 'pull' | 'push' | 'center'} $offset;
-/// @param {Bool} $offset-next;
-/// @return {Map | false} Map of offset value(s) per side | false.
-/// @example scss -
-///   _elsass-offset-map(-1/4);
-///   // (left: -1/4, right: 1/4)
-@function _elsass-offset-map($offset: null, $offset-next: null) {
-  $out: false;
-
-  @if type-of($offset) == number {
-    $offset-left: $offset;
-    $out: if($out, map-merge($out, ('left': $offset-left)), ('left': $offset-left));
-    @if $offset-next {
-      $out: map-merge($out, ('right': -$offset-left));
-    }
+  @if $shorthand {
+    $out: map-merge($out, ('shorthand': $shorthand));
   } @else {
-    @if $offset == 'center' or $offset == 'pull' {
-      $out: if($out, map-merge($out, ('right': auto)), ('right': auto));
-    }
-    @if $offset == 'center' or $offset == 'push' {
-      $out: if($out, map-merge($out, ('left': auto)), ('left': auto));
+    @each $side in $ELSASS-SIDES {
+      $val: map-get($vals, $side);
+      @if $val != false {
+        $out: map-merge($out, (#{$side}: $val));
+      }
     }
   }
 
   @return $out;
 }
 
-// 2.7 _elsass-gutter-short
+// 2.8 _elsass-gutter-short
 // ------------------------
 /// Returns a padding/margin shorthand value
 /// from four side values if possible.
@@ -485,7 +650,7 @@
   @return $out;
 }
 
-// 2.8 _elsass-merge-bpt
+// 2.9 _elsass-merge-bpt
 // ---------------------
 /// Merge map of CSS stored per media-queries related
 /// breakpoints in a way to optimize the outpout.

@@ -15,20 +15,21 @@
 ////
 
 // 1. BASE
-// 1.1 Layout
-// 2. MAIN
-// 2.1 Default gutter type-of
-// 2.2 Enabled mixin argument values
+// 1.1 elsass
 
 // 1. BASE
 // =======
 
-// 1.1 Layout
+// 1.1 elsass
 // ----------
 /// Media-queries agnostic and media-queries related settings.
 /// @type Map
 /// @prop {Map} global -
-///   (optional) Media-queries agnostic settings.
+///   Media-queries agnostic settings.
+/// @prop {Length} global.gutter -
+///   Default gutter value.
+/// @prop {Length} global.columns -
+///   Default columns number.
 /// @prop {Length} global.gutter-length -
 ///   (optional) Media-queries agnostic gutter length.
 /// @prop {Length} global.container-max-width -
@@ -46,10 +47,12 @@
 ///   (optional) Breakpoint related container max-width.
 /// @prop {Length} responsive.bpt.gutter-length -
 ///   (optional) Breakpoint related gutter length.
-$elsass-settings: (
-  'global': (                    // Media-queries agnostic settings.
-    'gutter-length'      : null, // Gutter length.
-    'container-max-width': null, // Max-width to optionally apply to containers.
+$elsass: (
+  'global': (                          // Media-queries agnostic settings.
+    'columns'            : 12,         // Default columns number
+    'gutter'             : 'all-over', // Default gutter value
+    'gutter-length'      : null,       // Gutter length.
+    'container-max-width': null,       // Max-width to optionally apply to containers.
   ),
   'responsive': (                   // Media-queries related settings.
     's': (                          // Custom breakpoint name.
@@ -74,28 +77,26 @@ $elsass-settings: (
   )
 ) !default;
 
-// 2. MAIN
-// =======
-
-// 2.1 Default gutter type
-// -----------------------
-/// Set gutters as padding (`'in'`) or margin (`'out'`) by default.  
-/// Can be overriden via the `elsass` mixin `$gutter` argument
-/// through a map using one or both of the gutter types as key(s).
-/// @type String
-/// @see {mixin} elsass
-$elsass-gutter-type: 'out' !default;
-
-// 2.2 Enabled mixin argument values
-// ---------------------------------
-/// Stores usual `elsass` mixin argument values to be easily enable through:
-/// - `true` to enable the related argument value;
-/// - `'…'` to enable the current and the following non defined argument values.
-/// @type Map
-/// @see {mixin} elsass
-$elsass-args: (
-  'media' : false,
-  'width' : 1 true,
-  'gutter': 0.5,
-  'offset': null,
-) !default;
+$elsass-advanced: (
+  'gutter': (
+    'before'  : ('out': 'no' 'no' 'no' 1),
+    'after'   : ('out': 'no' 1 'no' 'no'),
+    'outside' : ('out': 'no' .5),
+    'all-out' : ('out': .5),
+    'start'   : ('in' : 'no' 'no' 'no' 1),
+    'end'     : ('in' : 'no' 1 'no' 'no'),
+    'inside'  : ('in' : 'no' .5),
+    'all-in'  : ('in' : .5),
+    'all-over': ('in' : .5, 'out': .5)
+  ),
+  'behaviour': (
+    'silent'   : ('silent'),
+    'nest'     : ('out': 'in' -1),
+    'collapse' : ('in' : 0, 'out': 0),
+    'overlay'  : ('out': 'out' -1),
+    'is-prefix': ('in' : ('right': 0), 'out': ('right': 'out' -1)),
+    'is-suffix': ('in' : ('left': 0), 'out': ('left': 'out' -1)),
+    'affix'    : ('in' : ('right': 0, 'left': 0),
+                  'out': ('right': 'out' -1, 'left': 'out' -1))
+  )
+) !default;;
