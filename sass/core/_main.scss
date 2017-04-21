@@ -52,13 +52,11 @@
   @each $bpt-min, $to-map in $elsass-css {
     @each $bpt-max, $bpt-css in $to-map {
       @include _el-media($bpt-min, $bpt-max) {
-        @each $prop, $val in $bpt-css {
-          @if type-of($val) == map {
-            @each $key, $subval in $val {
-              #{$prop}: #{$subval};
-            }
-          } @else {
-            #{$prop}: #{$val};
+        @if type-of($bpt-css) == map {
+          #{nth(map-keys($bpt-css), 1)}: nth(map-values($bpt-css), 1);
+        } @else if type-of($bpt-css) == list {
+          @each $prop in $bpt-css {
+            #{nth(map-keys($prop), 1)}: nth(map-values($prop), 1);
           }
         }
       }
@@ -249,26 +247,26 @@
 
     @if $width {
       @if $gutter-out or $gutter-in {
-        $bpt-css: map-merge($bpt-css, (box-sizing: border-box)) !global;
+        $bpt-css: append($bpt-css, (box-sizing: border-box)) !global;
       }
       $val: elsass-width($width, if($gutter-width, $gutter-width, false));
-      $bpt-css: map-merge($bpt-css, (width: $val)) !global;
+      $bpt-css: append($bpt-css, (width: #{$val})) !global;
     }
 
     @if $max-width {
       $val: if($ELSASS-MAX-WIDTH, 'max', $bpt);
       $val: elsass-width($val, if($gutter-width, $gutter-width, false));
-      $bpt-css: map-merge($bpt-css, (max-width: $val)) !global;
+      $bpt-css: append($bpt-css, (max-width: #{$val})) !global;
     }
 
     @if $gutter-in or $offset-in {
       $bpt-gutter: _elsass-gutter-css($gutter-in, false, $offset-in);
       @if map-has-key($bpt-gutter, 'shorthand') {
         $shorthand: map-get($bpt-gutter, 'shorthand');
-        $bpt-css: map-merge($bpt-css, (padding: $shorthand)) !global;
+        $bpt-css: append($bpt-css, (padding: #{$shorthand})) !global;
       } @else {
         @each $side, $val in $bpt-gutter {
-          $bpt-css: map-merge($bpt-css, (padding-#{$side}: $val)) !global;
+          $bpt-css: append($bpt-css, (padding-#{$side}: #{$val})) !global;
         }
       }
     }
@@ -277,10 +275,10 @@
       $bpt-gutter: _elsass-gutter-css($gutter-out, $silent, $offset-out);
       @if map-has-key($bpt-gutter, 'shorthand') {
         $shorthand: map-get($bpt-gutter, 'shorthand');
-        $bpt-css: map-merge($bpt-css, (margin: $shorthand)) !global;
+        $bpt-css: if($bpt-css, append($bpt-css, (margin: #{$shorthand})), (margin: #{$shorthand})) !global;
       } @else {
         @each $side, $val in $bpt-gutter {
-          $bpt-css: map-merge($bpt-css, (margin-#{$side}: $val)) !global;
+          $bpt-css: append($bpt-css, (margin-#{$side}: #{$val})) !global;
         }
       }
     }
@@ -326,8 +324,12 @@
 ///     ));
 ///   }
 @mixin elsass-content($css) {
-  @each $property, $value in $css {
-    $bpt-css: map-merge($bpt-css, ($property: $value)) !global;
+  @if type-of($css) == map {
+    $bpt-css: append($bpt-css, $css) !global;
+  } @else if type-of($css) == list {
+    @each $prop in $css {
+      $bpt-css: append($bpt-css, $prop) !global;
+    }
   }
 }
 
@@ -718,16 +720,16 @@
   $bpt-next: nth(map-keys($submap), 1);
   $bpt-css: map-get($submap, $bpt-next);
 
-  @each $bpt-prop, $bpt-val in $bpt-css {
+  @each $bpt-prop in $bpt-css {
     @each $bpt-from, $map-to in $out {
       @if map-has-key($map-to, $bpt) {
         $to-css: map-get($map-to, $bpt);
-        @if map-get($to-css, $bpt-prop) == $bpt-val {
+        @if index($to-css, $bpt-prop) {
           // Remove duplicated CSS.
-          $bpt-css: map-remove($bpt-css, $bpt-prop);
-          $to-css: map-remove($to-css, $bpt-prop);
+          $bpt-css: remove($bpt-css, $bpt-prop);
+          $to-css: remove($to-css, $bpt-prop);
           // Move duplicated CSS in an extended media-query.
-          $new-css: map-merge($new-css, ($bpt-prop: $bpt-val));
+          $new-css: append($new-css, $bpt-prop);
           $new-map-to: ($bpt: $to-css, $bpt-next: $new-css);
           $map-to: map-merge(map-get($out, $bpt-from), $new-map-to);
 
@@ -741,4 +743,17 @@
   }
 
   @return $out;
+}
+
+
+@function remove($list, $value) {
+  $result: ();
+
+  @for $i from 1 through length($list) {
+    @if nth($list, $i) != $value {
+      $result: append($result, nth($list, $i));
+    }
+  }
+
+  @return $result;
 }
