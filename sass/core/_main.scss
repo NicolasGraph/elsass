@@ -44,10 +44,16 @@
 ///       @include elsass(from 'l', 4);
 ///     }
 ///   }
-@mixin elsass-group() {
-  // Parse elsass mixins.
-  $elsass-config: map-merge($elsass-config, ('group': true)) !global;
-  @content;
+@mixin elsass-group($config: null) {
+
+  @if $config {
+    $elsass-config: map-merge($elsass-config, ('group': true)) !global;
+
+    @each $media in $config {
+      @include elsass($media...);
+    }
+  }
+
   // Wrap each breakpoint related rules in dedicated media-queries.
   @each $bpt-min, $to-map in $elsass-css {
     @each $bpt-max, $bpt-css in $to-map {
@@ -62,10 +68,10 @@
       }
     }
   }
+
   // Reset.
   $elsass-css: null !global;
   $elsass-config: $elsass-config-reset !global;
-
 }
 
 // 1.2 elsass
@@ -173,7 +179,8 @@
   $media : 'from' $ELSASS-BPT-MIN,
   $width : null,
   $gutter: null,
-  $offset: null
+  $offset: null,
+  $extra : null
 ) {
 
   @if $width and not $gutter {
@@ -282,7 +289,16 @@
         }
       }
     }
-    @content;
+
+    @if $extra {
+      @if type-of($extra) == map {
+        $bpt-css: append($bpt-css, $extra) !global;
+      } @else if type-of($css) == list {
+        @each $prop in $css {
+          $bpt-css: append($bpt-css, $prop) !global;
+        }
+      }
+    }
 
     // Prepare the output.
     $bpt-next: false;
@@ -300,36 +316,9 @@
     $elsass-css: if($elsass-css, _elsass-merge-bpt($elsass-css, $bpt-out), $bpt-out) !global;
   }
 
-  // Conditional output.
   @if not map-get($elsass-config, 'group') {
     @include elsass-group; 
     $elsass-config: $elsass-config-reset !global;
-
-  }
-
-
-}
-
-// 1.3 elsass-content
-// ------------------
-/// Allows to provide extra CSS that can be parsed in `elsass` mixins.
-/// @param {Map} $css
-///   Map of extra CSS to apply.  
-///   Use a values lis
-/// @example scss -
-///   @include elsass(from 's') {
-///     @include elsass-content((
-///       border-width: elsass-gutter(),
-///       color: (blue) (rgba(100, 100, 200, 0.5))
-///     ));
-///   }
-@mixin elsass-content($css) {
-  @if type-of($css) == map {
-    $bpt-css: append($bpt-css, $css) !global;
-  } @else if type-of($css) == list {
-    @each $prop in $css {
-      $bpt-css: append($bpt-css, $prop) !global;
-    }
   }
 }
 
