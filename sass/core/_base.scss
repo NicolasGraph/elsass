@@ -26,6 +26,36 @@
 // 2. MIXIN
 // ========
 
+// 2.1 elsass-media
+// ----------------
+/// Wrap `@content` in a media-query.
+/// @param {List} $media [from $ELSASS-BPT-MIN] -
+///  Defines the related media-query(ies).
+///   -  `'breakpoint'`: applies to the breakpoint only;
+///   - `from 'breakpoint'` or `<length>`: applies to the provided breakpoint/`<length>` and greaters ones;
+///   - `to 'breakpoint'` or `<length>`: applies to smaller breakpoints than the one provided;
+///   - `'breakpoint'` or `<length> to 'greater-breakpoint'` or `<length>`: I let you guess…
+/// @example scss - SCSS
+///   .foo {
+///     @include elsass-media(to 'l') {
+///       background: #eee;
+///     }
+///   }
+/// @example css - CSS output
+///   /* Assuming $elsass is untouched. */
+///   @media screen and (max-width: 1023px) {
+///     .foo {
+///       background: #eee;
+///     }
+///   }
+@mixin elsass-media($media) {
+  $media: _elsass-parse-media($media);
+  
+  @include _el-media($media...) {
+    @content;
+  }
+}
+
 // 2.1 el-media
 // ----------------
 /// Wrap `@content` in a media-query.
@@ -79,7 +109,7 @@
 // ----------------------
 /// Calculate width by substracting potential right and left gutters used as margin.
 /// @param {Number | String} $width -
-///   Ratio of the container width or `<length>`.  
+///   `<length>` or ratio of the container width.  
 ///   Enter `'max'` or a breakpoint name to use the global/responsive
 ///   container max width defined through `$elsass`.
 /// @param {Number | List | Map} $gutter-width -
@@ -89,12 +119,12 @@
 ///   A single breakpoint can be used as a shorthand of `('breakpoint': 1)`.
 /// @return {Number} `<length>` (via `calc()` if needed).
 /// @example scss - SCSS
-///   width: elsass-width(1/4, 'm');
-///   /* = width: elsass-width(1/4, ('m': 1)); */
+///   width: elsass-width(3, 'm');
+///   // = width: elsass-width(1 of 4, ('m': 1));
 /// @example css - CSS output
-///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass. */
+///   // Assuming 'm' breakpoint gutter length is set to 30px through $elsass.
 ///   width: calc(25% - 30px);
-///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass. */
+///   // Assuming 'm' breakpoint gutter length is set to 5% through $elsass.
 ///   width: 20%;
 @function _elsass-parse-media($media) {
   $from: $ELSASS-BPT-MIN;
@@ -135,12 +165,12 @@
 ///   A single breakpoint can be used as a shorthand of `('breakpoint': 1)`.
 /// @return {Number} `<length>` (via `calc()` if needed).
 /// @example scss - SCSS
-///   width: elsass-width(1/4, 'm');
-///   /* = width: elsass-width(1/4, ('m': 1)); */
+///   width: elsass-width(3, 'm');
+///   // = width: elsass-width(1 of 4, ('m': 1));
 /// @example css - CSS output
-///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass. */
+///   // Assuming 'm' breakpoint gutter length is set to 30px through $elsass.
 ///   width: calc(25% - 30px);
-///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass. */
+///   // Assuming 'm' breakpoint gutter length is set to 5% through $elsass.
 ///   width: 20%;
 @function elsass-width(
   $width: null,
@@ -170,8 +200,8 @@
 
     // Parse $gutter-width;
     @if type-of($gutter-width) == number and unitless($gutter-width) {
-      @if $ELSASS-GUTTER-BASE {
-        $gutter-width: $gutter-width * $ELSASS-GUTTER-BASE;
+      @if $ELSASS-GUTTER-LENGTH {
+        $gutter-width: $gutter-width * $ELSASS-GUTTER-LENGTH;
       } @else {
         $bpt: map-get($elsass-config, 'bpt');
       }
@@ -227,10 +257,10 @@
 ///   margin-right: elsass-gutter(('m': 0.5));
 ///   margin-left: elsass-gutter(('m': 0.5), 3);
 /// @example css - CSS output
-///   /* Assuming 'm' breakpoint gutter length is set to 30px through $elsass. */
+///   // Assuming 'm' breakpoint gutter length is set to 30px through $elsass.
 ///   margin-right: 15px;
 ///   margin-left: calc(15px + 25%);
-///   /* Assuming 'm' breakpoint gutter length is set to 5% through $elsass. */
+///   // Assuming 'm' breakpoint gutter length is set to 5% through $elsass.
 ///   margin-right: 2.5%;
 ///   margin-left: 27.5%;
 @function elsass-gutter($gutter: map-get($elsass-config, 'g-width'), $offset: null) {
@@ -238,8 +268,8 @@
   @if $gutter {
     // Parse gutter.
     @if type-of($gutter) == number and unitless($gutter) {
-      @if $ELSASS-GUTTER-BASE {
-        $gutter: $gutter * $ELSASS-GUTTER-BASE;
+      @if $ELSASS-GUTTER-LENGTH {
+        $gutter: $gutter * $ELSASS-GUTTER-LENGTH;
       } @else {
         $gutter: $gutter * map-get(map-get($ELSASS-RESP, map-get($elsass-config, 'bpt')), 'gutter-length');
       }

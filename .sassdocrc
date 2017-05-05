@@ -5,5 +5,5 @@ display:
     - public
 groups:
   Config: "Configuration"
-  Main: "Main tool"
+  Main: "Main tools"
   Misc: "Others"

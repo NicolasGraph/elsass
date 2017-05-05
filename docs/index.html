@@ -1,111 +1,319 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><title>Elsass - v0.1.0-alpha</title><link rel="stylesheet" href="assets/css/main.css"><link href="https://fonts.googleapis.com/css?family=Open+Sans:400,500,700" rel="stylesheet" type="text/css"><meta name="viewport" content="width=device-width"><meta content="IE=edge, chrome=1" http-equiv="X-UA-Compatible"><!-- Open Graph tags --><meta property="og:title" content="Elsass - SassDoc"><meta property="og:type" content="website"><meta property="og:description" content="<p>Sass powered responsive and semantic grid builder.</p>
-"><!-- Thanks to Sass-lang.com for the icons --><link href="assets/images/favicon.png" rel="shortcut icon"></head><body><aside class="sidebar" role="nav"><div class="sidebar__header"><h1 class="sidebar__title">Elsass - 0.1.0-alpha</h1></div><div class="sidebar__body"><button type="button" class="btn-toggle js-btn-toggle" data-alt="Open all">Close all</button><p class="sidebar__item sidebar__item--heading" data-slug="config"><a href="#config">Configuration</a></p><div><p class="sidebar__item sidebar__item--sub-heading" data-slug="config-variable"><a href="#config-variable">variables</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="config" data-name="elsass" data-type="variable"><a href="#config-variable-elsass">elsass</a></li></ul></div><p class="sidebar__item sidebar__item--heading" data-slug="main"><a href="#main">Main tool</a></p><div><p class="sidebar__item sidebar__item--sub-heading" data-slug="main-mixin"><a href="#main-mixin">mixins</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="main" data-name="elsass" data-type="mixin"><a href="#main-mixin-elsass">elsass</a></li></ul></div><p class="sidebar__item sidebar__item--heading" data-slug="misc"><a href="#misc">Others</a></p><div><p class="sidebar__item sidebar__item--sub-heading" data-slug="misc-mixin"><a href="#misc-mixin">mixins</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="misc" data-name="elsass-media" data-type="mixin"><a href="#misc-mixin-elsass-media">elsass-media</a></li></ul><p class="sidebar__item sidebar__item--sub-heading" data-slug="misc-function"><a href="#misc-function">functions</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="misc" data-name="elsass-width" data-type="function"><a href="#misc-function-elsass-width">elsass-width</a></li><li class="sidebar__item sassdoc__item" data-group="misc" data-name="elsass-gutter" data-type="function"><a href="#misc-function-elsass-gutter">elsass-gutter</a></li></ul></div></div></aside><article class="main" role="main"><header class="header" role="banner"><div class="container"><div class="sassdoc__searchbar searchbar"><label for="js-search-input" class="visually-hidden">Search</label><div class="searchbar__form" id="js-search"><input name="search" type="search" class="searchbar__field" autocomplete="off" autofocus id="js-search-input" placeholder="Search"><ul class="searchbar__suggestions" id="js-search-suggestions"></ul></div></div></div></header><section class="main__section"><h1 class="main__heading" id="config"><div class="container">Configuration</div></h1><section class="main__sub-section" id="config-variable"><h2 class="main__heading--secondary"><div class="container">variables</div></h2><section class="main__item container item" id="config-variable-elsass"><h3 class="item__heading"><a class="item__name" href="#variable-elsass">elsass</a></h3><div class="item__code-wrapper"><pre class="item__code language-scss"><code>$elsass: (
-  &#39;global&#39;: (                          // Media-queries agnostic settings.
-    &#39;columns&#39;            : 12,         // Default columns number
-    &#39;gutter&#39;             : &#39;all-over&#39;, // Default gutter value
-    &#39;gutter-length&#39;      : null,       // Gutter length.
-    &#39;container-max-width&#39;: null,       // Max-width to optionally apply to containers.
+"><!-- Thanks to Sass-lang.com for the icons --><link href="assets/images/favicon.png" rel="shortcut icon"></head><body><aside class="sidebar" role="nav"><div class="sidebar__header"><h1 class="sidebar__title">Elsass - 0.1.0-alpha</h1></div><div class="sidebar__body"><button type="button" class="btn-toggle js-btn-toggle" data-alt="Open all">Close all</button><p class="sidebar__item sidebar__item--heading" data-slug="config"><a href="#config">Configuration</a></p><div><p class="sidebar__item sidebar__item--sub-heading" data-slug="config-variable"><a href="#config-variable">variables</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="config" data-name="elsass-global" data-type="variable"><a href="#config-variable-elsass-global">elsass-global</a></li><li class="sidebar__item sassdoc__item" data-group="config" data-name="elsass-responsive" data-type="variable"><a href="#config-variable-elsass-responsive">elsass-responsive</a></li><li class="sidebar__item sassdoc__item" data-group="config" data-name="elsass-gutters" data-type="variable"><a href="#config-variable-elsass-gutters">elsass-gutters</a></li><li class="sidebar__item sassdoc__item" data-group="config" data-name="elsass-behaviours" data-type="variable"><a href="#config-variable-elsass-behaviours">elsass-behaviours</a></li><li class="sidebar__item sassdoc__item" data-group="config" data-name="elsass-offsets" data-type="variable"><a href="#config-variable-elsass-offsets">elsass-offsets</a></li></ul></div><p class="sidebar__item sidebar__item--heading" data-slug="main"><a href="#main">Main tools</a></p><div><p class="sidebar__item sidebar__item--sub-heading" data-slug="main-mixin"><a href="#main-mixin">mixins</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="main" data-name="elsass-group" data-type="mixin"><a href="#main-mixin-elsass-group">elsass-group</a></li><li class="sidebar__item sassdoc__item" data-group="main" data-name="elsass" data-type="mixin"><a href="#main-mixin-elsass">elsass</a></li></ul></div><p class="sidebar__item sidebar__item--heading" data-slug="misc"><a href="#misc">Others</a></p><div><p class="sidebar__item sidebar__item--sub-heading" data-slug="misc-mixin"><a href="#misc-mixin">mixins</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="misc" data-name="elsass-media" data-type="mixin"><a href="#misc-mixin-elsass-media">elsass-media</a></li></ul><p class="sidebar__item sidebar__item--sub-heading" data-slug="misc-function"><a href="#misc-function">functions</a></p><ul class="list-unstyled"><li class="sidebar__item sassdoc__item" data-group="misc" data-name="elsass-width" data-type="function"><a href="#misc-function-elsass-width">elsass-width</a></li><li class="sidebar__item sassdoc__item" data-group="misc" data-name="elsass-gutter" data-type="function"><a href="#misc-function-elsass-gutter">elsass-gutter</a></li></ul></div></div></aside><article class="main" role="main"><header class="header" role="banner"><div class="container"><div class="sassdoc__searchbar searchbar"><label for="js-search-input" class="visually-hidden">Search</label><div class="searchbar__form" id="js-search"><input name="search" type="search" class="searchbar__field" autocomplete="off" autofocus id="js-search-input" placeholder="Search"><ul class="searchbar__suggestions" id="js-search-suggestions"></ul></div></div></div></header><section class="main__section"><h1 class="main__heading" id="config"><div class="container">Configuration</div></h1><section class="main__sub-section" id="config-variable"><h2 class="main__heading--secondary"><div class="container">variables</div></h2><section class="main__item container item" id="config-variable-elsass-global"><h3 class="item__heading"><a class="item__name" href="#variable-elsass-global">elsass-global</a></h3><div class="item__code-wrapper"><pre class="item__code language-scss"><code>$elsass-global: (
+  &#39;columns&#39;            : 12,
+  &#39;gutter&#39;             : &#39;all-over&#39;,
+  &#39;gutter-length&#39;      : null,
+  &#39;container-max-width&#39;: null,
+) !default;</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_settings.scss#L39-L44" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Media-queries agnostic settings.</p></div><h3 class="item__sub-heading">Type</h3><p><code>Map</code></p><h3 class="item__sub-heading">Map structure</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">Map key </span>Name</th><th scope="col"><span class="visually-hidden">Map key </span>Description</th><th scope="col"><span class="visually-hidden">Map key </span>Type</th><th scope="col"><span class="visually-hidden">Map key </span>Value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>columns</code></th><td data-label="desc"><p>Grid default columns number.</p></td><td data-label="type"><code>Integer</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>gutter</code></th><td data-label="desc"><p>Default gutter value (see <code>elsass-gutters</code>).</p></td><td data-label="type"><code>Keyword</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>gutter-length</code></th><td data-label="desc"><p>Gutter length (if not responsive).</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>container-max-width</code></th><td data-label="desc"><p>Container max-width (if not respsonsive).</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table></section><section class="main__item container item" id="config-variable-elsass-responsive"><h3 class="item__heading"><a class="item__name" href="#variable-elsass-responsive">elsass-responsive</a></h3><div class="item__code-wrapper"><pre class="item__code language-scss"><code>$elsass-responsive: (
+  &#39;s&#39;: (
+    &#39;container-max-width&#39;: 480px,
+    &#39;gutter-length&#39;      : 24px,
   ),
-  &#39;responsive&#39;: (                   // Media-queries related settings.
-    &#39;s&#39;: (                          // Custom breakpoint name.
-      &#39;container-max-width&#39;: 480px, // Max-width to optionally apply to containers.
-      &#39;gutter-length&#39;      : 24px,  // Gutter length.
-    ),
-    &#39;m&#39;: (
-      &#39;device-min-width&#39;   : 640px, // Media-query min-width;</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_settings.scss#L50-L63" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Media-queries agnostic and media-queries related settings.</p></div><h3 class="item__sub-heading">Type</h3><p><code>Map</code></p><h3 class="item__sub-heading">Map structure</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">Map key </span>Name</th><th scope="col"><span class="visually-hidden">Map key </span>Description</th><th scope="col"><span class="visually-hidden">Map key </span>Type</th><th scope="col"><span class="visually-hidden">Map key </span>Value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>global</code></th><td data-label="desc"><p>Media-queries agnostic settings.</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>global.gutter</code></th><td data-label="desc"><p>Default gutter value.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>global.columns</code></th><td data-label="desc"><p>Default columns number.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>global.gutter-length</code></th><td data-label="desc"><p>(optional) Media-queries agnostic gutter length.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>global.container-max-width</code></th><td data-label="desc"><p>(optional) Media-queries agnostic related container max-width.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>responsive</code></th><td data-label="desc"><p>Media-queries related settings.</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>responsive.bpt</code></th><td data-label="desc"><p>Map of a breakpoint related settings where using the breakpoint name as key.</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>responsive.bpt.device-min-width</code></th><td data-label="desc"><p>Breakpoint related media-query min-width (also used to calculate the previous breakpoint max-width).<br>This map item is useless for the smallest breakpoint.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>responsive.bpt.container-max-width</code></th><td data-label="desc"><p>(optional) Breakpoint related container max-width.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>responsive.bpt.gutter-length</code></th><td data-label="desc"><p>(optional) Breakpoint related gutter length.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table></section></section></section><section class="main__section"><h1 class="main__heading" id="main"><div class="container">Main tool</div></h1><section class="main__sub-section" id="main-mixin"><h2 class="main__heading--secondary"><div class="container">mixins</div></h2><section class="main__item container item" id="main-mixin-elsass"><h3 class="item__heading"><a class="item__name" href="#mixin-elsass">elsass</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@mixin elsass($media, $width, $gutter, $offset) { 
+  &#39;m&#39;: (
+    &#39;device-min-width&#39;   : 640px,
+    &#39;container-max-width&#39;: 800px,
+    &#39;gutter-length&#39;      : 32px,
+  ),
+  &#39;l&#39;: (
+    &#39;device-min-width&#39;   : 1024px,
+    &#39;container-max-width&#39;: 1000px,
+    &#39;gutter-length&#39;      : 40px,
+  ),
+  &#39;xl&#39;: (
+    &#39;device-min-width&#39;   : 1440px,
+    &#39;container-max-width&#39;: 1280px,
+    &#39;gutter-length&#39;      : 48px,
+  )
+) !default;</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_settings.scss#L58-L78" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Custom breakpoints related settings.</p></div><h3 class="item__sub-heading">Type</h3><p><code>Map</code></p><h3 class="item__sub-heading">Map structure</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">Map key </span>Name</th><th scope="col"><span class="visually-hidden">Map key </span>Description</th><th scope="col"><span class="visually-hidden">Map key </span>Type</th><th scope="col"><span class="visually-hidden">Map key </span>Value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>breakpoint</code></th><td data-label="desc"><p>Custom breakpoint related settings.</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>breakpoint.device-min-width</code></th><td data-label="desc"><p>Breakpoint related device min-width.</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>breakpoint.container-max-width</code></th><td data-label="desc"><p>Breakpoint related container max-width (if not defined as a global setting).</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>breakpoint.gutter-length</code></th><td data-label="desc"><p>Breakpoint related gutter length (if not defined as a global setting).</p></td><td data-label="type"><code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table></section><section class="main__item container item" id="config-variable-elsass-gutters"><h3 class="item__heading"><a class="item__name" href="#variable-elsass-gutters">elsass-gutters</a></h3><div class="item__code-wrapper"><pre class="item__code language-scss"><code>$elsass-gutters: (
+  &#39;above&#39;   : (&#39;out&#39;: (&#39;top&#39;: 1)),
+  &#39;after&#39;   : (&#39;out&#39;: (&#39;right&#39;: 1)),
+  &#39;below&#39;   : (&#39;out&#39;: (&#39;bottom&#39;: 1)),
+  &#39;before&#39;  : (&#39;out&#39;: (&#39;left&#39;: 1)),
+  &#39;x-out&#39;   : (&#39;out&#39;: &#39;none&#39; .5),
+  &#39;y-out&#39;   : (&#39;out&#39;: .5 &#39;none&#39;),
+  &#39;all-out&#39; : (&#39;out&#39;: &#39;none&#39; .5 .1 .5),
+  &#39;up&#39;      : (&#39;in&#39; : (&#39;top&#39;: 1)),
+  &#39;end&#39;     : (&#39;in&#39; : (&#39;right&#39;: 1)),
+  &#39;down&#39;    : (&#39;in&#39; : (&#39;bottom&#39;: 1)),
+  &#39;start&#39;   : (&#39;in&#39; : (&#39;left&#39;: 1)),
+  &#39;x-in&#39;    : (&#39;in&#39; : &#39;none&#39; .5),
+  &#39;y-in&#39;    : (&#39;in&#39; : .5 &#39;none&#39;),
+  &#39;all-in&#39;  : (&#39;in&#39; : .5),
+  &#39;all-over&#39;: (&#39;in&#39; : .25, &#39;out&#39;: &#39;none&#39; .25 .5 .25)
+) !default;</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_settings.scss#L90-L106" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Custom gutter related keywords and their values.</p></div><h3 class="item__sub-heading">Type</h3><p><code>Map</code></p><h3 class="item__sub-heading">Map structure</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">Map key </span>Name</th><th scope="col"><span class="visually-hidden">Map key </span>Description</th><th scope="col"><span class="visually-hidden">Map key </span>Type</th><th scope="col"><span class="visually-hidden">Map key </span>Value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>keyword</code></th><td data-label="desc"><p>Related map of <code>&#39;in&#39;</code> (padding) and/or <code>&#39;out&#39;</code> (margin) gutter values as:</p><ul><li>map(s) of sides related gutter length ratios or <code>&lt;length&gt;</code>.</li><li>Number or list(s) of up to four gutter length ratios or <code>&lt;length&gt;</code> sorted in the same way as the padding or margin shorthand value and where any unwanted side(s) related gutter can be set to <code>none</code>;</li></ul></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table></section><section class="main__item container item" id="config-variable-elsass-behaviours"><h3 class="item__heading"><a class="item__name" href="#variable-elsass-behaviours">elsass-behaviours</a></h3><div class="item__code-wrapper"><pre class="item__code language-scss"><code>$elsass-behaviours: (
+  &#39;silent&#39;  : (
+    &#39;in&#39;    : (&#39;in&#39; : &#39;none&#39;),
+    &#39;out&#39;   : (&#39;silent&#39;),
+    &#39;in-out&#39;: (&#39;silent&#39;)
+  ),
+  &#39;skip&#39;    : (
+    &#39;in&#39;    : (&#39;in&#39; : &#39;none&#39;),
+    &#39;out&#39;   : (&#39;out&#39;: &#39;none&#39;),
+    &#39;in-out&#39;: (&#39;in&#39; : &#39;none&#39;, &#39;out&#39;: &#39;none&#39;)
+  ),
+  &#39;collapse&#39;: (
+    &#39;in&#39;    : (&#39;in&#39; : 0),
+    &#39;out&#39;   : (&#39;out&#39;: 0),
+    &#39;in-out&#39;: (&#39;in&#39; : 0, &#39;out&#39;: 0)
+  ),
+  &#39;nest&#39;    : (
+    &#39;in&#39;    : (&#39;out&#39;: &#39;in&#39; -1),
+    &#39;in-out&#39;: (&#39;out&#39;: &#39;in&#39; -1)
+  ),
+  &#39;bleed&#39;   : (
+    &#39;in&#39;    : (&#39;in&#39;: &#39;in&#39; 2, &#39;out&#39;: &#39;in&#39; -1),
+    &#39;out&#39;   : (&#39;in&#39;: &#39;out&#39; 1, &#39;out&#39;: &#39;out&#39; -1),
+    &#39;in-out&#39;: (&#39;in&#39;: &#39;none&#39;, &#39;out&#39;: &#39;out&#39; -1)
+  ),
+  &#39;fit&#39;     : (
+    &#39;in-out&#39;: (&#39;in&#39;: &#39;none&#39;, &#39;out&#39;: &#39;out&#39; -1)
+  )
+) !default;</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_settings.scss#L117-L145" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Custom gutter behaviours related keywords and their values.<br>Docs improvements in process.</p></div><h3 class="item__sub-heading">Type</h3><p><code>Map</code></p><h3 class="item__sub-heading">Map structure</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">Map key </span>Name</th><th scope="col"><span class="visually-hidden">Map key </span>Description</th><th scope="col"><span class="visually-hidden">Map key </span>Type</th><th scope="col"><span class="visually-hidden">Map key </span>Value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>keyword</code></th><td data-label="desc"><p>Related map of changes according to the gutter position(s).</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>keyword.position</code></th><td data-label="desc"><p>Gutter position related changes.</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table></section><section class="main__item container item" id="config-variable-elsass-offsets"><h3 class="item__heading"><a class="item__name" href="#variable-elsass-offsets">elsass-offsets</a></h3><div class="item__code-wrapper"><pre class="item__code language-scss"><code>$elsass-offsets: (
+  &#39;before&#39;: (&#39;out&#39;: &#39;left&#39;),
+  &#39;after&#39; : (&#39;out&#39;: &#39;right&#39;),
+  &#39;start&#39; : (&#39;in&#39; : &#39;left&#39;),
+  &#39;end&#39;   : (&#39;in&#39; : &#39;right&#39;),
+  &#39;center&#39;: (&#39;out&#39;: &#39;right&#39; &#39;left&#39;),
+  &#39;push&#39;  : (&#39;out&#39;: &#39;left&#39;),
+  &#39;pull&#39;  : (&#39;out&#39;: &#39;right&#39;)
+) !default;</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_settings.scss#L153-L161" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Custom offset related keywords and their values.</p></div><h3 class="item__sub-heading">Type</h3><p><code>Map</code></p><h3 class="item__sub-heading">Map structure</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">Map key </span>Name</th><th scope="col"><span class="visually-hidden">Map key </span>Description</th><th scope="col"><span class="visually-hidden">Map key </span>Type</th><th scope="col"><span class="visually-hidden">Map key </span>Value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>keyword</code></th><td data-label="desc"><p>Map of keyword related position and sides.</p></td><td data-label="type"><code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table></section></section></section><section class="main__section"><h1 class="main__heading" id="main"><div class="container">Main tools</div></h1><section class="main__sub-section" id="main-mixin"><h2 class="main__heading--secondary"><div class="container">mixins</div></h2><section class="main__item container item" id="main-mixin-elsass-group"><h3 class="item__heading"><a class="item__name" href="#mixin-elsass-group">elsass-group</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@mixin elsass-group($config) { 
 
+  @if $config {
+    $elsass-config: map-merge($elsass-config, (&#39;group&#39;: true)) !global;
 
-  // Get the provided breakpoints.
-  $from: if(nth($media, 1), nth($media, 1), $ELSASS-BPT-MIN);
-  $to: if(type-of($media) == list, nth($media, 2), false);
-
-  $css: _elsass($media, $width, $gutter, $offset);
-
-  @if not map-has-key(map-get($css, $from), $to) {
-    $from-map: map-merge(map-get($css, $from), ($to: ()));
-    $css: map-merge($css, ($from: $from-map));
+    @each $media in $config {
+      @include elsass($media...);
+    }
   }
 
   // Wrap each breakpoint related rules in dedicated media-queries.
-  @each $bpt-min, $to-map in $css {
+  @each $bpt-min, $to-map in $elsass-css {
     @each $bpt-max, $bpt-css in $to-map {
-      @include elsass-media($bpt-min, $bpt-max) {
-        @each $prop, $val in $bpt-css {
-          #{$prop}: #{$val};
-        }
-        // Include @content in the related media-query.
-        @if $bpt-min == $from and $bpt-max == $to {
-          @content;
+      @include _el-media($bpt-min, $bpt-max) {
+        @if type-of($bpt-css) == map {
+          #{nth(map-keys($bpt-css), 1)}: nth(map-values($bpt-css), 1);
+        } @else if type-of($bpt-css) == list {
+          @each $prop in $bpt-css {
+            #{nth(map-keys($prop), 1)}: nth(map-values($prop), 1);
+          }
         }
       }
     }
   }
- }" data-collapsed="@mixin elsass($media, $width, $gutter, $offset) { ... }"><code>@mixin elsass($media, $width, $gutter, $offset) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_main.scss#L129-L162" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Help to wrap <code>@content</code> and arguments related CSS in tidy media-queries to manage your responsive grid.<br><code>$elsass</code> based values (max-width, gutters) try to use global settings before to fallback to responsive settings.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$media</code></th><td data-label="desc"><p>Defines the media-query/ies to generate and the related settings to use based on the following list of values:</p><ol><li>Media-query min-width related breakpoint name or <code>false</code>;</li><li>Media-query max-width related breakpoint name if needed.</li></ol></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$width</code></th><td data-label="desc"><p>Defines the element <code>width</code> and (optionally) <code>max-witdh</code> from the following values.</p><ul><li>a number of columns, used as a divisor of the columns number set;</li><li>a number of columns followed by <code>of</code> and a columns number to override de one set.</li><li><code>&#39;max&#39;</code>, to apply a <code>width</code> value of <code>100%</code> and a max width related to the settings.</li></ul></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$gutter</code></th><td data-label="desc"><p>Applies gutters as padding (<code>&#39;in&#39;</code>) and/or margin (<code>&#39;out&#39;</code>) based on the following valid values.</p><ul><li>A map of <code>&#39;in&#39;</code> and/or <code>&#39;out&#39;</code> gutter values as:<ul><li>a map of sides related gutter ratios or <code>&lt;length&gt;</code>.</li><li>a list of up to four gutter ratios or <code>&lt;length&gt;</code> sorted in the same way as the padding or margin shorthand value and where any unwanted side(s) related gutter can be set to <code>no</code>;</li></ul></li><li><p>A behaviour related keyword, optionally preceded by a type related keyword to override the default one.</p><ul><li>overridding the default gutter value:<ul><li>using the default value:<ul><li><code>&#39;default&#39;</code>: gutter applied according to the settings;</li></ul></li><li>using neither margins or paddings:<ul><li><code>&#39;none&#39;</code>: no margins or gutters applied;</li></ul></li><li>using margins:<ul><li><code>&#39;before&#39;</code>: full gutter length as the <code>margin-left</code> value;</li><li><code>&#39;after&#39;</code>: full gutter length as the <code>margin-right</code> value;</li><li><code>&#39;outside&#39;</code>: half gutter length as the right and left margins value;</li><li><code>&#39;all-out&#39;</code>: half gutter length as the <code>margin</code> value;</li></ul></li><li>using paddings:<ul><li><code>&#39;start&#39;</code>: full gutter length as the <code>padding-left</code> value;</li><li><code>&#39;end&#39;</code>: full gutter length as the <code>padding-right</code> value;</li><li><code>&#39;inside&#39;</code>: half gutter length as the right and left paddings value;</li><li><code>&#39;all-in&#39;</code>: half gutter length as the <code>padding</code> value;</li></ul></li><li>using both:<ul><li><code>&#39;all-over&#39;</code>: half gutter length as the <code>padding</code> and <code>margin</code> values;</li></ul></li></ul></li><li>alterating the gutter value through a defined behaviour:<ul><li><code>&#39;nest&#39;</code>: defines a negative margin according to the padding, or collapse the margin;</li><li><code>&#39;collapse&#39;</code>: reset set margins/paddings values to 0;</li><li><code>&#39;overlay&#39;</code>: reset the margins values as negative;</li><li><code>&#39;silent&#39;</code>: ;</li></ul></li></ul><p><code>$gutter</code> also helps to calculate the element width when using the <code>&#39;out&#39;</code> gutter type.<br>To alterate the width value without applying any margin, silent gutters can be used by replacing the <code>&#39;out&#39;</code> key by <code>&#39;silent&#39;</code>.</p></li></ul></td><td data-label="type"><code>List</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$offset</code></th><td data-label="desc"><p>Container width ratio to push or pull (if negative) the element, optionally followed by true to pull or push next items.</p><ul><li>A shorthand<ul><li>using `paddings:<ul><li><code>&#39;before&#39;</code> number: width related padding on the left;</li><li><code>&#39;after&#39;</code> number: width related padding on the right;</li><li><code>&#39;pull&#39;</code>: <code>&#39;auto&#39;</code> as the margin-right value;</li><li><code>&#39;push&#39;</code>: <code>&#39;auto&#39;</code> as the margin-left value;</li><li><code>&#39;center&#39;</code>: <code>&#39;auto&#39;</code> as the right and left margins;</li></ul></li><li>using margins:<ul><li><code>&#39;start&#39;</code> + number: width related padding on the left;</li><li><code>&#39;end&#39;</code> + number: width related padding on the right;</li></ul></li></ul></li><li>A map of <code>&#39;in&#39;</code> and/or <code>&#39;out&#39;</code> offset values as:<ul><li>a list of up to four gutter ratios or <code>&lt;length&gt;</code> sorted in the same way as the padding or margin shorthand value and where any unwanted side(s) related gutter can be set to <code>no</code>;</li><li>a map of sides related gutter ratios or <code>&lt;length&gt;</code>.</li></ul></li></ul></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Content</h3><p>This mixin allows extra content to be passed (through the <code>@content</code> directive).</p><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>.foo {
-  @include elsass(&#39;s&#39; &#39;l&#39;, 4) {
+
+  // Reset.
+  $elsass-css: null !global;
+  $elsass-config: $elsass-config-reset !global;
+ }" data-collapsed="@mixin elsass-group($config) { ... }"><code>@mixin elsass-group($config) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_main.scss#L50-L78" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Groups multiple elsass mixins arguments maps/lists to optimize the output by avoiding duplicated CSS through media-queries.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$config</code></th><td data-label="desc"><p>elsass mixins arguments maps/lists (see <code>elsass</code>).</p></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>.foo {
+  border-style: solid;
+  @include elsass-group(
+    (&#39;extra&#39;: (border-width: (gutter: .5)))
+    (&#39;s&#39;, 12)
+    (&#39;m&#39; to &#39;l&#39;, 6)
+    (from &#39;l&#39;, 4)
+  );
+}</code></pre></div><h3 class="item__sub-heading">Requires</h3><ul class="list-unstyled"><li class="item__description item__description--inline"><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li></ul><h3 class="item__sub-heading">Used by</h3><ul class="list-unstyled"><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li></ul></section><section class="main__item container item" id="main-mixin-elsass"><h3 class="item__heading"><a class="item__name" href="#mixin-elsass">elsass</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@mixin elsass($media: from $ELSASS-BPT-MIN, $width, $gutter, $offset, $extra) { 
+
+  // Get the provided breakpoints.
+  $media: _elsass-parse-media($media);
+  $elsass-config: map-merge($elsass-config, $media) !global;
+  $bpts-set: _elsass-bpts-set($media...);
+  $elsass-config: map-merge($elsass-config, (&#39;bpts&#39;: $bpts-set)) !global;
+
+  $max-width: false;
+
+  @if $width {
+    @if type-of($width) == list {
+      $elsass-config: map-merge($elsass-config, (&#39;cols&#39;: nth($width, 3))) !global;
+      $width: nth($width, 1);
+    } @else if $width == &#39;max&#39; {
+      $max-width: true;
+      $width: 100%;
+    }
+  }
+
+  $gutter-in: null;
+  $gutter-out: null;
+  $silent: null;
+  $gutter-width: false;
+
+  @if $gutter {
+    $gutters: if($gutter == &#39;none&#39;, (), _elsass-parse-gutter($gutter));
+    @if map-has-key($gutters, &#39;in&#39;) {
+      $gutter-in: map-get($gutters, &#39;in&#39;);
+    }
+    @if map-has-key($gutters, &#39;out&#39;) {
+      $gutter-out: map-get($gutters, &#39;out&#39;);
+    } @else {
+      $silent: true;
+      $gutter-out: map-get($gutters, &#39;silent&#39;);
+    }
+
+    @if $gutter-out {
+      @each $val in (map-get($gutter-out, &#39;right&#39;), map-get($gutter-out, &#39;left&#39;)) {
+        @if $val {
+          $gutter-width: if($gutter-width, append($gutter-width, $val), $val);
+          $elsass-config: map-merge($elsass-config, (&#39;g-width&#39;: $gutter-width)) !global;
+        }
+      }
+    }
+  }
+
+  $offset-in: null;
+  $offset-out: null;
+
+  @if $offset {
+    $offsets: _elsass-parse-offset($offset);
+    @if map-has-key($offsets, &#39;out&#39;) {
+      $offset-out: map-get($offsets, &#39;out&#39;);
+    }
+    @if map-has-key($offsets, &#39;in&#39;) {
+      $offset-in: map-get($offsets, &#39;in&#39;);
+    }
+  }
+
+  $out: null;
+
+  // Get and store each breakpoint related CSS.
+  @each $bpt in $bpts-set {
+
+    $elsass-config: map-merge($elsass-config, (&#39;bpt&#39;: $bpt)) !global;
+
+    $bpt-css: () !global;
+
+    @if $width {
+      @if $gutter-out or $gutter-in {
+        $bpt-css: append($bpt-css, (box-sizing: border-box)) !global;
+      }
+      $val: elsass-width($width, if($gutter-width, $gutter-width, false));
+      $bpt-css: append($bpt-css, (width: #{$val})) !global;
+    }
+
+    @if $max-width {
+      $val: if($ELSASS-MAX-WIDTH, &#39;max&#39;, $bpt);
+      $val: elsass-width($val, if($gutter-width, $gutter-width, false));
+      $bpt-css: append($bpt-css, (max-width: #{$val})) !global;
+    }
+
+    @if $gutter-in or $offset-in {
+      $bpt-gutter: _elsass-gutter-css($gutter-in, false, $offset-in);
+      @if map-has-key($bpt-gutter, &#39;shorthand&#39;) {
+        $shorthand: map-get($bpt-gutter, &#39;shorthand&#39;);
+        $bpt-css: append($bpt-css, (padding: #{$shorthand})) !global;
+      } @else {
+        @each $side, $val in $bpt-gutter {
+          $bpt-css: append($bpt-css, (padding-#{$side}: #{$val})) !global;
+        }
+      }
+    }
+
+    @if $gutter-out or $offset-out {
+      $bpt-gutter: _elsass-gutter-css($gutter-out, $silent, $offset-out);
+      @if map-has-key($bpt-gutter, &#39;shorthand&#39;) {
+        $shorthand: map-get($bpt-gutter, &#39;shorthand&#39;);
+        $bpt-css: if($bpt-css, append($bpt-css, (margin: #{$shorthand})), (margin: #{$shorthand})) !global;
+      } @else {
+        @each $side, $val in $bpt-gutter {
+          $bpt-css: append($bpt-css, (margin-#{$side}: #{$val})) !global;
+        }
+      }
+    }
+
+    @if $extra {
+      @if type-of($extra) == map {
+        $vals: nth(map-values($extra), 1);
+        @if type-of($vals) != list {
+          $vals: ($vals) ();
+        }
+        $new: null;
+        @each $val in $vals {
+          @if type-of($val) == map {
+            @if map-has-key($val, &#39;gutter&#39;) {
+              $val: elsass-gutter(map-get($val, &#39;gutter&#39;));
+            } @else {
+              $val: elsass-width(map-get($val, &#39;width&#39;));
+            }
+          }
+          $new: if($new, $new $val, $val);
+        }
+        $bpt-css: if($new, append($bpt-css, (nth(map-keys($extra), 1): $new)), append($bpt-css, $extra)) !global;
+      } @else if type-of($extra) == list {
+        @each $prop in $extra {
+          $new: null;
+          @each $val in map-values($prop) {
+            @if type-of($val) == map {
+              @if map-has-key($val, &#39;gutter&#39;) {
+                $val: elsass-gutter(map-get($val, &#39;gutter&#39;));
+              } @else {
+                $val: elsass-width(map-get($val, &#39;width&#39;));
+              }
+            }
+            $new: if($new, $new $val, $val);
+          }
+          $bpt-css: if($new, append($bpt-css, (nth(map-keys($prop), 1): $new)), append($bpt-css, $prop)) !global;
+
+        }
+      }
+    }
+
+    // Prepare the output.
+    $bpt-next: false;
+    $i: index($bpts-set, $bpt);
+
+    @if $i == length($bpts-set) {
+      @if map-get($media, &#39;to&#39;) {
+        $bpt-next: nth($ELSASS-BPTS, index($ELSASS-BPTS, $bpt) + 1);
+      }
+    } @else {
+      $bpt-next: nth($bpts-set, $i + 1);
+    }
+
+    $bpt-map: ($bpt: ($bpt-next: $bpt-css));
+    $elsass-css: if($elsass-css, _elsass-merge-bpt($elsass-css, $bpt-map), $bpt-map) !global;
+  }
+
+  @if not map-get($elsass-config, &#39;group&#39;) {
+    @include elsass-group; 
+  }
+ }" data-collapsed="@mixin elsass($media: from $ELSASS-BPT-MIN, $width, $gutter, $offset, $extra) { ... }"><code>@mixin elsass($media: from $ELSASS-BPT-MIN, $width, $gutter, $offset, $extra) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_main.scss#L130-L299" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Builds any responsive layout item.<br>Uses global settings before to fallback to responsive ones.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$media</code></th><td data-label="desc"><p>Defines the related media-query(ies). See <code>elsass-media</code> mixin.</p></td><td data-label="type"><code>List</code></td><td data-label="default"><code>from $ELSASS-BPT-MIN</code></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$width</code></th><td data-label="desc"><p>Defines the element <code>width</code> and (optionally) <code>max-witdh</code> from the following values.</p><ul><li><code>3</code>: divises the global columns number (<code>12</code> by default) per <code>3</code>;</li><li><code>3 of 6</code>: applies a width of <code>50%</code>;</li><li><code>&#39;max&#39;</code>: applies a <code>width</code> value of <code>100%</code> and a max width related to the settings.</li></ul></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$gutter</code></th><td data-label="desc"><p>Applies gutters as padding and/or margin based on the following valid values.</p><ul><li>A map, as defined in <code>$elsass-gutters</code>;</li><li>A shorthand as <code>&#39;default&#39;</code>, <code>&#39;none&#39;</code> or an <code>$elsass-behaviours</code> key, optionally preceded by an <code>$elsass-gutters</code> key to override the default gutter value.<br>Gutter behaviour related keywords accept suffixes to alterate defined gutter sides. Valid sufixes are <code>&#39;-top&#39;</code>, <code>&#39;-right&#39;</code>, <code>&#39;-bottom&#39;</code>, <code>&#39;-left&#39;</code>, <code>&#39;-x&#39;</code> and <code>&#39;-y&#39;</code>. If no suffix is provided all gutter related sides will be alterate.<pre><code class="lang-scss">$gutter: &#39;all-over&#39;; // or
+$gutter: &#39;nest&#39;; // or
+$gutter: &#39;all-over&#39; &#39;nest&#39;;
+</code></pre></li></ul></td><td data-label="type"><code>List</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$offset</code></th><td data-label="desc"><p>Alterates the element and/or content position by pushing, pulling or centering it via margin and/or padding through the following values.</p><ul><li>A map of <code>&#39;in&#39;</code> and/or <code>&#39;out&#39;</code> offset values as:<ul><li>a map of sides related <code>&lt;length&gt;</code> or container width ratios;<pre><code class="lang-scss">$offset: (&#39;out&#39;: (&#39;left&#39;: 3));
+</code></pre></li></ul></li><li>A shorthand using one or more <code>$elsass-offsets</code> key, optionally followed by a <code>&lt;length&gt;</code> or container width ratio. If no ratio is provided <code>auto</code> will be used.<pre><code class="lang-scss">  $gutter: &#39;center&#39; &#39;start&#39; 3;
+</code></pre></li></ul></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$extra</code></th><td data-label="desc"><p>List of extra CSS rules to apply. Any gutter or width related value can be indirectly set via <code>elsass-gutter</code> or <code>elsass-width</code> functions by providing a map with <code>gutter</code> or <code>width</code> as key and where the value is the related argument list.</p></td><td data-label="type"><code>List</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>.foo {
+  border-style: solid;
+  @include elsass(from &#39;l&#39;, 3, &#39;all-out&#39;, &#39;before&#39; 3, (border-width: (gutter: .25)));
+}</code></pre></div><h3 class="item__sub-heading">Output</h3><div class="item__description"><p>Arguments and <code>@content</code> relative CSS wrapped into tidy media-queries.</p></div><h3 class="item__sub-heading">Requires</h3><ul class="list-unstyled"><li class="item__description item__description--inline"><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass-group"><code>elsass-group</code></a></li><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-width"><code>elsass-width</code></a></li><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-width"><code>elsass-width</code></a></li><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-gutter"><code>elsass-gutter</code></a></li><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-width"><code>elsass-width</code></a></li><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-gutter"><code>elsass-gutter</code></a></li><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-width"><code>elsass-width</code></a></li></ul><h3 class="item__sub-heading">Used by</h3><ul class="list-unstyled"><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass-group"><code>elsass-group</code></a></li></ul></section></section></section><section class="main__section"><h1 class="main__heading" id="misc"><div class="container">Others</div></h1><section class="main__sub-section" id="misc-mixin"><h2 class="main__heading--secondary"><div class="container">mixins</div></h2><section class="main__item container item" id="misc-mixin-elsass-media"><h3 class="item__heading"><a class="item__name" href="#mixin-elsass-media">elsass-media</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@mixin elsass-media($media: from $ELSASS-BPT-MIN) { 
+  $media: _elsass-parse-media($media);
+  
+  @include _el-media($media...) {
+    @content;
+  }
+ }" data-collapsed="@mixin elsass-media($media: from $ELSASS-BPT-MIN) { ... }"><code>@mixin elsass-media($media: from $ELSASS-BPT-MIN) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_base.scss#L51-L57" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Wrap <code>@content</code> in a media-query.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$media</code></th><td data-label="desc"><p>Defines the related media-query(ies).</p><ul><li><code>&#39;breakpoint&#39;</code>: applies to the breakpoint only;</li><li><code>from &#39;breakpoint&#39;</code> or <code>&lt;length&gt;</code>: applies to the provided breakpoint/<code>&lt;length&gt;</code> and greaters ones;</li><li><code>to &#39;breakpoint&#39;</code> or <code>&lt;length&gt;</code>: applies to smaller breakpoints than the one provided;</li><li><code>&#39;breakpoint&#39;</code> or <code>&lt;length&gt; to &#39;greater-breakpoint&#39;</code> or <code>&lt;length&gt;</code>: I let you guess…</li></ul></td><td data-label="type"><code>List</code></td><td data-label="default"><code>from $ELSASS-BPT-MIN</code></td></tr></tbody></table><h3 class="item__sub-heading">Content</h3><p>This mixin allows extra content to be passed (through the <code>@content</code> directive).</p><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>.foo {
+  @include elsass-media(to &#39;l&#39;) {
     background: #eee;
   }
 }</code></pre></div><div class="item__example example"><div class="example__description"><p>CSS output</p></div><pre class="example__code language-css"><code>/* Assuming $elsass is untouched. */
-@media screen and (max-width: 639px) {
-  .foo {
-    width: calc(25% - 24px);
-    margin: 12px;
-  }
-}
 @media screen and (max-width: 1023px) {
   .foo {
-    box-sizing: border-box;
     background: #eee;
   }
-}
-@media screen and (min-width: 640px) and (max-width: 1023px) {
-  .foo {
-    width: calc(25% - 32px);
-    margin: 16px;
-  }
-}</code></pre></div><h3 class="item__sub-heading">Output</h3><div class="item__description"><p>Arguments relative CSS and <code>@content</code> wrapped in tidy media-queries.</p></div><h3 class="item__sub-heading">Requires</h3><ul class="list-unstyled"><li class="item__description item__description--inline"><span class="item__cross-type">[mixin]</span> <a href="#misc-mixin-elsass-media"><code>elsass-media</code></a></li></ul></section></section></section><section class="main__section"><h1 class="main__heading" id="misc"><div class="container">Others</div></h1><section class="main__sub-section" id="misc-mixin"><h2 class="main__heading--secondary"><div class="container">mixins</div></h2><section class="main__item container item" id="misc-mixin-elsass-media"><h3 class="item__heading"><a class="item__name" href="#mixin-elsass-media">elsass-media</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@mixin elsass-media($from: $ELSASS-BPT-MIN, $to) { 
-  $mq: false; // Media-query
+}</code></pre></div></section></section><section class="main__sub-section" id="misc-function"><h2 class="main__heading--secondary"><div class="container">functions</div></h2><section class="main__item container item" id="misc-function-elsass-width"><h3 class="item__heading"><a class="item__name" href="#function-elsass-width">elsass-width</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@function elsass-width($width, $gutter-width) { 
 
-  // Set a media-query min-width if $from is set and is not the first bpt.
-  @if $from and $from != $ELSASS-BPT-MIN {
-    @if index($ELSASS-BPTS, $from) {
-      $from: map-get(map-get($ELSASS-RESP, $from), &#39;device-min-width&#39;);
-    }
-    $mq: &#39;(min-width: #{$from})&#39;;
-  }
-
-  // Set a media-query max-width if $to is set.
-  @if $to {
-    @if index($ELSASS-BPTS, $to) {
-      $to: map-get(map-get($ELSASS-RESP, $to), &#39;device-min-width&#39;) - 1;
-    }
-    $mq: if($mq, $mq &#39; and &#39;, &#39;&#39;) &#39;(max-width: #{$to})&#39;;
-  }
-
-  // Wrap @content in a media query if set.
-  @if $mq {
-    @media screen and #{$mq} {
-      @content;
-    }
-  } @else {
-    @content;
-  }
- }" data-collapsed="@mixin elsass-media($from: $ELSASS-BPT-MIN, $to) { ... }"><code>@mixin elsass-media($from: $ELSASS-BPT-MIN, $to) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_base.scss#L57-L84" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Wrap <code>@content</code> in a media-query.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$from</code></th><td data-label="desc"><p>media-query min-width related breakpoint name or <code>&lt;length&gt;</code>;</p></td><td data-label="type"><code>String</code> or <code>Number</code></td><td data-label="default"><code>$ELSASS-BPT-MIN</code></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$to</code></th><td data-label="desc"><p>media-query max-width related breakpoint name or <code>&lt;length&gt;</code>;</p></td><td data-label="type"><code>String</code> or <code>Number</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Content</h3><p>This mixin allows extra content to be passed (through the <code>@content</code> directive).</p><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>.foo {
-  elsass-media(&#39;m&#39;, &#39;l&#39;) { width: 25%; }
-}</code></pre></div><div class="item__example example"><div class="example__description"><p>CSS output</p></div><pre class="example__code language-css"><code>/* Assuming device min-widths for &#39;m&#39; and &#39;l&#39; breakpoints are set to 640px and 1024px through $elsass. */
-@media screen and (min-width: 640px) and (max-width: 1023px) {
-  .foo { width: 25%; }
-}</code></pre></div><h3 class="item__sub-heading">Output</h3><div class="item__description"><p><code>@content</code> wrapped in a media-query or <code>@content</code> only;</p></div><h3 class="item__sub-heading">Used by</h3><ul class="list-unstyled"><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li></ul></section></section><section class="main__sub-section" id="misc-function"><h2 class="main__heading--secondary"><div class="container">functions</div></h2><section class="main__item container item" id="misc-function-elsass-width"><h3 class="item__heading"><a class="item__name" href="#function-elsass-width">elsass-width</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@function elsass-width($width, $gutter-width) { 
-
-  @if type-of($width) == list {
-    $width: percentage(nth($width, 1) / nth($width, 3));
-  } @else if type-of($width) == string {
-    @if $width == &#39;max&#39; {
+  // Parse $width.
+  @if type-of($width) == number and unitless($width) {
+    $cols: if(map-get($elsass-config, &#39;cols&#39;), map-get($elsass-config, &#39;cols&#39;), $ELSASS-COLS);
+    $width: percentage($width / $cols);
+  } @else if $width == &#39;max&#39; {
+    @if $ELSASS-MAX-WIDTH {
       $width: $ELSASS-MAX-WIDTH;
     } @else {
-      $width: map-get(map-get($ELSASS-RESP, $width), &#39;container-max-width&#39;);
+      $width: map-get(map-get($ELSASS-RESP, map-get($elsass-config, &#39;bpt&#39;)), &#39;container-max-width&#39;);
     }
-  } @else if unitless($width) {
-    $width: percentage($width / $ELSASS-COLS);
+  } @else if index($ELSASS-BPTS, $width) {
+    $width: map-get(map-get($ELSASS-RESP, $width), &#39;container-max-width&#39;);
+  } @else if type-of($width) == list {
+    $width: percentage(nth($width, 1) / nth($width, 3));
   }
 
   $calc: null;
@@ -113,7 +321,14 @@
   @if $gutter-width {
     $bpt: null;
 
-    @if type-of($gutter-width) == map {
+    // Parse $gutter-width;
+    @if type-of($gutter-width) == number and unitless($gutter-width) {
+      @if $ELSASS-GUTTER-LENGTH {
+        $gutter-width: $gutter-width * $ELSASS-GUTTER-LENGTH;
+      } @else {
+        $bpt: map-get($elsass-config, &#39;bpt&#39;);
+      }
+    } @else if type-of($gutter-width) == map {
       $bpt: nth(map-keys($gutter-width), 1);
       $gutter-width: map-get($gutter-width, $bpt);
     }
@@ -127,9 +342,10 @@
         $calc: if($calc, append($calc, $val), $val);
       }
     }
-    $gutter-width: $calc;
 
+    $gutter-width: $calc;
     $calc: null;
+    
     // Calculate width according to margins.
     @each $val in $gutter-width {
       $abs: abs($val);
@@ -147,34 +363,40 @@
   }
 
   @return if($calc, calc(#{$width} #{$calc}), $width);
- }" data-collapsed="@function elsass-width($width, $gutter-width) { ... }"><code>@function elsass-width($width, $gutter-width) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_base.scss#L110-L163" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Calculate width by substracting potential right and left gutters used as margin.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$width</code></th><td data-label="desc"><p>Ratio of the container width or <code>&lt;length&gt;</code>.<br>Enter <code>&#39;max&#39;</code> or a breakpoint name to use the global/responsive container max width defined through <code>$elsass</code>.</p></td><td data-label="type"><code>Number</code> or <code>String</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$gutter-width</code></th><td data-label="desc"><p>Sum or list of the right and left gutter ratios or lengths.<br>A one item long map using a breakpoint name as key can be provided to use this breakpoint related gutter length as the ratio base.<br>A single breakpoint can be used as a shorthand of <code>(&#39;breakpoint&#39;: 1)</code>.</p></td><td data-label="type"><code>Number</code> or <code>List</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Returns</h3><div class="item__description item__description--inline"><code>Number</code> &mdash;<p><code>&lt;length&gt;</code> (via <code>calc()</code> if needed).</p></div><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>width: elsass-width(1/4, &#39;m&#39;);
-/* = width: elsass-width(1/4, (&#39;m&#39;: 1)); */</code></pre></div><div class="item__example example"><div class="example__description"><p>CSS output</p></div><pre class="example__code language-css"><code>/* Assuming &#39;m&#39; breakpoint gutter length is set to 30px through $elsass. */
+ }" data-collapsed="@function elsass-width($width, $gutter-width) { ... }"><code>@function elsass-width($width, $gutter-width) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_base.scss#L175-L243" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Calculate width by substracting potential right and left gutters used as margin.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$width</code></th><td data-label="desc"><p>Ratio of the container width or <code>&lt;length&gt;</code>.<br>Enter <code>&#39;max&#39;</code> or a breakpoint name to use the global/responsive container max width defined through <code>$elsass</code>.</p></td><td data-label="type"><code>Number</code> or <code>String</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$gutter-width</code></th><td data-label="desc"><p>Sum or list of the right and left gutter ratios or lengths.<br>A one item long map using a breakpoint name as key can be provided to use this breakpoint related gutter length as the ratio base.<br>A single breakpoint can be used as a shorthand of <code>(&#39;breakpoint&#39;: 1)</code>.</p></td><td data-label="type"><code>Number</code> or <code>List</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Returns</h3><div class="item__description item__description--inline"><code>Number</code> &mdash;<p><code>&lt;length&gt;</code> (via <code>calc()</code> if needed).</p></div><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>width: elsass-width(3, &#39;m&#39;);
+// = width: elsass-width(1 of 4, (&#39;m&#39;: 1));</code></pre></div><div class="item__example example"><div class="example__description"><p>CSS output</p></div><pre class="example__code language-css"><code>// Assuming &#39;m&#39; breakpoint gutter length is set to 30px through $elsass.
 width: calc(25% - 30px);
-/* Assuming &#39;m&#39; breakpoint gutter length is set to 5% through $elsass. */
-width: 20%;</code></pre></div><h3 class="item__sub-heading">Requires</h3><ul class="list-unstyled"><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-gutter"><code>elsass-gutter</code></a></li></ul></section><section class="main__item container item" id="misc-function-elsass-gutter"><h3 class="item__heading"><a class="item__name" href="#function-elsass-gutter">elsass-gutter</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@function elsass-gutter($gutter, $offset) { 
+// Assuming &#39;m&#39; breakpoint gutter length is set to 5% through $elsass.
+width: 20%;</code></pre></div><h3 class="item__sub-heading">Requires</h3><ul class="list-unstyled"><li class="item__description item__description--inline"><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-gutter"><code>elsass-gutter</code></a></li></ul><h3 class="item__sub-heading">Used by</h3><ul class="list-unstyled"><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li></ul></section><section class="main__item container item" id="misc-function-elsass-gutter"><h3 class="item__heading"><a class="item__name" href="#function-elsass-gutter">elsass-gutter</a></h3><div class="item__code-wrapper"><pre class="item__code item__code--togglable language-scss" data-current-state="collapsed" data-expanded="@function elsass-gutter($gutter, $offset) { 
 
   @if $gutter {
-    @if type-of($gutter) == map {
+    // Parse gutter.
+    @if type-of($gutter) == number and unitless($gutter) {
+      @if $ELSASS-GUTTER-LENGTH {
+        $gutter: $gutter * $ELSASS-GUTTER-LENGTH;
+      } @else {
+        $gutter: $gutter * map-get(map-get($ELSASS-RESP, map-get($elsass-config, &#39;bpt&#39;)), &#39;gutter-length&#39;);
+      }
+   } @else if type-of($gutter) == map {
       $bpt: nth(map-keys($gutter), 1);
       $gutter-length: map-get(map-get($ELSASS-RESP, $bpt), &#39;gutter-length&#39;);
       $gutter: map-get($gutter, $bpt) * $gutter-length;
-    } @else if map-has-key($ELSASS-RESP, $gutter) {
+    } @else if index($ELSASS-BPTS, $gutter) {
       $gutter: map-get(map-get($ELSASS-RESP, $gutter), &#39;gutter-length&#39;);
-    } @else if unitless($gutter) {
-      $gutter: $gutter * $ELSASS-GUTTER-BASE;
     }
   }
 
   @if $offset {
-
-    @if type-of($offset) == number and unitless($offset) {
-      $offset: percentage($offset / $ELSASS-COLS);
-    } @else if type-of($offset) == map {
-      $columns: nth(map-keys($offset), 1);
-      $offset: percentage(map-get($offset, $columns) / $columns);
+    // Parse $offset.
+    @if type-of($offset) == number {
+      $cols: if(map-get($elsass-config, &#39;cols&#39;), map-get($elsass-config, &#39;cols&#39;), $ELSASS-COLS);
+      $offset: if(unitless($offset), percentage($offset / $cols), $offset);
+    } @else if type-of($offset) == list {
+      $offset: percentage(nth($offset, 1) / nth($offset, 3));
     }
 
     @if $gutter {
+      // Reset $gutter.
       $abs: abs($offset);
       @if comparable($gutter, $abs) {
         $gutter: if($offset == $abs, $gutter + $abs, $gutter - $abs);
@@ -189,10 +411,10 @@ width: 20%;</code></pre></div><h3 class="item__sub-heading">Requires</h3><ul cla
   }
 
   @return if($gutter, $gutter, $offset);
- }" data-collapsed="@function elsass-gutter($gutter, $offset) { ... }"><code>@function elsass-gutter($gutter, $offset) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_base.scss#L186-L224" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Calculate a gutter length.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$gutter</code></th><td data-label="desc"><p>Gutter ratio or length.<br>A one item long map using a breakpoint name as key can be provided to use this breakpoint related gutter length as the ratio base.<br>A single breakpoint can be used as a shorthand of <code>(&#39;breakpoint&#39;: 1)</code>.</p></td><td data-label="type"><code>Number</code> or <code>String</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$offset</code></th><td data-label="desc"><p>Ratio the container width or <code>&lt;length&gt;</code> to add or substract;</p></td><td data-label="type"><code>Number</code> or <code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Returns</h3><div class="item__description item__description--inline"><code>Number</code> &mdash;<p><code>&lt;length&gt;</code></p></div><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>margin-right: elsass-gutter((&#39;m&#39;: 0.5));
-margin-left: elsass-gutter((&#39;m&#39;: 0.5), 1/4);</code></pre></div><div class="item__example example"><div class="example__description"><p>CSS output</p></div><pre class="example__code language-css"><code>/* Assuming &#39;m&#39; breakpoint gutter length is set to 30px through $elsass. */
+ }" data-collapsed="@function elsass-gutter($gutter, $offset) { ... }"><code>@function elsass-gutter($gutter, $offset) { ... }</code></pre><a href="https://github.com/nicolasgraph/elsass/core/_base.scss#L266-L310" class="item__source-link" target="_blank">View source</a></div><h3 class="item__sub-heading">Description</h3><div class="item__description"><p>Calculate a gutter length.</p></div><h3 class="item__sub-heading">Parameters</h3><table class="item__parameters"><thead><tr><th scope="col"><span class="visually-hidden">parameter </span>Name</th><th scope="col"><span class="visually-hidden">parameter </span>Description</th><th scope="col"><span class="visually-hidden">parameter </span>Type</th><th scope="col"><span class="visually-hidden">parameter </span>Default value</th></tr></thead><tbody><tr class="item__parameter"><th scope="row" data-label="name"><code>$gutter</code></th><td data-label="desc"><p>Gutter ratio or length.<br>A one item long map using a breakpoint name as key can be provided to use this breakpoint related gutter length as the ratio base.<br>A single breakpoint can be used as a shorthand of <code>(&#39;breakpoint&#39;: 1)</code>.</p></td><td data-label="type"><code>Number</code> or <code>String</code> or <code>Map</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr><tr class="item__parameter"><th scope="row" data-label="name"><code>$offset</code></th><td data-label="desc"><p>Ratio the container width or <code>&lt;length&gt;</code> to add or substract;</p></td><td data-label="type"><code>Number</code> or <code>Length</code></td><td data-label="default">&mdash;<span class="visually-hidden"> none</span></td></tr></tbody></table><h3 class="item__sub-heading">Returns</h3><div class="item__description item__description--inline"><code>Number</code> &mdash;<p><code>&lt;length&gt;</code></p></div><h3 class="item__sub-heading">Example</h3><div class="item__example example"><div class="example__description"><p>SCSS</p></div><pre class="example__code language-scss"><code>margin-right: elsass-gutter((&#39;m&#39;: 0.5));
+margin-left: elsass-gutter((&#39;m&#39;: 0.5), 3);</code></pre></div><div class="item__example example"><div class="example__description"><p>CSS output</p></div><pre class="example__code language-css"><code>// Assuming &#39;m&#39; breakpoint gutter length is set to 30px through $elsass.
 margin-right: 15px;
 margin-left: calc(15px + 25%);
-/* Assuming &#39;m&#39; breakpoint gutter length is set to 5% through $elsass. */
+// Assuming &#39;m&#39; breakpoint gutter length is set to 5% through $elsass.
 margin-right: 2.5%;
-margin-left: 27.5%;</code></pre></div><h3 class="item__sub-heading">Used by</h3><ul class="list-unstyled"><li><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-width"><code>elsass-width</code></a></li></ul></section></section></section><footer class="footer" role="contentinfo"><div class="container"><div class="footer__project-info project-info"><!-- Name and URL --> <span class="project-info__name">Elsass</span><!-- Version --> <span class="project-info__version">- v0.1.0-alpha</span><!-- License --> <span class="project-info__license">, under MIT</span></div><a class="footer__watermark" href="http://sassdoc.com"><img src="assets/images/logo_light_inline.svg" alt="SassDoc Logo"></a></div></footer></article><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>window.jQuery || document.write('<script src="assets/js/vendor/jquery.min.js"><\/script>')</script><script src="assets/js/main.min.js"></script></body></html>
+margin-left: 27.5%;</code></pre></div><h3 class="item__sub-heading">Used by</h3><ul class="list-unstyled"><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li><li><span class="item__cross-type">[mixin]</span> <a href="#main-mixin-elsass"><code>elsass</code></a></li><li><span class="item__cross-type">[function]</span> <a href="#misc-function-elsass-width"><code>elsass-width</code></a></li></ul></section></section></section><footer class="footer" role="contentinfo"><div class="container"><div class="footer__project-info project-info"><!-- Name and URL --> <span class="project-info__name">Elsass</span><!-- Version --> <span class="project-info__version">- v0.1.0-alpha</span><!-- License --> <span class="project-info__license">, under MIT</span></div><a class="footer__watermark" href="http://sassdoc.com"><img src="assets/images/logo_light_inline.svg" alt="SassDoc Logo"></a></div></footer></article><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>window.jQuery || document.write('<script src="assets/js/vendor/jquery.min.js"><\/script>')</script><script src="assets/js/main.min.js"></script></body></html>
