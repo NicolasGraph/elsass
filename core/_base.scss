@@ -21,8 +21,9 @@
 // 3. FUNCTIONS
 // 3.1 el_width
 // 3.2 el_gutte
-// 3.3 elsass-config
-// 3.4 _elsass-responsive
+// 3.3 _elsass-map-get
+// 3.4 elsass-config
+// 3.5 _elsass-responsive
 
 // 2. MIXIN
 // ========
@@ -297,41 +298,46 @@
   @return if($gutter, $gutter, $offset);
 }
 
-// 3.3 elsass-config
-// -----------------
-/// Get an `$elsass-config` key value.
-/// @param {String} $key/// @param {Number | Length} $offset -
-/// @return {<value>} `$elsass-config` key value.
-@function _elsass-config($key) {
-  $out: false;
-
-  @if map-has-key($elsass-config, $key) {
-    $out: map-get($elsass-config, $key);
-  }
-
-  @return $out;
-}
-
-// 3.4 _elsass-responsive
+// 3.3 _elsass-map-get
 // ----------------------
-/// Get an `$elsass-responsive` key value.
-/// @param {String} $bpt
-/// @param {String} $bpt.key
-/// @return {<value>} `$elsass-responsive` breakpoint related key value.
-@function _elsass-responsive($bpt, $key: null) {
+/// Get a map key/subkey value.
+/// @param {String} $key
+/// @param {String} $subkey
+/// @param {Map} $map
+/// @return {<value>} `$map` breakpoint related key/subkey value.
+@function _elsass-map-get($key, $subkey: null, $map: ()) {
   $out: false;
 
-  @if map-has-key($elsass-responsive, $bpt) {
-    $out: map-get($elsass-responsive, $bpt);
+  @if map-has-key($map, $key) {
+    $out: map-get($map, $key);
   }
 
-  @if $out and $key {
-    @if map-has-key($out, $key) {
-      $out: map-get($out, $key);
+  @if $out and $subkey {
+    @if map-has-key($out, $subkey) {
+      $out: map-get($out, $subkey);
     } @else {
       $out: false;
     }
   }
 
   @return $out;
+}
+
+// 3.4 elsass-config
+// -----------------
+/// Get an `$elsass-config` key value.
+/// @param {String} $key
+/// @return {<value>} `$elsass-config` key value.
+@function _elsass-config($key) {  
+  @return _elsass-map-get($key, false, $elsass-config);
+}
+
+// 3.5 _elsass-responsive
+// ----------------------
+/// Get an `$elsass-responsive` key value.
+/// @param {String} $bpt
+/// @param {String} $key
+/// @return {<value>} `$elsass-responsive` breakpoint related key value.
+@function _elsass-responsive($bpt, $key: null) {  
+  @return _elsass-map-get($bpt, $key, $elsass-responsive);
 }
