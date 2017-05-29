@@ -4,6 +4,6 @@ display:
   access:
     - public
 groups:
-  Config: "Configuration"
+  Config: "Settings"
   Main: "Main tools"
   Misc: "Others"
