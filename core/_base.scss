@@ -20,7 +20,7 @@
 // 2.2 _el-media
 // 3. FUNCTIONS
 // 3.1 el_width
-// 3.2 el_gutte
+// 3.2 el_gutter
 // 3.3 _elsass-map-get
 // 3.4 elsass-config
 // 3.5 _elsass-responsive
@@ -28,7 +28,7 @@
 // 2. MIXIN
 // ========
 
-// 2.1 elsass-medi
+// 2.1 elsass-media
 // ----------------
 /// Wrap `@content` in a media-query.
 /// @param {List} $media [from $ELSASS-BPT-MIN] -
@@ -299,7 +299,7 @@
 }
 
 // 3.3 _elsass-map-get
-// ----------------------
+// -------------------
 /// Get a map key/subkey value.
 /// @param {String} $key
 /// @param {String} $subkey
@@ -323,8 +323,8 @@
   @return $out;
 }
 
-// 3.4 elsass-config
-// -----------------
+// 3.4 _elsass-config
+// ------------------
 /// Get an `$elsass-config` key value.
 /// @param {String} $key
 /// @return {<value>} `$elsass-config` key value.
