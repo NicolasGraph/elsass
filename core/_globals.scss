@@ -24,7 +24,6 @@ $ELSASS-BPTS         : map-keys($elsass-responsive); /// Breakpoints list.
 $ELSASS-BPT-MIN      : nth($ELSASS-BPTS, 1); /// Smallest breakpoint.
 $ELSASS-BPT-MAX      : nth($ELSASS-BPTS, length($ELSASS-BPTS)); /// Bigger breakpoint.
 $ELSASS-SIDES        : 'top', 'right', 'bottom', 'left';
-$ELSASS-RESP         : $elsass-responsive;
 $ELSASS-GUTTERS      : $elsass-gutters;
 $ELSASS-BEHAVIOURS   : $elsass-behaviours;
 $ELSASS-OFFSETS      : $elsass-offsets;
