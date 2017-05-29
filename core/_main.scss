@@ -27,24 +27,26 @@
 // 2.6 _elsass-gutter-css
 // 2.7 _elsass-gutter-short
 // 2.8 _elsass-merge-bpt
+// 2.9 _elsass-list-remove
 
 // 1. MIXIN
 // ========
 
 // 1.1 elsass-group
 // ----------------
-/// Groups multiple elsass mixins arguments maps/lists to optimize the output
-/// by avoiding duplicated CSS through media-queries.  
+/// Groups multiple `elsass` mixins arguments lists/maps
+/// to optimize the output by avoiding duplicated CSS
+/// through media-queries.  
 /// @param {List} $config -
-///   elsass mixins arguments maps/lists (see `elsass`).
+///   elsass mixin arguments lists/maps (see `elsass`).
 /// @example scss - SCSS
 ///   .foo {
 ///     border-style: solid;
 ///     @include elsass-group(
-///       ('extra': (border-width: (gutter: .5)))
-///       ('s', 12)
-///       ('m' to 'l', 6)
-///       (from 'l', 4)
+///       ('extra': (border-width: ('gutter': .5)))
+///       ('s', 12, 'default')
+///       ('m' to 'xl', 6, 'default')
+///       (from 'xl', 4, 'default')
 ///     );
 ///   }
 @mixin elsass-group($config: null) {
@@ -79,53 +81,64 @@
 
 // 1.2 elsass
 // ----------
-/// Builds any responsive layout item.  
+/// Builds any responsive layout element.  
 /// Uses global settings before to fallback to responsive ones.  
 /// @param {List} $media [from $ELSASS-BPT-MIN] -
-///   Defines the related media-query(ies). See `elsass-media` mixin.
+///   Defines the related media-query/ies `min`
+///   and\or `max-width` from one of the following value:
+///   -  `<breakpoint>` applies to the provided breakpoint only;
+///   - `from <breakpoint>` applies to the provided breakpoint and larger ones;
+///   - `to <breakpoint>` applies to smaller breakpoints than the one provided;
+///   - `<breakpoint> to <breakpoint>`.  
+///
+///   Each value using `from` or `to` allows `<breakpoint>` to be replaced
+///   by a `<lenght>` only if no breakpoint settings related value is needed.
 /// @param {List} $width -
-///   Defines the element `width` and (optionally) `max-witdh` from the following values.
-///   - `3`: divises the global columns number (`12` by default) per `3`;
-///   - `3 of 6`: applies a width of `50%`;
-///   - `'max'`: applies a `width` value of `100%` and a max width related to the settings.
+///   Defines the element `width` and (optionally)
+///   `max-witdh` from one of the following values.
+///   - `<number>` defines a default columns number related `width`
+///     or a `max-width` related to the global/breakpoint(s)
+///     container max-width set if followed by `max`;
+///   - `<number> of <number>` defines a custom columns number related `width`
+///     or a `max-width` related to the global/breakpoint(s)
+///     container max-width set if followed by `max`;
+///   - `max` set a `max-width` equal to the global/breakpoint(s)
+///      container max-width set.
 /// @param {List | Map} $gutter -
 ///   Applies gutters as padding and/or margin based on the following valid values.  
-///
 ///   - A map, as defined in `$elsass-gutters`;
-///   - A shorthand as `'default'`, `'none'` or an `$elsass-behaviours` key,
-///     optionally preceded by an `$elsass-gutters` key to override the default gutter value.  
-///     Gutter behaviour related keywords accept suffixes to alterate defined gutter sides.
-///     Valid sufixes are `'-top'`, `'-right'`, `'-bottom'`, `'-left'`, `'-x'` and `'-y'`.
+///   - A shorthand as
+///     - `default` uses the default gutter set;
+///     - `none` does not apply any gutter;
+///     - an `$elsass-gutters` key applies the related value;
+///     - an `$elsass-behaviours` key applies the related change(s)
+///       to alterate the default gutter;
+///     - an `$elsass-gutters` key followed by an `$elsass-behaviours` key
+///       applies the `$elsass-behaviours` related change(s) to alterate
+///       the `$elsass-gutters` related value.  
+///
+///     `$elsass-behaviours` keys accept suffixes to alterate defined gutter sides.
+///     Valid sufixes are `-top`, `-right`, `-bottom`, `-left`, `-x` and `-y`.  
 ///     If no suffix is provided all gutter related sides will be alterate.
-///     ```scss
-///     $gutter: 'all-over'; // or
-///     $gutter: 'nest'; // or
-///     $gutter: 'all-over' 'nest';
-///     ```
-/// @param {List} $offset -
-///   Alterates the element and/or content position by pushing,
-///   pulling or centering it via margin and/or padding through the following values.
-///   - A map of `'in'` and/or `'out'` offset values as:
-///     - a map of sides related `<length>` or container width ratios;
-///       ```scss
-///       $offset: ('out': ('left': 3));
-///       ```
-///   - A shorthand using one or more `$elsass-offsets` key,
-///     optionally followed by a `<length>` or container width ratio.
-///     If no ratio is provided `auto` will be used.
-///       ```scss
-///       $gutter: 'center' 'start' 3;
-///       ```
-/// @param {List} $extra -
-///   List of extra CSS rules to apply.
-///   Any gutter or width related value can be indirectly set via `elsass-gutter`
-///   or `elsass-width` functions by providing a map with `gutter` or `width` as key
-///   and where the value is the related argument list.
+/// @param {List | Map} $offset -
+///   Alterates the horizontal element and/or content position
+///   via margin and/or padding through the following values.
+///   - A map of `in` and/or `out` offset values as:
+///     - a map of sides related or grid fraction or `<length>`;
+///   - A shorthand using a list of `$elsass-offsets` keys
+///     optionally followed by a related grid fraction or `<length>`.
+///     If no ratio is provided `auto` will be used as the padding/margin value.
+/// @param {List | Map} $extra -
+///   List of extra CSS rules to apply.  
+///   Gutter or width related CSS values can be indirectly set
+///   by providing a map using `gutter` or `width` as key and
+///   a list or map of the `elsass-gutter` or `elsass-width`
+///   function arguments as value.
 /// @output Arguments and `@content` relative CSS wrapped into tidy media-queries.
 /// @example scss - SCSS
 ///   .foo {
 ///     border-style: solid;
-///     @include elsass(from 'l', 3, 'all-out', 'before' 3, (border-width: (gutter: .25)));
+///     @include elsass('m', 6, 'after', 'before' 3, (border-width: ('gutter': 1)));
 ///   }
 @mixin elsass(
   $media : 'from' $ELSASS-BPT-MIN,
@@ -141,15 +154,26 @@
   $bpts-set: _elsass-bpts-set($media...);
   $elsass-config: map-merge($elsass-config, ('bpts': $bpts-set)) !global;
 
-  $max-width: false;
+  $bpt-width: null;
+  $max-width: null;
 
   @if $width {
+    $bpt-width: nth($width, 1);
+
     @if type-of($width) == list {
-      $elsass-config: map-merge($elsass-config, ('cols': nth($width, 3))) !global;
-      $width: nth($width, 1);
-    } @else if $width == 'max' {
-      $max-width: true;
-      $width: 100%;
+      @if length($width) >= 3 {
+        $elsass-config: map-merge($elsass-config, ('cols': nth($width, 3))) !global;
+      }
+      @if length($width) == 2 or length($width) == 4 {
+        $max-width: $bpt-width 'max';
+        $bpt-width: null;
+      }
+    } @else if type-of($width) == string {
+      $max-width: 'max';
+      $bpt-width: null;
+    } @else if type-of($width) != number {
+      $max-width: $bpt-width 'max';
+      $bpt-width: null;
     }
   }
 
@@ -202,17 +226,16 @@
 
     $bpt-css: () !global;
 
-    @if $width {
+    @if $bpt-width {
       @if $gutter-out or $gutter-in {
         $bpt-css: append($bpt-css, (box-sizing: border-box)) !global;
       }
-      $val: elsass-width($width, if($gutter-width, $gutter-width, false));
+      $val: elsass-width($bpt-width, if($gutter-width, $gutter-width, false));
       $bpt-css: append($bpt-css, (width: #{$val})) !global;
     }
 
     @if $max-width {
-      $val: if($ELSASS-MAX-WIDTH, 'max', $bpt);
-      $val: elsass-width($val, if($gutter-width, $gutter-width, false));
+      $val: elsass-width($max-width, if($gutter-width, $gutter-width, false));
       $bpt-css: append($bpt-css, (max-width: #{$val})) !global;
     }
 
@@ -232,7 +255,7 @@
       $bpt-gutter: _elsass-gutter-css($gutter-out, $silent, $offset-out);
       @if map-has-key($bpt-gutter, 'shorthand') {
         $shorthand: map-get($bpt-gutter, 'shorthand');
-        $bpt-css: if($bpt-css, append($bpt-css, (margin: #{$shorthand})), (margin: #{$shorthand})) !global;
+        $bpt-css: append($bpt-css, (margin: #{$shorthand})) !global;
       } @else {
         @each $side, $val in $bpt-gutter {
           $bpt-css: append($bpt-css, (margin-#{$side}: #{$val})) !global;
@@ -250,9 +273,9 @@
         @each $val in $vals {
           @if type-of($val) == map {
             @if map-has-key($val, 'gutter') {
-              $val: elsass-gutter(map-get($val, 'gutter'));
+              $val: elsass-gutter(map-get($val, 'gutter')...);
             } @else {
-              $val: elsass-width(map-get($val, 'width'));
+              $val: elsass-width(map-get($val, 'width')...);
             }
           }
           $new: if($new, $new $val, $val);
@@ -362,16 +385,15 @@
   @if type-of($gutter) == string or type-of($gutter) == list {
     $type: nth($gutter, 1);
 
-    @if $type != 'default' and not map-has-key($ELSASS-GUTTERS, $type)  {
-      $behaviour: $type;
-      $type: $ELSASS-GUTTER;
-    } @else {
-      @if length($gutter) == 2 {
-        $behaviour: nth($gutter, 2);
-      }
+    @if not map-has-key($ELSASS-GUTTERS, $type) {
       @if $type == 'default' {
         $type: $ELSASS-GUTTER;
+      } @else {
+        $behaviour: $type;
+        $type: $ELSASS-GUTTER;
       }
+    } @else if type-of($gutter) == list {
+      $behaviour: nth($gutter, 2);
     }
 
     // Assign values according to $type.
@@ -727,7 +749,14 @@
   @return $out;
 }
 
-
+// 2.9 _elsass-list-remove
+// -----------------------
+/// Remove from list.
+/// @param {List} $list
+///   List from which the value need to be removed.
+/// @param {Value} $value
+///   Value to remove from the list.
+/// @return {List}
 @function _elsass-list-remove($list, $value) {
   $result: ();
 

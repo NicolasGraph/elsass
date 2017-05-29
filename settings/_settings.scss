@@ -26,65 +26,71 @@
 
 // 1.1 elsass-global
 // -----------------
-/// Media-queries agnostic settings.
+/// Media-queries agnostic grid settings.
 /// @type Map
 /// @prop {Integer} columns -
-///   Grid default columns number.
+///   Default grid columns number per row.
 /// @prop {Keyword | Map} gutter -
-///   Default gutter value (see `elsass-gutters`).
+///   Default gutter value as an `$elsass-gutters` key or key value.
 /// @prop {Length} gutter-length -
-///   Gutter length (if not responsive).
+///   Gutter `<length>`, if not responsive.
 /// @prop {Length} container-max-width -
-///   Container max-width (if not respsonsive).
+///   Container `max-width`, if not respsonsive.
 $elsass-global: (
   'columns'            : 12,
-  'gutter'             : 'all-over',
+  'gutter'             : 'all-out',
   'gutter-length'      : null,
   'container-max-width': null,
 ) !default;
 
 // 1.2 elsass-responsive
 // ---------------------
-/// Custom breakpoints related settings.
+/// Custom breakpoints related grid settings
+/// sorted by device min-width.
 /// @type Map
 /// @prop {Map} breakpoint -
-///   Custom breakpoint related settings.
+///   Custom breakpoint related map of settings.
 /// @prop {Length} breakpoint.device-min-width -
-///   Breakpoint related device min-width.
+///   Breakpoint related device `min-width`.
 /// @prop {Length} breakpoint.container-max-width -
-///   Breakpoint related container max-width (if not defined as a global setting).
+///   Breakpoint related container `max-width`, if responsive.
 /// @prop {Length} breakpoint.gutter-length -
-///   Breakpoint related gutter length (if not defined as a global setting).
+///   Breakpoint related gutter `<length>`, if responsive.
 $elsass-responsive: (
   's': (
     'container-max-width': 480px,
-    'gutter-length'      : 24px,
+    'gutter-length'      : 16px,
   ),
   'm': (
     'device-min-width'   : 640px,
     'container-max-width': 800px,
-    'gutter-length'      : 32px,
+    'gutter-length'      : 24px,
   ),
   'l': (
-    'device-min-width'   : 1024px,
-    'container-max-width': 1000px,
-    'gutter-length'      : 40px,
+    'device-min-width'   : 960px,
+    'container-max-width': 1080px,
+    'gutter-length'      : 32px,
   ),
   'xl': (
-    'device-min-width'   : 1440px,
+    'device-min-width'   : 1280px,
     'container-max-width': 1280px,
-    'gutter-length'      : 48px,
+    'gutter-length'      : 32px,
   )
 ) !default;
 
 // 1.3 elsass-gutters
 // ------------------
-/// Custom gutter related keywords and their values.
+/// Custom gutters related keywords and their values.  
+/// Allows to easily set a gutter value through `elsass-global`
+/// or the `elsass` mixin `$gutter` argument by providing a key.  
+/// `none` and `default` keys are *not allowed*.
 /// @type Map
-/// @prop {Map} keyword -
-///   Related map of `'in'` (padding) and/or `'out'` (margin) gutter values as:  
-///   - map(s) of sides related gutter length ratios or `<length>`.
-///   - Number or list(s) of up to four gutter length ratios or `<length>`
+/// @prop {Map} gutter -
+///   Custom gutter related map of `'in'` (padding)
+///   and/or `'out'` (margin) gutter(s).  
+///   Each key set accepts one of the following values:
+///   - a map of side(s) related gutter length ratios or `<length>`;
+///   - a list of up to four gutter length ratios or `<length>`
 ///     sorted in the same way as the padding or margin shorthand value
 ///     and where any unwanted side(s) related gutter can be set to `none`;
 $elsass-gutters: (
@@ -92,28 +98,31 @@ $elsass-gutters: (
   'after'   : ('out': ('right': 1)),
   'below'   : ('out': ('bottom': 1)),
   'before'  : ('out': ('left': 1)),
-  'x-out'   : ('out': 'none' .5),
-  'y-out'   : ('out': .5 'none'),
-  'all-out' : ('out': 'none' .5 .1 .5),
+  'outside' : ('out': 'none' .5),
+  'all-out' : ('out': 'none' .5 1 .5),
   'up'      : ('in' : ('top': 1)),
   'end'     : ('in' : ('right': 1)),
   'down'    : ('in' : ('bottom': 1)),
   'start'   : ('in' : ('left': 1)),
-  'x-in'    : ('in' : 'none' .5),
-  'y-in'    : ('in' : .5 'none'),
+  'inside'  : ('in' : 'none' .5),
   'all-in'  : ('in' : .5),
-  'all-over': ('in' : .25, 'out': 'none' .25 .5 .25)
+  'all-over': ('in' : .5, 'out': 'none' .5 1 .5)
 ) !default;
 
 // 1.4 elsass-behaviours
 // ---------------------
 /// Custom gutter behaviours related keywords and their values.  
-/// Docs improvements in process.
+/// Allows to easily alterate a gutter value through the `elsass` mixin
+/// `$gutter` argument by providing a key.
 /// @type Map
-/// @prop {Map} keyword -
-///   Related map of changes according to the gutter position(s).
-/// @prop {Map} keyword.position -
-///   Gutter position related changes.
+/// @prop {Map} behaviour -
+///   Custom behaviour related map of changes according to the gutter position(s).
+/// @prop {Map} behaviour.gutter-position -
+///   Gutter position related changes as a map of `in` and/or `out` changes.  
+///   Each key set accepts one of the following values:
+///   - `none`: does not apply any gutter;
+///   - `<length>`: applies the provided value;
+///   - position (+ ratio): applies the position related gutter/gutter ratio.
 $elsass-behaviours: (
   'silent'  : (
     'in'    : ('in' : 'none'),
@@ -140,49 +149,25 @@ $elsass-behaviours: (
     'in-out': ('in': 'none', 'out': 'out' -1)
   ),
   'fit'     : (
+    'in'    : ('in': 'none'),
+    'out'   : ('out': 'out' -1),
     'in-out': ('in': 'none', 'out': 'out' -1)
   )
 ) !default;
 
-// 1.5 elsass-gutters
+// 1.5 elsass-offsets
 // ------------------
-/// Custom offset related keywords and their values.
+/// Custom offset related keywords and their values.  
+/// Allows to easily alterate the horizontal element or content position
+/// through the `elsass` mixin `$offset` argument by providing a keys.
 /// @type Map
-/// @prop {Map} keyword -
-///   Map of keyword related position and sides.
+/// @prop {Map} offset -
+///   Custom offset related value as a map using `in` (padding) or `out` (margin)
+///   as the only key and a side or list of sides to alterate as its value.
 $elsass-offsets: (
   'before': ('out': 'left'),
   'after' : ('out': 'right'),
   'start' : ('in' : 'left'),
   'end'   : ('in' : 'right'),
-  'center': ('out': 'right' 'left'),
-  'push'  : ('out': 'left'),
-  'pull'  : ('out': 'right')
+  'center': ('out': 'right' 'left')
 ) !default;
-
-// 1. CONSTANTS
-// ============
-
-$ELSASS-COLS         : map-get($elsass-global, 'columns');
-$ELSASS-GUTTER       : map-get($elsass-global, 'gutter');
-$ELSASS-GUTTER-LENGTH: if(map-has-key($elsass-global, 'gutter-length'), map-get($elsass-global, 'gutter-length'), null);
-$ELSASS-MAX-WIDTH    : if(map-has-key($elsass-global, 'container-max-width'), map-get($elsass-global, 'container-max-width'), null);
-$ELSASS-BPTS         : map-keys($elsass-responsive); /// Breakpoints list.
-$ELSASS-BPT-MIN      : nth($ELSASS-BPTS, 1); /// Smallest breakpoint.
-$ELSASS-BPT-MAX      : nth($ELSASS-BPTS, length($ELSASS-BPTS)); /// Bigger breakpoint.
-$ELSASS-SIDES        : 'top', 'right', 'bottom', 'left';
-$ELSASS-RESP         : $elsass-responsive;
-$ELSASS-GUTTERS      : $elsass-gutters;
-$ELSASS-BEHAVIOURS   : $elsass-behaviours;
-$ELSASS-OFFSETS      : $elsass-offsets;
-
-$elsass-config: () !default;
-
-$elsass-config-reset: (
-  'cols': $ELSASS-COLS,
-  'bpt' : $ELSASS-BPT-MIN,
-  'g-width': 1,
-) !default;
-
-$bpt-css: ();
-$elsass-css: null !default;

@@ -1,0 +1,48 @@
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// ------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+////
+/// @group Global
+////
+
+// 1. BASE
+// 2. CONFIG
+
+// 1. CONSTANTS
+// ============
+
+$ELSASS-COLS         : map-get($elsass-global, 'columns');
+$ELSASS-GUTTER       : map-get($elsass-global, 'gutter');
+$ELSASS-GUTTER-LENGTH: if(map-has-key($elsass-global, 'gutter-length'), map-get($elsass-global, 'gutter-length'), null);
+$ELSASS-MAX-WIDTH    : if(map-has-key($elsass-global, 'container-max-width'), map-get($elsass-global, 'container-max-width'), null);
+$ELSASS-BPTS         : map-keys($elsass-responsive); /// Breakpoints list.
+$ELSASS-BPT-MIN      : nth($ELSASS-BPTS, 1); /// Smallest breakpoint.
+$ELSASS-BPT-MAX      : nth($ELSASS-BPTS, length($ELSASS-BPTS)); /// Bigger breakpoint.
+$ELSASS-SIDES        : 'top', 'right', 'bottom', 'left';
+$ELSASS-RESP         : $elsass-responsive;
+$ELSASS-GUTTERS      : $elsass-gutters;
+$ELSASS-BEHAVIOURS   : $elsass-behaviours;
+$ELSASS-OFFSETS      : $elsass-offsets;
+
+// 2. CONFIG
+// =========
+
+$elsass-config: () !default;
+
+$elsass-config-reset: (
+  'cols'   : $ELSASS-COLS,
+  'bpt'    : $ELSASS-BPT-MIN,
+  'g-width': 1,
+) !default;
+
+$bpt-css: ();
+$elsass-css: null !default;
