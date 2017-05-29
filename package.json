@@ -3,20 +3,31 @@
   "version": "0.1.0-alpha",
   "description": "Sass powered responsive and semantic grid builder.",
   "author": "Nicolas Morand <contact@nicolasmorand.com>",
-  "main": "sass/elsass.scss",
+  "main": "_elsass.scss",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nicolasgraph/elsass.git"
+    "url": "git+https://github.com/NicolasGraph/elsass.git"
   },
   "keywords": [
     "layout",
     "grid",
     "sass",
+    "scss",
+    "css",
     "responsive",
-    "semantic",
+    "semantic"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nicolasgraph/elsass/issues"
+    "url": "https://github.com/NicolasGraph/elsass/issues"
+  },
+  "homepage": "https://github.com/NicolasGraph/elsass#readme",
+  "devDependencies": {
+    "browser-sync": "^2.18.11",
+    "run-sequence": "^1.2.2",
+    "sassdoc": "^2.2.2"
   }
 }
