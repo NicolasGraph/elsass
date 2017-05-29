@@ -21,6 +21,7 @@
 // 3. FUNCTIONS
 // 3.1 el_width
 // 3.2 el_gutte
+// 3.3 elsass-config
 
 // 2. MIXIN
 // ========
@@ -150,18 +151,18 @@
 ///   max-width: elsass-width('m', 'm');
 @function elsass-width(
   $width: null,
-  $gutter-width: map-get($elsass-config, 'g-width')
+  $gutter-width: _elsass-config('g-width')
 ) {
 
   $max: null;
   
   @if $ELSASS-MAX-WIDTH {
     $max: $ELSASS-MAX-WIDTH;
-  } @else if map-has-key($elsass-config, 'bpt') {
-    $max: map-get(map-get($ELSASS-RESP, map-get($elsass-config, 'bpt')), 'container-max-width');
+  } @else if _elsass-config('bpt') {
+    $max: map-get(map-get($ELSASS-RESP, _elsass-config('bpt')), 'container-max-width');
   }
 
-  $cols: if(map-get($elsass-config, 'cols'), map-get($elsass-config, 'cols'), $ELSASS-COLS);
+  $cols: if(_elsass-config('cols'), _elsass-config('cols'), $ELSASS-COLS);
 
   // Parse $width.
   @if type-of($width) == number and unitless($width) {
@@ -190,7 +191,7 @@
       @if $ELSASS-GUTTER-LENGTH {
         $gutter-width: $gutter-width * $ELSASS-GUTTER-LENGTH;
       } @else {
-        $bpt: map-get($elsass-config, 'bpt');
+        $bpt: _elsass-config('bpt');
       }
     } @else if type-of($gutter-width) == map {
       $bpt: nth(map-keys($gutter-width), 1);
@@ -247,7 +248,7 @@
 ///   margin-right: elsass-gutter(('m': 0.5));
 ///   margin-left: elsass-gutter(('m': 0.5), 3);
 @function elsass-gutter(
-  $gutter: map-get($elsass-config, 'g-width'),
+  $gutter: _elsass-config('g-width'),
   $offset: null
 ) {
 
@@ -257,7 +258,7 @@
       @if $ELSASS-GUTTER-LENGTH {
         $gutter: $gutter * $ELSASS-GUTTER-LENGTH;
       } @else {
-        $gutter: $gutter * map-get(map-get($ELSASS-RESP, map-get($elsass-config, 'bpt')), 'gutter-length');
+        $gutter: $gutter * map-get(map-get($ELSASS-RESP, _elsass-config('bpt')), 'gutter-length');
       }
    } @else if type-of($gutter) == map {
       $bpt: nth(map-keys($gutter), 1);
@@ -271,7 +272,7 @@
   @if $offset {
     // Parse $offset.
     @if type-of($offset) == number {
-      $cols: if(map-get($elsass-config, 'cols'), map-get($elsass-config, 'cols'), $ELSASS-COLS);
+      $cols: if(_elsass-config('cols'), _elsass-config('cols'), $ELSASS-COLS);
       $offset: if(unitless($offset), percentage($offset / $cols), $offset);
     } @else if type-of($offset) == list {
       $offset: percentage(nth($offset, 1) / nth($offset, 3));
@@ -293,4 +294,19 @@
   }
 
   @return if($gutter, $gutter, $offset);
+}
+
+// 3.3 elsass-config
+// -----------------
+/// Get an `$elsass-config` key value.
+/// @param {String} $key/// @param {Number | Length} $offset -
+/// @return {<value>} `$elsass-config` key value.
+@function _elsass-config($key) {
+  $out: false;
+
+  @if map-has-key($elsass-config, $key) {
+    $out: map-get($elsass-config, $key);
+  }
+
+  @return $out;
 }
