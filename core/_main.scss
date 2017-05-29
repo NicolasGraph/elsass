@@ -316,8 +316,8 @@
     $elsass-css: if($elsass-css, _elsass-merge-bpt($elsass-css, $bpt-map), $bpt-map) !global;
   }
 
-  @if not map-get($elsass-config, 'group') {
-    @include elsass-group; 
+  @if not _elsass-config('group') {
+    @include elsass-group;
   }
 }
 
