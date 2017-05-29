@@ -20,10 +20,6 @@
 // 1. CONSTANTS
 // ============
 
-$ELSASS-COLS         : map-get($elsass-global, 'columns');
-$ELSASS-GUTTER       : map-get($elsass-global, 'gutter');
-$ELSASS-GUTTER-LENGTH: if(map-has-key($elsass-global, 'gutter-length'), map-get($elsass-global, 'gutter-length'), null);
-$ELSASS-MAX-WIDTH    : if(map-has-key($elsass-global, 'container-max-width'), map-get($elsass-global, 'container-max-width'), null);
 $ELSASS-BPTS         : map-keys($elsass-responsive); /// Breakpoints list.
 $ELSASS-BPT-MIN      : nth($ELSASS-BPTS, 1); /// Smallest breakpoint.
 $ELSASS-BPT-MAX      : nth($ELSASS-BPTS, length($ELSASS-BPTS)); /// Bigger breakpoint.

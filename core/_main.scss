@@ -360,7 +360,7 @@
   $out: false;
 
   @if $gutter == 'silent' {
-    $out: $ELSASS-GUTTER;
+    $out: _elsass-setting('gutter');
   } @else if type-of($gutter) == map and map-has-key($gutter, 'silent') {
     $out: map-get($gutter, 'silent');
   }
@@ -387,10 +387,10 @@
 
     @if not map-has-key($ELSASS-GUTTERS, $type) {
       @if $type == 'default' {
-        $type: $ELSASS-GUTTER;
+        $type: _elsass-setting('gutter');
       } @else {
         $behaviour: $type;
-        $type: $ELSASS-GUTTER;
+        $type: _elsass-setting('gutter');
       }
     } @else if type-of($gutter) == list {
       $behaviour: nth($gutter, 2);
