@@ -64,7 +64,7 @@
 
   // Set a media-query min-width if $from is set and is not the first bpt.
   @if $from and $from != $ELSASS-BPT-MIN {
-    @if index($ELSASS-BPTS, $from) {
+    @if _elsass-responsive($from) {
       $from: _elsass-responsive($from, 'device-min-width');
     }
     $mq: '(min-width: #{$from})';
@@ -72,7 +72,7 @@
 
   // Set a media-query max-width if $to is set.
   @if $to {
-    @if index($ELSASS-BPTS, $to) {
+    @if _elsass-responsive($to) {
       $to: _elsass-responsive($to, 'device-min-width') - 1;
     }
     $mq: if($mq, $mq ' and ', '') '(max-width: #{$to})';
@@ -107,7 +107,7 @@
   $from: $ELSASS-BPT-MIN;
   $to: null;
 
-  @if index($ELSASS-BPTS, $media) {
+  @if _elsass-responsive($media) {
     $from: $media;
     $i: index($ELSASS-BPTS, $media);
     @if $i != length($ELSASS-BPTS) {
@@ -170,7 +170,7 @@
     $width: percentage($width / $cols);
   } @else if $width == 'max' and $max {
     $width: $max;
-  } @else if index($ELSASS-BPTS, $width) {
+  } @else if _elsass-responsive($width) {
     $width: _elsass-responsive($width, 'container-max-width');
   } @else if type-of($width) == list {
     @if length($width) == 3 {
@@ -265,7 +265,7 @@
       $bpt: nth(map-keys($gutter), 1);
       $gutter-length: _elsass-responsive($bpt, 'gutter-length');
       $gutter: map-get($gutter, $bpt) * $gutter-length;
-    } @else if index($ELSASS-BPTS, $gutter) {
+    } @else if _elsass-responsive($gutter) {
       $gutter: _elsass-responsive($gutter, 'gutter-length');
     }
   }
