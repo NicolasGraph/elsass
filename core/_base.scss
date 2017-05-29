@@ -22,6 +22,7 @@
 // 3.1 el_width
 // 3.2 el_gutte
 // 3.3 elsass-config
+// 3.4 _elsass-responsive
 
 // 2. MIXIN
 // ========
@@ -64,7 +65,7 @@
   // Set a media-query min-width if $from is set and is not the first bpt.
   @if $from and $from != $ELSASS-BPT-MIN {
     @if index($ELSASS-BPTS, $from) {
-      $from: map-get(map-get($ELSASS-RESP, $from), 'device-min-width');
+      $from: map-get(_elsass-responsive($from), 'device-min-width');
     }
     $mq: '(min-width: #{$from})';
   }
@@ -72,7 +73,7 @@
   // Set a media-query max-width if $to is set.
   @if $to {
     @if index($ELSASS-BPTS, $to) {
-      $to: map-get(map-get($ELSASS-RESP, $to), 'device-min-width') - 1;
+      $to: map-get(_elsass-responsive($to), 'device-min-width') - 1;
     }
     $mq: if($mq, $mq ' and ', '') '(max-width: #{$to})';
   }
@@ -159,7 +160,7 @@
   @if $ELSASS-MAX-WIDTH {
     $max: $ELSASS-MAX-WIDTH;
   } @else if _elsass-config('bpt') {
-    $max: map-get(map-get($ELSASS-RESP, _elsass-config('bpt')), 'container-max-width');
+    $max: map-get(_elsass-responsive(_elsass-config('bpt')), 'container-max-width');
   }
 
   $cols: if(_elsass-config('cols'), _elsass-config('cols'), $ELSASS-COLS);
@@ -170,7 +171,7 @@
   } @else if $width == 'max' and $max {
     $width: $max;
   } @else if index($ELSASS-BPTS, $width) {
-    $width: map-get(map-get($ELSASS-RESP, $width), 'container-max-width');
+    $width: map-get(_elsass-responsive($width), 'container-max-width');
   } @else if type-of($width) == list {
     @if length($width) == 3 {
       $width: percentage(nth($width, 1) / nth($width, 3));
@@ -258,14 +259,14 @@
       @if $ELSASS-GUTTER-LENGTH {
         $gutter: $gutter * $ELSASS-GUTTER-LENGTH;
       } @else {
-        $gutter: $gutter * map-get(map-get($ELSASS-RESP, _elsass-config('bpt')), 'gutter-length');
+        $gutter: $gutter * map-get(_elsass-responsive(_elsass-config('bpt')), 'gutter-length');
       }
    } @else if type-of($gutter) == map {
       $bpt: nth(map-keys($gutter), 1);
-      $gutter-length: map-get(map-get($ELSASS-RESP, $bpt), 'gutter-length');
+      $gutter-length: map-get(_elsass-responsive($bpt), 'gutter-length');
       $gutter: map-get($gutter, $bpt) * $gutter-length;
     } @else if index($ELSASS-BPTS, $gutter) {
-      $gutter: map-get(map-get($ELSASS-RESP, $gutter), 'gutter-length');
+      $gutter: map-get(_elsass-responsive($gutter), 'gutter-length');
     }
   }
 
@@ -306,6 +307,21 @@
 
   @if map-has-key($elsass-config, $key) {
     $out: map-get($elsass-config, $key);
+  }
+
+  @return $out;
+}
+
+// 3.4 _elsass-responsive
+// ----------------------
+/// Get an `$elsass-responsive` key value.
+/// @param {String} $key/// @param {Number | Length} $offset -
+/// @return {<value>} `$elsass-responsive` key value.
+@function _elsass-responsive($key) {
+  $out: false;
+
+  @if map-has-key($elsass-responsive, $key) {
+    $out: map-get($elsass-responsive, $key);
   }
 
   @return $out;
