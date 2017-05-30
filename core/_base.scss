@@ -360,11 +360,11 @@
 /// @return {Map} Merged map.
 @function _elsass-map-merge($map1, $map2) {
 
-  @if type-of($map1) == list and $map1 != () {
+  @if type-of($map1) == list and length($map1) = 2 {
     $map1: map-get(nth($map1, 1), nth($map1, 2));
   }
 
-  @if type-of($map2) == list and $map1 != () {
+  @if type-of($map2) == list and length($map2) = 2 {
     $map2: map-get(nth($map2, 1), nth($map2, 2));
   }
 
