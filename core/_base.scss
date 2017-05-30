@@ -300,14 +300,13 @@
   $out: false;
 
   @if map-has-key($map, $key) {
-    $out: map-get($map, $key);
-  }
-
-  @if $out and $subkey {
-    @if map-has-key($out, $subkey) {
-      $out: map-get($out, $subkey);
+    @if $subkey {
+      $submap: map-get($map, $key);
+      @if map-has-key($submap, $subkey) {
+        $out: map-get($submap, $subkey);
+      }
     } @else {
-      $out: false;
+      $out: map-get($map, $key);
     }
   }
 
