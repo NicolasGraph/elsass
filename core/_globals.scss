@@ -34,7 +34,7 @@ $ELSASS-OFFSETS      : $elsass-offsets;
 $elsass-config: () !default;
 
 $elsass-config-reset: (
-  'cols'   : $ELSASS-COLS,
+  'cols'   : _elsass-config('columns'),
   'bpt'    : $ELSASS-BPT-MIN,
   'g-width': 1,
 ) !default;
