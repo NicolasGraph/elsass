@@ -292,11 +292,11 @@
 // 3.3 _elsass-map-get
 // -------------------
 /// Get a map key/subkey value.
+/// @param {Map} $map
 /// @param {String} $key
 /// @param {String} $subkey
-/// @param {Map} $map
 /// @return {<value>} `$map` breakpoint related key/subkey value.
-@function _elsass-map-get($key, $subkey: null, $map: ()) {
+@function _elsass-map-get($map, $key, $subkey: null) {
   $out: false;
 
   @if map-has-key($map, $key) {
@@ -320,7 +320,7 @@
 /// @param {String} $key
 /// @return {<value>} `$elsass-config` key value.
 @function _elsass-config($key) {  
-  @return _elsass-map-get($key, false, $elsass-config);
+  @return _elsass-map-get($elsass-config, $key);
 }
 
 // 3.5 _elsass-responsive
@@ -330,7 +330,7 @@
 /// @param {String} $key
 /// @return {<value>} `$elsass-responsive` breakpoint related key value.
 @function _elsass-responsive($bpt, $key: null) {  
-  @return _elsass-map-get($bpt, $key, $elsass-responsive);
+  @return _elsass-map-get($elsass-responsive, $bpt, $key);
 }
 
 // 3.6 _elsass-setting
@@ -343,9 +343,9 @@
   $out: null;
 
   @if $bpt { 
-    $out: _elsass-map-get($bpt, $setting, $elsass-responsive);
+    $out: _elsass-map-get($elsass-responsive, $bpt, $setting);
   } @else {
-    $out: _elsass-map-get($setting, false, $elsass-global);
+    $out: _elsass-map-get($elsass-global, $setting);
   }
   
   @return $out;
