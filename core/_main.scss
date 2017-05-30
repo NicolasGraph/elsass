@@ -491,7 +491,7 @@
     $gutter-pos: 'in';
   }
 
-  $to: map-get(map-get($ELSASS-BEHAVIOURS, $kw), $gutter-pos);
+  $to: _elsass-map-get($ELSASS-BEHAVIOURS, $kw, $gutter-pos);
 
   // Alterate values.
   @if $to == 'silent' {
@@ -513,12 +513,12 @@
         @if type-of($val) == list {
           $from: nth($val, 1);
           $alt: nth($val, 2);
-          @if map-has-key($gutter, $from) and (map-has-key(map-get($gutter, $from), $side)) {
-            $base: map-get(map-get($gutter, $from), $side);
+          @if _elsass-map-get($gutter, $from, $side) {
+            $base: _elsass-map-get($gutter, $from, $side);
             $new: map-merge($new, ($side: $base * $alt));
           }
         } @else {
-          @if map-has-key($gutter, $pos) and (map-has-key(map-get($gutter, $pos), $side)) {
+          @if _elsass-map-get($gutter, $pos, $side) {
             @if $val == 'none' {
               $gutter: map-merge($gutter, ($pos: map-remove(map-get($gutter, $pos), $side)));
             } @else {
@@ -597,7 +597,7 @@
         $new: ($pos: null);
       }
 
-      @each $side in map-get(map-get($ELSASS-OFFSETS, $kw), $pos) { 
+      @each $side in _elsass-map-get($ELSASS-OFFSETS, $kw, $pos) { 
         @if map-get($new, $pos) {
           $new: map-merge($new, ($pos: map-merge(map-get($new, $pos), ($side: $val))));
         } @else {
