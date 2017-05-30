@@ -25,6 +25,7 @@
 // 3.4 elsass-config
 // 3.5 _elsass-responsive
 // 3.6 _elsass-setting
+// 3.7 _elsass-map-merge
 
 // 2. MIXIN
 // ========
@@ -348,4 +349,24 @@
   }
   
   @return $out;
+}
+
+// 3.7 _elsass-map-merge
+// ---------------------
+/// Merge maps/maps keys.
+/// @param {Map|List} $map1
+/// @param {Map|List} $map2
+/// @param {String} $subkey
+/// @return {Map} Merged map.
+@function _elsass-map-merge($map1, $map2) {
+
+  @if type-of($map1) == list and $map1 != () {
+    $map1: map-get(nth($map1, 1), nth($map1, 2));
+  }
+
+  @if type-of($map2) == list and $map1 != () {
+    $map2: map-get(nth($map2, 1), nth($map2, 2));
+  }
+
+  @return map-merge($map1, $map2);
 }

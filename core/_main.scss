@@ -434,7 +434,7 @@
           $merge: ($side: $val);
           @if $out {
             @if map-has-key($out, $pos) {
-              $out: map-merge($out, ($pos: map-merge(map-get($out, $pos), $merge)));
+              $out: map-merge($out, ($pos: _elsass-map-merge(($out, $pos), $merge)));
             } @else {
               $out: map-merge($out, ($pos: $merge));
             }
@@ -528,7 +528,7 @@
         }
       }
       $merge: if(map-has-key($gutter, $pos), map-get($gutter, $pos), null);
-      $alt: ($pos: if($merge, map-merge(map-get($gutter, $pos), $new), $new));
+      $alt: ($pos: if($merge, _elsass-map-merge(($gutter, $pos), $new), $new));
       $out: if($out, map-merge($out, $alt), $alt);
     }
     $out: map-merge($gutter, $out);
@@ -559,7 +559,7 @@
           @if $val {
             @if $out {
               @if map-has-key($out, $pos) {
-                $pos: ($pos: map-merge(map-get($out, $pos), ($side: $val)));
+                $pos: ($pos: _elsass-map-merge(($out, $pos), ($side: $val)));
                 $out: map-merge($out, $pos);
               } @else {
                 $out: map-merge($out, ($pos: ($side: $val)));
@@ -599,7 +599,7 @@
 
       @each $side in _elsass-map-get($ELSASS-OFFSETS, $kw, $pos) { 
         @if map-get($new, $pos) {
-          $new: map-merge($new, ($pos: map-merge(map-get($new, $pos), ($side: $val))));
+          $new: map-merge($new, ($pos: _elsass-map-merge(($new, $pos), ($side: $val))));
         } @else {
           $new: map-merge($new, ($pos: ($side: $val)));
         }
@@ -719,7 +719,7 @@
           // Move duplicated CSS in an extended media-query.
           $new-css: append($new-css, $bpt-prop);
           $new-map-to: ($bpt: $to-css, $bpt-next: $new-css);
-          $map-to: map-merge(map-get($out, $bpt-from), $new-map-to);
+          $map-to: _elsass-map-merge(($out, $bpt-from), $new-map-to);
 
           $out: map-merge($out, ($bpt-from: ($map-to)));
         }
