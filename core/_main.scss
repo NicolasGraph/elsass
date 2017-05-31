@@ -62,7 +62,7 @@
   // Wrap each breakpoint related rules in dedicated media-queries.
   @each $bpt-min, $to-map in $elsass-css {
     @each $bpt-max, $bpt-css in $to-map {
-      @include _el-media($bpt-min, $bpt-max) {
+      @include _elsass-media($bpt-min, $bpt-max) {
         @if type-of($bpt-css) == map {
           #{nth(map-keys($bpt-css), 1)}: nth(map-values($bpt-css), 1);
         } @else if type-of($bpt-css) == list {

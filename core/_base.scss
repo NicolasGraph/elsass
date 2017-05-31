@@ -17,7 +17,7 @@
 // 1. CONSTANTS
 // 2. MIXIN
 // 2.1 elsass-media
-// 2.2 _el-media
+// 2.2 _elsass-media
 // 3. FUNCTIONS
 // 3.1 el_width
 // 3.2 el_gutter
@@ -50,19 +50,19 @@
 @mixin elsass-media($media) {
   $media: _elsass-parse-media($media);
   
-  @include _el-media($media...) {
+  @include _elsass-media($media...) {
     @content;
   }
 }
 
-// 2.2 _el-media
+// 2.2 _elsass-media
 // -------------
 /// Wrap `@content` in a media-query.
 /// @param {String | Number} $from [$ELSASS-BPT-MIN] -
 ///   media-query min-width related breakpoint name or `<length>`;
 /// @param {String | Number} $to -
 ///   media-query max-width related breakpoint name or `<length>`;
-@mixin _el-media($from: $ELSASS-BPT-MIN, $to: null) {
+@mixin _elsass-media($from: $ELSASS-BPT-MIN, $to: null) {
   $mq: false; // Media-query
 
   // Set a media-query min-width if $from is set and is not the first bpt.
