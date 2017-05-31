@@ -295,7 +295,8 @@
 /// Get a map key/subkey value.
 /// @param {Map} $map
 /// @param {String} $key
-/// @param {String} $subkey
+/// @param {String} $subkey -
+///   `$key` key if `$key` value is a map. 
 /// @return {<value>} `$map` breakpoint related key/subkey value.
 @function _elsass-map-get($map, $key, $subkey: null) {
   $out: false;
@@ -316,9 +317,10 @@
 
 // 3.4 _elsass-config
 // ------------------
-/// Get an `$elsass-config` key value.
-/// @param {String} $key
-/// @return {<value>} `$elsass-config` key value.
+/// Get an `$elsass-config` value.
+/// @param {String} $key -
+///   `elsass-config` key.
+/// @return {<value>} `$elsass-config` key related value.
 @function _elsass-config($key) {  
   @return _elsass-map-get($elsass-config, $key);
 }
@@ -335,9 +337,14 @@
 
 // 3.6 _elsass-setting
 // -------------------
-/// Get an `$elsass-global` or `$elsass-responsive` key value.
-/// @param {String} $setting
-/// @param {String} $bpt
+/// Get an `$elsass-global` value and fallback
+/// to an `$elsass-responsive` breakpoint related one
+/// if `$bpt` is defined.
+/// @param {String} $setting -
+///   `$elsass-global` key or `$elsass-responsive` breakpoint related key.
+/// @param {String} $bpt -
+///   Used to fallback to the right breakpoint settings
+///   in `$elsass-responsive` if needed.
 /// @return {<value>} `$elsass-global` or `$elsass-responsive` key value.
 @function _elsass-setting($setting, $bpt: null) {
   $out: null;
@@ -354,9 +361,12 @@
 // 3.7 _elsass-map-merge
 // ---------------------
 /// Merge maps/maps keys.
-/// @param {Map|List} $map1
+/// @param {Map|List} $map1 -
+///   Map or list of a map and one of
+///   its key which value is also a map.
 /// @param {Map|List} $map2
-/// @param {String} $subkey
+///   Map or list of a map and one of
+///   its key which value is also a map.
 /// @return {Map} Merged map.
 @function _elsass-map-merge($map1, $map2) {
 
