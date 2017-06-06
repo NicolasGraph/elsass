@@ -111,25 +111,84 @@
   $from: $ELSASS-BPT-MIN;
   $to: null;
 
-  @if _elsass-responsive($media) {
-    $from: $media;
-    $i: index($ELSASS-BPTS, $media);
-    @if $i != length($ELSASS-BPTS) {
-      $to: nth($ELSASS-BPTS, index($ELSASS-BPTS, $media) + 1);
+  @if type-of($media) == string {
+    // $media should be a breakpoint name.
+    @if _elsass-responsive($media) {
+      $from: $media;
+      $i: index($ELSASS-BPTS, $media);
+      @if $i != length($ELSASS-BPTS) {
+        $to: nth($ELSASS-BPTS, index($ELSASS-BPTS, $media) + 1);
+      }
+    } @else {
+      @return _elsass-error(
+        '"#{$media}" is not a valid value for `$media`.',
+        '',
+        'Valid values as a string are: #{$ELSASS-BPTS}.'
+      );
     }
   } @else if type-of($media) == list {
     @if length($media) == 2 {
-      @if nth($media, 1) == 'from' {
-        $from: nth($media, 2);
-        $to: false;
+      // $media should use 'from bpt' or 'to bpt'.
+      @if _elsass-responsive(nth($media, 2)) {
+        @if nth($media, 1) == 'from' {
+          $from: nth($media, 2);
+          $to: false;
+        } @else if nth($media, 1) == 'to' {
+          $from: nth($ELSASS-BPTS, 1);
+          $to: nth($media, 2);
+        } @else {
+          $clue: nth($media, 1);
+          @return _elsass-error(
+            '"#{$media}" is not a valid value for `$media`.',
+            '"#{$clue}" as the first item is not valid.',
+            'Valid values as the first item are: "from" or "to".'
+          );
+        }
       } @else {
-        $from: nth($ELSASS-BPTS, 1);
-        $to: nth($media, 2);
+        $clue: nth($media, 2);
+        @return _elsass-error(
+          '"#{$media}" is not a valid value for `$media`.',
+          '"#{$clue}" as the second item is not valid.',
+          'Valid values as the second item are: #{$ELSASS-BPTS}.'
+        );
       }
     } @else if length($media) == 3 {
-      $from: nth($media, 1);
-      $to: nth($media, 3);
+      // $media should use 'bpt to bpt'.
+      @if _elsass-responsive(nth($media, 1)) and _elsass-responsive(nth($media, 3)) {
+        @if nth($media, 2) == 'to' {
+          $from: nth($media, 1);
+          $to: nth($media, 3);
+        } @else {
+          $clue: nth($media, 2);
+          @return _elsass-error(
+            '"#{$media}" is not a valid value for `$media`.',
+            '"#{$clue}" as the second item is not valid.',
+            'Valid value as the second item in a list of three is: "to".'
+          );
+        }
+      } @else {
+        $clue: nth($media, 1) 'and/or' nth($media, 3);
+        @return _elsass-error(
+          '"#{$media}" is not a valid value for `$media`.',
+          '"#{$clue}" as the first and third items is/are not valid.',
+          'Valid values as the first and third items are: #{$ELSASS-BPTS}.'
+        );
+      }
+    } @else {
+      $clue: length($media);
+      @return _elsass-error(
+        '"#{$media}" is not a valid value for `$media`.',
+        '"#{$clue}" as a number of items is not valid.',
+        'Valid number of items in a list are: 2 or 3.'
+      );
     }
+  } @else {
+    $clue: type-of($media);
+    @return _elsass-error(
+      '"#{$media}" is not a valid value for `$media`.',
+      '"#{$clue}" as a type of value is not valid.',
+      'Valid types of values are: string or list.'
+    );
   }
 
   @return if($to, ('from': $from, 'to': $to), ('from': $from));
