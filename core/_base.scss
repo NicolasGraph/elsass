@@ -370,13 +370,29 @@
 /// @return {Map} Merged map.
 @function _elsass-map-merge($map1, $map2) {
 
-  @if type-of($map1) == list and length($map1) = 2 {
+  @if type-of($map1) == list and length($map1) == 2 {
     $map1: map-get(nth($map1, 1), nth($map1, 2));
   }
 
-  @if type-of($map2) == list and length($map2) = 2 {
+  @if type-of($map2) == list and length($map2) == 2 {
     $map2: map-get(nth($map2, 1), nth($map2, 2));
   }
 
   @return map-merge($map1, $map2);
+}
+
+// 3.8 _elsass-error
+// ---------------------
+/// Throws an error message.
+/// @param {string} $error -
+///   Main error message.
+/// @param {string} $clue
+///   About where something went wrong.
+/// @param {string} $fix
+///   About how to fix.
+@function _elsass-error($error, $clue: null, $fix: null) {
+
+  @error '#{$error} #{$clue}
+#{$fix}';
+
 }
