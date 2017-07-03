@@ -379,29 +379,111 @@
 ///   // (top: false, left: .5, bottom: false, $right: .5)
 @function _elsass-parse-gutter($gutter: null) {
   $silent: null;
+  $type: null;
   $behaviour: null;
 
-  // Parse keywords.
-  @if type-of($gutter) == string or type-of($gutter) == list {
-    $type: nth($gutter, 1);
-
-    @if not map-has-key($ELSASS-GUTTERS, $type) {
-      @if $type == 'default' {
-        $type: _elsass-setting('gutter');
-      } @else {
-        $behaviour: $type;
-        $type: _elsass-setting('gutter');
-      }
-    } @else if type-of($gutter) == list {
-      $behaviour: nth($gutter, 2);
-    }
-
-    // Assign values according to $type.
-    @if type-of($type) == string {
-      $gutter: map-get($ELSASS-GUTTERS, $type);
+  @if type-of($gutter) == string {
+    // $gutter should be 'default', an $elsass-gutters key or $elsass-behaviours key.
+    @if $gutter == 'default' {
+      $type: _elsass-setting('gutter');
+    } @else if map-has-key($ELSASS-GUTTERS, $gutter) {
+      $type: map-get($ELSASS-GUTTERS, $gutter);
+    } @else if map-has-key($ELSASS-BEHAVIOURS, $gutter) {
+      $type: _elsass-setting('gutter');
+      $behaviour: $gutter;
     } @else {
-      $gutter: $type;
+      @return _elsass-error(
+        '"#{$gutter}" is not a valid value for `$gutter`:',
+        '',
+        'Valid values as a string are "default, <gutter>, <behaviour> or none".'
+      );
     }
+  } @else if type-of($gutter) == list {
+    // $gutter should be an $elsass-gutters key followed by an $elsass-behaviours key.
+    @if length($gutter) == 2 {
+      @if map-has-key($ELSASS-GUTTERS, nth($gutter, 1)) {
+        $type: nth($gutter, 1);
+      } @else {
+        $clue: nth($gutter, 1);
+        $fix: append(("default", ), map-keys($ELSASS-GUTTERS));
+        @return _elsass-error(
+          '"#{$gutter}" is not a valid value for `$gutter`.',
+          '"#{$clue}" as the first item is not valid.',
+          'Valid values as the first item are: #{$fix}'
+        );
+      }
+      @if map-has-key($ELSASS-BEHAVIOURS, nth($gutter, 2)) {
+        $behaviour: nth($gutter, 2);
+      } @else {
+        $clue: nth($gutter, 2);
+        $fix: append(("default", ), map-keys($ELSASS-BEHAVIOURS));
+        @return _elsass-error(
+          '"#{$gutter}" is not a valid value for `$gutter`.',
+          '"#{$clue}" as the second item is not valid.',
+          'Valid values as the second item are: #{$fix}'
+        );
+      }
+    } @else {
+      $clue: length($gutter);
+      @return _elsass-error(
+        '"#{$gutter}" is not a valid value for `$gutter`.',
+        '"#{$clue}" as the number of list items is not valid.',
+        'Valid number of items in a list is 2'
+      );
+    }
+  } @else if type-of($gutter) == map {
+    // $gutter should be a map or a nested map…
+    $type: $gutter;
+    @each $pos, $vals in $gutter {
+      @if $pos != "in" and $pos != "out" and $pos != "silent" {
+        @return _elsass-error(
+          '"#{$gutter}" is not a valid value for `$gutter`.',
+          '"#{$pos}" as key in a  map is not valid.',
+          'Valid keys in a nested map are: "in" or "out"'
+        );
+      } @else if type-of($vals) != map {
+        @each $val in $vals {
+          @if type-of($val) != number and $val != "none" {
+            @return _elsass-error(
+              '"#{$gutter}" is not a valid value for `$gutter`.',
+              '"#{$val}" as a list item of a map value is not valid.',
+              'Valid items in a list as a map value are: "<number>", "none"'
+            );
+          } 
+        }
+      } @else {
+        @each $side, $val in $vals {
+          @if not index($ELSASS-SIDES, $side) {
+            @return _elsass-error(
+              '"#{$gutter}" is not a valid value for `$gutter`.',
+              '"#{$side}" as key in a nested map is not valid.',
+              'Valid keys in a nested map are: #{$ELSASS-SIDES}'
+            );
+          } @else if type-of($val) != number {
+            $clue: type-of($val);
+            @return _elsass-error(
+              '"#{$gutter}" is not a valid value for `$gutter`.',
+              '"#{$clue}" is not a valid type of value as a nested map value.',
+              'Valid type of nested map values is: number'
+            );
+          }
+        } 
+      }
+    }
+  } @else {
+    $clue: type-of($gutter);
+    @return _elsass-error(
+      '"#{$gutter}" is not a valid value for `$gutter`.',
+      '"#{$clue}" as type of value is not valid.',
+      'Valid types are: string, list, map'
+    );
+  }
+
+  // Assign values according to $type.
+  @if type-of($type) == string {
+    $gutter: map-get($ELSASS-GUTTERS, $type);
+  } @else {
+    $gutter: $type;
   }
 
   // Get gutters map.
