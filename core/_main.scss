@@ -383,7 +383,7 @@
   $behaviour: null;
 
   @if type-of($gutter) == string {
-    // $gutter should be 'default', an $elsass-gutters key or $elsass-behaviours key.
+    // $gutter should be 'default', an $elsass-gutters key, $elsass-behaviours key or 'none'.
     @if $gutter == 'default' {
       $type: _elsass-setting('gutter');
     } @else if map-has-key($ELSASS-GUTTERS, $gutter) {
