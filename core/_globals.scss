@@ -35,7 +35,7 @@ $elsass-config: () !default;
 
 $elsass-config-reset: (
   'bpt'    : $ELSASS-BPT-MIN,
-  'g-width': 1,
+  'gutter-width': 1,
 ) !default;
 
 $bpt-css: ();

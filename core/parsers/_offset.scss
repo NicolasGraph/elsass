@@ -1,0 +1,73 @@
+// 2.5 _elsass-parse-offset
+// ---------------------
+/// Returns a map of needed flex related
+/// CSS properties and their values.
+/// @access  Private
+/// @param {Map | List} $offset;
+/// @return {Map | false} Map of offset value(s) per side | false.
+@function _elsass-parse-offset($offset: null) {
+  $out: false;
+
+  @if type-of($offset) == map {
+    @each $pos, $vals in $offset {
+      @if type-of($vals) == number {
+        $vals: $vals $vals;
+      }
+      @if type-of($vals) == list {
+        @each $side in ('left', 'right') {
+          $i: index(('left', 'right'), $side);
+          $val: nth($vals, $i);
+          @if $val {
+            @if $out {
+              @if map-has-key($out, $pos) {
+                $pos: ($pos: _elsass-map-merge(($out, $pos), ($side: $val)));
+                $out: map-merge($out, $pos);
+              } @else {
+                $out: map-merge($out, ($pos: ($side: $val)));
+              }
+            } @else {
+              $out: ($pos: ($side: $val));
+            }
+          }
+        }
+      } @else {
+        $out: $offset;
+      }
+    }
+  } @else {
+    // Parse keywords.
+    $new: null;
+
+    $i: 1;
+    @while $i <= length($offset) {
+      $kw: nth($offset, $i);
+      $val: null;
+
+      @if $i < length($offset) and type-of(nth($offset, $i + 1)) == number {
+        $val: nth($offset, $i + 1);
+        $i: $i + 2;
+      } @else {
+        $val: auto;
+        $i: $i + 1;
+      }
+
+      $pos: nth(map-keys(map-get($ELSASS-OFFSETS, $kw)), 1);
+      @if $new and not map-has-key($new, $pos) {
+        $new: map-merge($new, ($pos: null));
+      } @else if not $new {
+        $new: ($pos: null);
+      }
+
+      @each $side in _elsass-map-get($ELSASS-OFFSETS, $kw, $pos) { 
+        @if map-get($new, $pos) {
+          $new: map-merge($new, ($pos: _elsass-map-merge(($new, $pos), ($side: $val))));
+        } @else {
+          $new: map-merge($new, ($pos: ($side: $val)));
+        }
+      }
+    }
+    $out: $new;
+  }
+
+  @return $out;
+}

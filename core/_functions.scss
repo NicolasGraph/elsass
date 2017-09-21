@@ -1,0 +1,174 @@
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// ------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+////
+/// @group Misc
+////
+
+// 1. elsass_width
+// 2. elsass_gutter
+
+// 3.1 elsass-width
+// ----------------
+/// Calculate width by substracting potential
+/// right and left gutters used as margin.
+/// @param {Number | String} $width -
+///   Defines the length base.
+///   - `<number>` defines a default columns number fraction;
+///   - `<number> of <number>` defines a custom columns number fraction;
+///   - `max` uses the global container max-width set.
+///   - `<breakpoint>` uses the breakpoint related container max-width set.
+/// @param {Number | List | Map} $gutter-width -
+///   Defines the margin length to substract from one of the following value.
+///   - a sum or list of the right and left gutter ratios or lengths; 
+///   - a map using a breakpoint as key and a sum or list of the right and left gutter ratios or lengths as value.
+///   - a breakpoint name (uses the related gutter lentgh); 
+/// @return {Number} `<length>` (via `calc()` if needed).
+/// @example scss - SCSS
+///   width: elsass-width(12, 'm');
+///   max-width: elsass-width('m', 'm');
+@function elsass-width(
+  $width: null,
+  $gutter-width: _elsass-config('gutter-width')
+) {
+  
+  $max: _elsass-setting('container-max-width', _elsass-config('bpt'));
+
+  $cols: if(_elsass-config('cols'), _elsass-config('cols'), _elsass-setting('columns'));
+
+  // Parse $width.
+  @if type-of($width) == number and unitless($width) {
+    $width: percentage($width / $cols);
+  } @else if $width == 'max' and $max {
+    $width: $max;
+  } @else if _elsass-responsive($width) {
+    $width: _elsass-responsive($width, 'container-max-width');
+  } @else if type-of($width) == list {
+    @if length($width) == 3 {
+      $width: percentage(nth($width, 1) / nth($width, 3));
+    } @else if length($width) == 2 {
+      $width: $max * (nth($width, 1) / $cols);
+    } @else if  length($width) == 4 {
+      $width: $max * (nth($width, 1) / nth($width, 4));
+    }
+  }
+
+  $calc: null;
+
+  @if $gutter-width {
+    $bpt: null;
+
+    // Parse $gutter-width;
+    @if type-of($gutter-width) == number and unitless($gutter-width) {
+      @if _elsass-setting('gutter-length') {
+        $gutter-width: $gutter-width * _elsass-setting('gutter-length');
+      } @else {
+        $bpt: _elsass-config('bpt');
+      }
+    } @else if type-of($gutter-width) == map {
+      $bpt: nth(map-keys($gutter-width), 1);
+      $gutter-width: map-get($gutter-width, $bpt);
+    }
+
+    // Get a margin value to subtract.
+    @each $gutter in $gutter-width {
+      $val: elsass-gutter(if($bpt, ($bpt: $gutter), $gutter));
+      @if $calc and comparable($calc, $val) {
+        $calc: $calc + $val;
+      } @else {
+        $calc: if($calc, append($calc, $val), $val);
+      }
+    }
+
+    $gutter-width: $calc;
+    $calc: null;
+    
+    // Calculate width according to margins.
+    @each $val in $gutter-width {
+      $abs: abs($val);
+      @if comparable($width, $val) {
+        $width: if($val == $abs, $width - $abs, $width + $abs);
+      } @else {
+        $operator: if($val == $abs, '-', '+');
+        @if $calc {
+          $calc: append($calc, #{$operator} #{$abs});
+        } @else {
+          $calc: #{$operator} #{$abs};
+        }
+      }
+    }
+  }
+
+  @return if($calc, calc(#{$width} #{$calc}), $width);
+}
+
+// 3.2 elsass-gutter
+// -----------------
+/// Calculate a gutter length.
+/// @param {Number | String | Map} $gutter -
+///   Defines a gutter length.
+///   - a global gutter length ratio;
+///   - a breakpoint related gutter length ratio
+///     as the value of a map using the breakpoint as key;
+///   - a breakpoint name as a shorthand of `(breakpoint: 1)`.
+/// @param {Number | Length} $offset -
+///   Number of columns or `<length>`.
+///   - `n` defines a default columns number fraction;
+///   - `n of n` defines a custom columns number fraction.
+/// @return {Number} `<length>`
+/// @example scss - SCSS
+///   margin-right: elsass-gutter(('m': 0.5));
+///   margin-left: elsass-gutter(('m': 0.5), 3);
+@function elsass-gutter(
+  $gutter: _elsass-config('gutter-width'),
+  $offset: null
+) {
+
+  @if $gutter {
+    // Parse gutter.
+    @if type-of($gutter) == number and unitless($gutter) {
+      $gutter: $gutter * _elsass-setting('gutter-length', _elsass-config('bpt'));
+   } @else if type-of($gutter) == map {
+      $bpt: nth(map-keys($gutter), 1);
+      $gutter-length: _elsass-responsive($bpt, 'gutter-length');
+      $gutter: map-get($gutter, $bpt) * $gutter-length;
+    } @else if _elsass-responsive($gutter) {
+      $gutter: _elsass-responsive($gutter, 'gutter-length');
+    }
+  }
+
+  @if $offset {
+    // Parse $offset.
+    @if type-of($offset) == number {
+      $cols: if(_elsass-config('cols'), _elsass-config('cols'), _elsass-setting('columns'));
+      $offset: if(unitless($offset), percentage($offset / $cols), $offset);
+    } @else if type-of($offset) == list {
+      $offset: percentage(nth($offset, 1) / nth($offset, 3));
+    }
+
+    @if $gutter {
+      // Reset $gutter.
+      $abs: abs($offset);
+      @if comparable($gutter, $abs) {
+        $gutter: if($offset == $abs, $gutter + $abs, $gutter - $abs);
+      } @else {
+        @if $offset == $abs {
+          $gutter: calc(#{$gutter} + #{$abs});
+        } @else {
+          $gutter: calc(#{$gutter} - #{$abs});
+        }
+      }
+    }
+  }
+
+  @return if($gutter, $gutter, $offset);
+}

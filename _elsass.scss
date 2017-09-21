@@ -1,4 +1,9 @@
 @import 'settings/_settings';
 @import 'core/_globals';
-@import 'core/_base';
-@import 'core/_main';
+@import 'core/_lib';
+@import 'core/_functions';
+@import 'core/_mixins';
+@import 'core/parsers/_media';
+@import 'core/parsers/_width';
+@import 'core/parsers/_gutter';
+@import 'core/parsers/_offset';

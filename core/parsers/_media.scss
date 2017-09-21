@@ -1,0 +1,138 @@
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// ------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+////
+/// @group Misc
+////
+
+// 1. _elsass-parse-media
+// 1. _elsass-valid-media-from-string
+// 1. _elsass-valid-media-from-list
+
+// 1.1 _elsass-parse-media
+// ----------------------
+/// Parse an `elsass` or `elsass-media` mixin `$media` argument value.
+/// @param {List} $media [from $ELSASS-BPT-MIN] -
+///  Defines the related media-query `min` and\or `max-width` from one
+///  of the following value where each `<breakpoint>` could be a `<length>`
+///  when used with `from`or `to`:
+///   -  `<breakpoint>` applies to the provided breakpoint only;
+///   - `from <breakpoint>` applies to the provided breakpoint and larger ones;
+///   - `to <breakpoint>` applies to smaller breakpoints than the one provided;
+///   - `<breakpoint> to <breakpoint>` 
+/// @return {Map}.
+@function _elsass-parse-media($media) {
+  $out: null;
+
+  @if type-of($media) == string {
+    $out: _elsass-get-media-from-string($media);
+  } @else if type-of($media) == list {
+    $out: _elsass-get-media-from-list($media);
+  } @else {
+    $clue: type-of($media);
+    @return _elsass-error(
+      '"#{$media}" is not a valid value for `$media`.',
+      '"#{$clue}" as a type of value is not valid.',
+      'Valid types of values are: string or list.'
+    );
+  }
+
+  @return $out;
+}
+
+// 1.2 _elsass-valid-media-string
+// ------------------------------
+/// @param {String} $media -
+///  $media as passed through $elsass-media mixin.
+/// @return {Map} `('from': …, 'to': …)`
+@function _elsass-get-media-from-string($media) {
+  $out: null;
+
+  // $media should be a breakpoint name.
+  @if _elsass-responsive($media) {
+    $out: ('from': $media);
+    $i: index($ELSASS-BPTS, $media);
+    @if $i != length($ELSASS-BPTS) {
+      $to: nth($ELSASS-BPTS, index($ELSASS-BPTS, $media) + 1);
+      $out: map-merge($out, ('to': $to));
+    }
+  } @else {
+    @return _elsass-error(
+      '"#{$media}" is not a valid value for `$media`.',
+      '',
+      'Valid values as a string are: #{$ELSASS-BPTS}.'
+    );
+  }
+
+  @return $out;
+}
+
+// 1.3 _elsass-valid-media-list
+// ------------------------------
+@function _elsass-get-media-from-list($media) {
+  $out: null;
+
+  @if length($media) == 2 {
+    // $media should use 'from bpt' or 'to bpt'.
+    @if _elsass-responsive(nth($media, 2)) {
+      @if nth($media, 1) == 'from' {
+        $out: ('from': nth($media, 2));
+      } @else if nth($media, 1) == 'to' {
+        $out: ('from': nth($ELSASS-BPTS, 1), 'to': nth($media, 2));
+      } @else {
+        $clue: nth($media, 1);
+        @return _elsass-error(
+          '"#{$media}" is not a valid value for `$media`.',
+          '"#{$clue}" as the first item is not valid.',
+          'Valid values as the first item are: "from" or "to".'
+        );
+      }
+    } @else {
+      $clue: nth($media, 2);
+      @return _elsass-error(
+        '"#{$media}" is not a valid value for `$media`.',
+        '"#{$clue}" as the second item is not valid.',
+        'Valid values as the second item are: #{$ELSASS-BPTS}.'
+      );
+    }
+  } @else if length($media) == 3 {
+    // $media should use 'bpt to bpt'.
+    @if _elsass-responsive(nth($media, 1)) and _elsass-responsive(nth($media, 3)) {
+      @if nth($media, 2) == 'to' {
+        $out: ('from': nth($media, 1), 'to': nth($media, 3));
+      } @else {
+        $clue: nth($media, 2);
+        @return _elsass-error(
+          '"#{$media}" is not a valid value for `$media`.',
+          '"#{$clue}" as the second item is not valid.',
+          'Valid value as the second item in a list of three is: "to".'
+        );
+      }
+    } @else {
+      $clue: nth($media, 1) 'and/or' nth($media, 3);
+      @return _elsass-error(
+        '"#{$media}" is not a valid value for `$media`.',
+        '"#{$clue}" as the first and third items is/are not valid.',
+        'Valid values as the first and third items are: #{$ELSASS-BPTS}.'
+      );
+    }
+  } @else {
+    $clue: length($media);
+    @return _elsass-error(
+      '"#{$media}" is not a valid value for `$media`.',
+      '"#{$clue}" as a number of items is not valid.',
+      'Valid number of items in a list are: 2 or 3.'
+    );
+  }
+
+  @return $out;
+}

@@ -1,0 +1,357 @@
+// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// ------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+////
+/// @group Mixins
+////
+
+// 1. elsass-media
+// 1.2 _elsass-media
+// 2. elsass-group
+// 3. elsass
+
+// 1. MIXIN
+// ========
+
+// 2.1 elsass-media
+// ----------------
+/// Wrap `@content` in a media-query.
+/// @param {List} $media [from $ELSASS-BPT-MIN] -
+///  Defines the related media-query `min` and\or `max-width` from one
+///  of the following value where each `<breakpoint>` could be a `<length>`
+///  when used with `from`or `to`:
+///   -  `<breakpoint>` applies to the provided breakpoint only;
+///   - `from <breakpoint>` applies to the provided breakpoint and larger ones;
+///   - `to <breakpoint>` applies to smaller breakpoints than the one provided;
+///   - `<breakpoint> to <breakpoint>` 
+/// @example scss - SCSS
+///   .foo {
+///     @include elsass-media(to 'm') {
+///       background: #eee;
+///     }
+///   }
+@mixin elsass-media($media) {
+  $media: _elsass-parse-media($media);
+
+  @include _elsass-media($media...) {
+    @content;
+  }
+}
+
+// 2.2 _elsass-media
+// -------------
+/// Wrap `@content` in a media-query.
+/// @param {String | Number} $from [$ELSASS-BPT-MIN] -
+///   media-query min-width related breakpoint name or `<length>`;
+/// @param {String | Number} $to -
+///   media-query max-width related breakpoint name or `<length>`;
+@mixin _elsass-media($from: $ELSASS-BPT-MIN, $to: null) {
+  $mq: false; // Media-query
+
+  // Set a media-query min-width if $from is set and is not the first bpt.
+  @if $from and $from != $ELSASS-BPT-MIN {
+    @if _elsass-responsive($from) {
+      $from: _elsass-responsive($from, 'device-min-width');
+    }
+    $mq: '(min-width: #{$from})';
+  }
+
+  // Set a media-query max-width if $to is set.
+  @if $to {
+    @if _elsass-responsive($to) {
+      $to: _elsass-responsive($to, 'device-min-width') - 1;
+    }
+    $mq: if($mq, $mq ' and ', '') '(max-width: #{$to})';
+  }
+
+  // Wrap @content in a media query if set.
+  @if $mq {
+    @media screen and #{$mq} {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+// 1.1 elsass-group
+// ----------------
+/// Groups multiple `elsass` mixins arguments lists/maps
+/// to optimize the output by avoiding duplicated CSS
+/// through media-queries.  
+/// @param {List} $config -
+///   elsass mixin arguments lists/maps (see `elsass`).
+/// @example scss - SCSS
+///   .foo {
+///     border-style: solid;
+///     @include elsass-group(
+///       ('extra': (border-width: ('gutter': .5)))
+///       ('s', 12, 'default')
+///       ('m' to 'xl', 6, 'default')
+///       (from 'xl', 4, 'default')
+///     );
+///   }
+@mixin elsass-group($config: null) {
+
+  @if $config {
+    $elsass-config: map-merge($elsass-config, ('group': true)) !global;
+
+    @each $media in $config {
+      @include elsass($media...);
+    }
+  }
+
+  // Wrap each breakpoint related rules in dedicated media-queries.
+  @each $bpt-min, $to-map in $elsass-css {
+    @each $bpt-max, $bpt-css in $to-map {
+      @include _elsass-media($bpt-min, $bpt-max) {
+        @if type-of($bpt-css) == map {
+          #{nth(map-keys($bpt-css), 1)}: nth(map-values($bpt-css), 1);
+        } @else if type-of($bpt-css) == list {
+          @each $prop in $bpt-css {
+            #{nth(map-keys($prop), 1)}: nth(map-values($prop), 1);
+          }
+        }
+      }
+    }
+  }
+
+  // Reset.
+  $elsass-css: null !global;
+  $elsass-config: $elsass-config-reset !global;
+}
+
+// 1.2 elsass
+// ----------
+/// Builds any responsive layout element.  
+/// Uses global settings before to fallback to responsive ones.  
+/// @param {List} $media [from $ELSASS-BPT-MIN] -
+///   Defines the related media-query/ies `min`
+///   and\or `max-width` from one of the following value:
+///   -  `<breakpoint>` applies to the provided breakpoint only;
+///   - `from <breakpoint>` applies to the provided breakpoint and larger ones;
+///   - `to <breakpoint>` applies to smaller breakpoints than the one provided;
+///   - `<breakpoint> to <breakpoint>`.  
+///
+///   Each value using `from` or `to` allows `<breakpoint>` to be replaced
+///   by a `<lenght>` only if no breakpoint settings related value is needed.
+/// @param {List} $width -
+///   Defines the element `width` and (optionally)
+///   `max-witdh` from one of the following values.
+///   - `<number>` defines a default columns number related `width`
+///     or a `max-width` related to the global/breakpoint(s)
+///     container max-width set if followed by `max`;
+///   - `<number> of <number>` defines a custom columns number related `width`
+///     or a `max-width` related to the global/breakpoint(s)
+///     container max-width set if followed by `max`;
+///   - `max` set a `max-width` equal to the global/breakpoint(s)
+///      container max-width set.
+/// @param {List | Map} $gutter -
+///   Applies gutters as padding and/or margin based on the following valid values.  
+///   - A map, as defined in `$elsass-gutters`;
+///   - A shorthand as
+///     - `default` uses the default gutter set;
+///     - `none` does not apply any gutter;
+///     - an `$elsass-gutters` key applies the related value;
+///     - an `$elsass-behaviours` key applies the related change(s)
+///       to alterate the default gutter;
+///     - an `$elsass-gutters` key followed by an `$elsass-behaviours` key
+///       applies the `$elsass-behaviours` related change(s) to alterate
+///       the `$elsass-gutters` related value.  
+///
+///     `$elsass-behaviours` keys accept suffixes to alterate defined gutter sides.
+///     Valid sufixes are `-top`, `-right`, `-bottom`, `-left`, `-x` and `-y`.  
+///     If no suffix is provided all gutter related sides will be alterate.
+/// @param {List | Map} $offset -
+///   Alterates the horizontal element and/or content position
+///   via margin and/or padding through the following values.
+///   - A map of `in` and/or `out` offset values as:
+///     - a map of sides related or grid fraction or `<length>`;
+///   - A shorthand using a list of `$elsass-offsets` keys
+///     optionally followed by a related grid fraction or `<length>`.
+///     If no ratio is provided `auto` will be used as the padding/margin value.
+/// @param {List | Map} $extra -
+///   List of extra CSS rules to apply.  
+///   Gutter or width related CSS values can be indirectly set
+///   by providing a map using `gutter` or `width` as key and
+///   a list or map of the `elsass-gutter` or `elsass-width`
+///   function arguments as value.
+/// @output Arguments and `@content` relative CSS wrapped into tidy media-queries.
+/// @example scss - SCSS
+///   .foo {
+///     border-style: solid;
+///     @include elsass('m', 6, 'after', 'before' 3, (border-width: ('gutter': 1)));
+///   }
+@mixin elsass(
+  $media : 'from' $ELSASS-BPT-MIN,
+  $width : null,
+  $gutter: null,
+  $offset: null,
+  $extra : null
+) {
+  $bpt-width: null;
+  $bpt-max-width: null;
+  $gutter-in: null;
+  $gutter-out: null;
+  $silent: null;
+  $gutter-width: null;
+  $offset-in: null;
+  $offset-out: null;
+  $out: null;
+
+  // Get the provided breakpoints.
+  $media: _elsass-parse-media($media);
+  $elsass-config: map-merge($elsass-config, $media) !global;
+  $bpts-set: _elsass-bpts-set($media...);
+  $elsass-config: map-merge($elsass-config, ('bpts': $bpts-set)) !global;
+
+  @if $width {
+    $valid-width: _elsass-valid-width($width);
+    @if map-has-key($valid-width, 'width') {
+      $bpt-width: map-get($valid-width, 'width');
+    } @else {
+      $bpt-max-width: map-get($valid-width, 'max-width');
+    }
+  }
+
+  @if $gutter and $gutter != 'none' {
+    $gutters: _elsass-parse-gutter($gutter);
+
+    @if map-has-key($gutters, 'in') {
+      $gutter-in: map-get($gutters, 'in');
+    }
+
+    @if map-has-key($gutters, 'out') {
+      $gutter-out: map-get($gutters, 'out');
+    } @else if map-has-key($gutters, 'silent') {
+      $silent: true;
+      $gutter-out: map-get($gutters, 'silent');
+    }
+
+    @if $gutter-out {
+      @each $val in (map-get($gutter-out, 'right'), map-get($gutter-out, 'left')) {
+        @if $val {
+          $gutter-width: if($gutter-width, append($gutter-width, $val), $val);
+          $elsass-config: map-merge($elsass-config, ('gutter-width': $gutter-width)) !global;
+        }
+      }
+    }
+  }
+
+  @if $offset {
+    $offsets: _elsass-parse-offset($offset);
+
+    @if map-has-key($offsets, 'out') {
+      $offset-out: map-get($offsets, 'out');
+    }
+
+    @if map-has-key($offsets, 'in') {
+      $offset-in: map-get($offsets, 'in');
+    }
+  }
+
+  // Get and store each breakpoint related CSS.
+  @each $bpt in $bpts-set {
+    $bpt-css: () !global;
+    $bpt-next: false;
+    $i: index($bpts-set, $bpt);
+    $elsass-config: map-merge($elsass-config, ('bpt': $bpt)) !global;
+
+    @if $i == length($bpts-set) {
+      @if map-get($media, 'to') {
+        $bpt-next: nth($ELSASS-BPTS, index($ELSASS-BPTS, $bpt) + 1);
+      }
+    } @else {
+      $bpt-next: nth($bpts-set, $i + 1);
+    }
+
+    @if $bpt-width {
+      @if $gutter-out or $gutter-in {
+        $bpt-css: append($bpt-css, (box-sizing: border-box)) !global;
+      }
+      $val: elsass-width($bpt-width, if($gutter-width, $gutter-width, false));
+      $bpt-css: append($bpt-css, (width: #{$val})) !global;
+    }
+
+    @if $bpt-max-width {
+      $val: elsass-width($bpt-max-width, if($gutter-width, $gutter-width, false));
+      $bpt-css: append($bpt-css, (max-width: #{$val})) !global;
+    }
+
+    @if $gutter-in or $offset-in {
+      $bpt-gutter: _elsass-gutter-css($gutter-in, false, $offset-in);
+      @if map-has-key($bpt-gutter, 'shorthand') {
+        $shorthand: map-get($bpt-gutter, 'shorthand');
+        $bpt-css: append($bpt-css, (padding: #{$shorthand})) !global;
+      } @else {
+        @each $side, $val in $bpt-gutter {
+          $bpt-css: append($bpt-css, (padding-#{$side}: #{$val})) !global;
+        }
+      }
+    }
+
+    @if $gutter-out or $offset-out {
+      $bpt-gutter: _elsass-gutter-css($gutter-out, $silent, $offset-out);
+      @if map-has-key($bpt-gutter, 'shorthand') {
+        $shorthand: map-get($bpt-gutter, 'shorthand');
+        $bpt-css: append($bpt-css, (margin: #{$shorthand})) !global;
+      } @else {
+        @each $side, $val in $bpt-gutter {
+          $bpt-css: append($bpt-css, (margin-#{$side}: #{$val})) !global;
+        }
+      }
+    }
+
+    @if $extra {
+      @if type-of($extra) == map {
+        $vals: nth(map-values($extra), 1);
+        @if type-of($vals) != list {
+          $vals: ($vals) ();
+        }
+        $new: null;
+        @each $val in $vals {
+          @if type-of($val) == map {
+            @if map-has-key($val, 'gutter') {
+              $val: elsass-gutter(map-get($val, 'gutter')...);
+            } @else {
+              $val: elsass-width(map-get($val, 'width')...);
+            }
+          }
+          $new: if($new, $new $val, $val);
+        }
+        $bpt-css: if($new, append($bpt-css, (nth(map-keys($extra), 1): $new)), append($bpt-css, $extra)) !global;
+      } @else if type-of($extra) == list {
+        @each $prop in $extra {
+          $new: null;
+          @each $val in map-values($prop) {
+            @if type-of($val) == map {
+              @if map-has-key($val, 'gutter') {
+                $val: elsass-gutter(map-get($val, 'gutter'));
+              } @else {
+                $val: elsass-width(map-get($val, 'width'));
+              }
+            }
+            $new: if($new, $new $val, $val);
+          }
+          $bpt-css: if($new, append($bpt-css, (nth(map-keys($prop), 1): $new)), append($bpt-css, $prop)) !global;
+        }
+      }
+    }
+
+    $bpt-map: ($bpt: ($bpt-next: $bpt-css));
+    $elsass-css: if($elsass-css, _elsass-merge-bpt($elsass-css, $bpt-map), $bpt-map) !global;
+  }
+
+  @if not _elsass-config('group') {
+    @include elsass-group;
+  }
+}
