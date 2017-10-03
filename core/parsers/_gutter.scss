@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+// Copyright (c) 2016-2017 Nicolas Morand (https://twitter.com/NicolasGraph)
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // ------------------------------------------------------------------------
@@ -15,32 +15,37 @@
 ////
 
 // 1. _elsass-parse-gutter
-// 1. _elsass-valid-gutter-from-string
-// 1. _elsass-valid-gutter-from-list
-// 1. _elsass-valid-gutter-from-map
-// 1. _elsass-parse-gutter-map
-// 1. _elsass-alterate-gutter-map
+// 1.1 _elsass-valid-gutter-from-string
+// 1.2 _elsass-valid-gutter-from-list
+// 1.3 _elsass-valid-gutter-from-map
+// 2. _elsass-parse-gutter-map
+// 3. _elsass-alterate-gutter-map
 
-// 2.1 _elsass-parse-gutter
-// ------------------------
+// 1. _elsass-parse-gutter
+// -----------------------
 /// Validates the $gutter mixin argument;
 /// get its related value;
 /// associates a value per side in a nested map;
 /// alterates this map if any behaviour is used.
+///
 /// @param {String | List | Map} $gutter -
 ///   Defines a gutter length.
 ///   - a global gutter length ratio;
 ///   - a breakpoint related gutter length ratio
 ///     as the value of a map using the breakpoint as key;
 ///   - a breakpoint name as a shorthand of `(breakpoint: 1)`.
+///
 /// @param {Number | Length} $offset -
 ///   Number of columns or `<length>`.
 ///   - `n` defines a default columns number fraction;
 ///   - `n of n` defines a custom columns number fraction.
+//
 /// @return {Map}
+///
 /// @example scss - SCSS
 ///   margin-right: elsass-gutter(('m': 0.5));
 ///   margin-left: elsass-gutter(('m': 0.5), 3);
+
 @function _elsass-parse-gutter($gutter) {
   $out: null;
 
@@ -69,8 +74,9 @@
   @return $out;
 }
 
-// 2.2 _elsass-valid-gutter-string
-// -------------------------------
+// 1.1 _elsass-get-gutter-from-string
+// ----------------------------------
+
 @function _elsass-get-gutter-from-string($gutter) {
   $out: null;
   $default: _elsass-setting('gutter');
@@ -100,8 +106,9 @@
   @return $out;
 }
 
-// 2.3 _elsass-valid-gutter-list
-// -----------------------------
+// 1.2 _elsass-get-gutter-from-list
+// --------------------------------
+
 @function _elsass-get-gutter-from-list($gutter) {
   $out: null;
   // $gutter should be an $elsass-gutters key followed by an $elsass-behaviours key.
@@ -142,8 +149,9 @@
   @return $out;
 }
 
-// 2.4 _elsass-valid-gutter-map
-// ----------------------------
+// 1.3 _elsass-get-gutter-from-map
+// -------------------------------
+
 @function _elsass-get-gutter-from-map($gutter) {
   // $gutter should be a map or a nested map…
   @each $pos, $vals in $gutter {
@@ -188,6 +196,7 @@
 
 // 2.2 _elsass-valid-behaviour
 // ---------------------------
+
 @function _elsass-get-behaviour($behaviour, $gutter) {
   $out: ('sides': $ELSASS-SIDES);
   $dash: str_index($behaviour, '-');
@@ -227,12 +236,16 @@
 // 2.3 _elsass-parse-gutter
 // ----------------------
 /// Return a map of side values from the elsass mixin $gutter value.
+///
 /// @param {List} $gap -
 ///   Single value or list of two or four values;
+///
 /// @return {Map | false} Map of side values | false.
+///
 /// @example scss -
 ///   _elsass-parse-gutter(false .5);
 ///   // (top: false, left: .5, bottom: false, $right: .5)
+
 @function _elsass-parse-gutter-map($gutter: null, $behaviour: null, $alt-sides: null) {
   $silent: null;
 
@@ -287,8 +300,11 @@
 // -------------------------
 /// Returns a map of needed flex related
 /// CSS properties and their values.
+///
 /// @param {…} $gutter CSS flex-wrap value;
+///
 /// @return {List | false} Silent gutter value | false.
+
 @function _elsass-gutter-is-silent($gutter: null) {
   $out: false;
 
@@ -305,11 +321,15 @@
 // ---------------------------
 /// Alterate a map of sides related gutter values
 /// according to a define behaviour.
+///
 /// @param {Map} $gutter -
 ///   Map of sides related gutter values;
+///
 /// @param {String} $behaviour -
 ///   Behaviour related keyword;
+///
 /// @return {Map} New map of sides related gutter values.
+
 @function _elsass-alterate-gutter-map($gutter, $behaviour, $alt-sides) {
   $out: $gutter;
   $new: null;

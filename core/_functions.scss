@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+// Copyright (c) 2016-2017 Nicolas Morand (https://twitter.com/NicolasGraph)
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // ------------------------------------------------------------------------
@@ -11,31 +11,35 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ////
-/// @group Misc
+/// @group Tools
 ////
 
 // 1. elsass_width
 // 2. elsass_gutter
 
-// 3.1 elsass-width
-// ----------------
-/// Calculate width by substracting potential
-/// right and left gutters used as margin.
+// 1. elsass-width
+// ---------------
+/// Calculates a span width.
+///
 /// @param {Number | String} $width -
 ///   Defines the length base.
 ///   - `<number>` defines a default columns number fraction;
 ///   - `<number> of <number>` defines a custom columns number fraction;
 ///   - `max` uses the global container max-width set.
 ///   - `<breakpoint>` uses the breakpoint related container max-width set.
+///
 /// @param {Number | List | Map} $gutter-width -
 ///   Defines the margin length to substract from one of the following value.
 ///   - a sum or list of the right and left gutter ratios or lengths; 
 ///   - a map using a breakpoint as key and a sum or list of the right and left gutter ratios or lengths as value.
 ///   - a breakpoint name (uses the related gutter lentgh); 
+///
 /// @return {Number} `<length>` (via `calc()` if needed).
+///
 /// @example scss - SCSS
 ///   width: elsass-width(12, 'm');
 ///   max-width: elsass-width('m', 'm');
+
 @function elsass-width(
   $width: null,
   $gutter-width: _elsass-config('gutter-width')
@@ -92,7 +96,7 @@
     $gutter-width: $calc;
     $calc: null;
     
-    // Calculate width according to margins.
+    // Calculates the width according to margins.
     @each $val in $gutter-width {
       $abs: abs($val);
       @if comparable($width, $val) {
@@ -111,23 +115,28 @@
   @return if($calc, calc(#{$width} #{$calc}), $width);
 }
 
-// 3.2 elsass-gutter
-// -----------------
-/// Calculate a gutter length.
+// 2. elsass-gutter
+// ----------------
+/// Calculates a gutter length.
+///
 /// @param {Number | String | Map} $gutter -
 ///   Defines a gutter length.
 ///   - a global gutter length ratio;
 ///   - a breakpoint related gutter length ratio
 ///     as the value of a map using the breakpoint as key;
 ///   - a breakpoint name as a shorthand of `(breakpoint: 1)`.
+///
 /// @param {Number | Length} $offset -
 ///   Number of columns or `<length>`.
 ///   - `n` defines a default columns number fraction;
 ///   - `n of n` defines a custom columns number fraction.
+///
 /// @return {Number} `<length>`
+///
 /// @example scss - SCSS
 ///   margin-right: elsass-gutter(('m': 0.5));
 ///   margin-left: elsass-gutter(('m': 0.5), 3);
+
 @function elsass-gutter(
   $gutter: _elsass-config('gutter-width'),
   $offset: null

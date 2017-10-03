@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+// Copyright (c) 2016-2017 Nicolas Morand (https://twitter.com/NicolasGraph)
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // ------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ////
-/// @group Mixins
+/// @group Tools
 ////
 
 // 1. elsass-media
@@ -19,12 +19,10 @@
 // 2. elsass-group
 // 3. elsass
 
-// 1. MIXIN
-// ========
-
-// 2.1 elsass-media
-// ----------------
-/// Wrap `@content` in a media-query.
+// 1. elsass-media
+// ---------------
+/// Defines a media-query.
+///
 /// @param {List} $media [from $ELSASS-BPT-MIN] -
 ///  Defines the related media-query `min` and\or `max-width` from one
 ///  of the following value where each `<breakpoint>` could be a `<length>`
@@ -33,12 +31,14 @@
 ///   - `from <breakpoint>` applies to the provided breakpoint and larger ones;
 ///   - `to <breakpoint>` applies to smaller breakpoints than the one provided;
 ///   - `<breakpoint> to <breakpoint>` 
+///
 /// @example scss - SCSS
 ///   .foo {
 ///     @include elsass-media(to 'm') {
 ///       background: #eee;
 ///     }
 ///   }
+
 @mixin elsass-media($media) {
   $media: _elsass-parse-media($media);
 
@@ -47,17 +47,20 @@
   }
 }
 
-// 2.2 _elsass-media
-// -------------
-/// Wrap `@content` in a media-query.
+// 1.2 _elsass-media
+// -----------------
+/// Defines a media-query.
+///
 /// @param {String | Number} $from [$ELSASS-BPT-MIN] -
 ///   media-query min-width related breakpoint name or `<length>`;
+///
 /// @param {String | Number} $to -
 ///   media-query max-width related breakpoint name or `<length>`;
+
 @mixin _elsass-media($from: $ELSASS-BPT-MIN, $to: null) {
   $mq: false; // Media-query
 
-  // Set a media-query min-width if $from is set and is not the first bpt.
+  // Sets a media-query min-width if $from is set and is not the first bpt.
   @if $from and $from != $ELSASS-BPT-MIN {
     @if _elsass-responsive($from) {
       $from: _elsass-responsive($from, 'device-min-width');
@@ -65,7 +68,7 @@
     $mq: '(min-width: #{$from})';
   }
 
-  // Set a media-query max-width if $to is set.
+  // Sets a media-query max-width if $to is set.
   @if $to {
     @if _elsass-responsive($to) {
       $to: _elsass-responsive($to, 'device-min-width') - 1;
@@ -73,7 +76,7 @@
     $mq: if($mq, $mq ' and ', '') '(max-width: #{$to})';
   }
 
-  // Wrap @content in a media query if set.
+  // Wraps @content in a media query or renders it as is.
   @if $mq {
     @media screen and #{$mq} {
       @content;
@@ -83,57 +86,10 @@
   }
 }
 
-// 1.1 elsass-group
-// ----------------
-/// Groups multiple `elsass` mixins arguments lists/maps
-/// to optimize the output by avoiding duplicated CSS
-/// through media-queries.  
-/// @param {List} $config -
-///   elsass mixin arguments lists/maps (see `elsass`).
-/// @example scss - SCSS
-///   .foo {
-///     border-style: solid;
-///     @include elsass-group(
-///       ('extra': (border-width: ('gutter': .5)))
-///       ('s', 12, 'default')
-///       ('m' to 'xl', 6, 'default')
-///       (from 'xl', 4, 'default')
-///     );
-///   }
-@mixin elsass-group($config: null) {
-
-  @if $config {
-    $elsass-config: map-merge($elsass-config, ('group': true)) !global;
-
-    @each $media in $config {
-      @include elsass($media...);
-    }
-  }
-
-  // Wrap each breakpoint related rules in dedicated media-queries.
-  @each $bpt-min, $to-map in $elsass-css {
-    @each $bpt-max, $bpt-css in $to-map {
-      @include _elsass-media($bpt-min, $bpt-max) {
-        @if type-of($bpt-css) == map {
-          #{nth(map-keys($bpt-css), 1)}: nth(map-values($bpt-css), 1);
-        } @else if type-of($bpt-css) == list {
-          @each $prop in $bpt-css {
-            #{nth(map-keys($prop), 1)}: nth(map-values($prop), 1);
-          }
-        }
-      }
-    }
-  }
-
-  // Reset.
-  $elsass-css: null !global;
-  $elsass-config: $elsass-config-reset !global;
-}
-
-// 1.2 elsass
-// ----------
-/// Builds any responsive layout element.  
-/// Uses global settings before to fallback to responsive ones.  
+// 2. elsass
+// ---------
+/// Builds any responsive element.
+///
 /// @param {List} $media [from $ELSASS-BPT-MIN] -
 ///   Defines the related media-query/ies `min`
 ///   and\or `max-width` from one of the following value:
@@ -144,6 +100,7 @@
 ///
 ///   Each value using `from` or `to` allows `<breakpoint>` to be replaced
 ///   by a `<lenght>` only if no breakpoint settings related value is needed.
+///
 /// @param {List} $width -
 ///   Defines the element `width` and (optionally)
 ///   `max-witdh` from one of the following values.
@@ -155,22 +112,24 @@
 ///     container max-width set if followed by `max`;
 ///   - `max` set a `max-width` equal to the global/breakpoint(s)
 ///      container max-width set.
+///
 /// @param {List | Map} $gutter -
 ///   Applies gutters as padding and/or margin based on the following valid values.  
 ///   - A map, as defined in `$elsass-gutters`;
 ///   - A shorthand as
-///     - `default` uses the default gutter set;
-///     - `none` does not apply any gutter;
-///     - an `$elsass-gutters` key applies the related value;
-///     - an `$elsass-behaviours` key applies the related change(s)
+///     - `default`: uses the default gutter set;
+///     - `none`: does not apply any gutter;
+///     - an `$elsass-gutters` key: applies the related value;
+///     - an `$elsass-behaviours` key: applies the related change(s)
 ///       to alterate the default gutter;
-///     - an `$elsass-gutters` key followed by an `$elsass-behaviours` key
+///     - an `$elsass-gutters` key followed by an `$elsass-behaviours` key:
 ///       applies the `$elsass-behaviours` related change(s) to alterate
 ///       the `$elsass-gutters` related value.  
 ///
 ///     `$elsass-behaviours` keys accept suffixes to alterate defined gutter sides.
 ///     Valid sufixes are `-top`, `-right`, `-bottom`, `-left`, `-x` and `-y`.  
 ///     If no suffix is provided all gutter related sides will be alterate.
+///
 /// @param {List | Map} $offset -
 ///   Alterates the horizontal element and/or content position
 ///   via margin and/or padding through the following values.
@@ -179,18 +138,23 @@
 ///   - A shorthand using a list of `$elsass-offsets` keys
 ///     optionally followed by a related grid fraction or `<length>`.
 ///     If no ratio is provided `auto` will be used as the padding/margin value.
+///
 /// @param {List | Map} $extra -
 ///   List of extra CSS rules to apply.  
 ///   Gutter or width related CSS values can be indirectly set
 ///   by providing a map using `gutter` or `width` as key and
 ///   a list or map of the `elsass-gutter` or `elsass-width`
 ///   function arguments as value.
+///
 /// @output Arguments and `@content` relative CSS wrapped into tidy media-queries.
+///
 /// @example scss - SCSS
 ///   .foo {
 ///     border-style: solid;
+///
 ///     @include elsass('m', 6, 'after', 'before' 3, (border-width: ('gutter': 1)));
 ///   }
+
 @mixin elsass(
   $media : 'from' $ELSASS-BPT-MIN,
   $width : null,
@@ -208,7 +172,7 @@
   $offset-out: null;
   $out: null;
 
-  // Get the provided breakpoints.
+  // Gets the provided breakpoints.
   $media: _elsass-parse-media($media);
   $elsass-config: map-merge($elsass-config, $media) !global;
   $bpts-set: _elsass-bpts-set($media...);
@@ -259,7 +223,7 @@
     }
   }
 
-  // Get and store each breakpoint related CSS.
+  // Gets and stores each breakpoint related CSS.
   @each $bpt in $bpts-set {
     $bpt-css: () !global;
     $bpt-next: false;
@@ -354,4 +318,55 @@
   @if not _elsass-config('group') {
     @include elsass-group;
   }
+}
+
+// 3. elsass-group
+// ---------------
+/// Groups multiple `elsass` mixins arguments lists/maps
+/// to optimize the output by avoiding duplicated CSS
+/// through media-queries.
+///
+/// @param {List} $config -
+///   elsass mixin arguments lists/maps (see `elsass`).
+///
+/// @example scss - SCSS
+///   .foo {
+///     border-style: solid;
+///
+///     @include elsass-group(
+///       ('extra': (border-width: ('gutter': .5))) // Uses a responsive gutter value as the border-width value.
+///       ('s', 12, 'default') // A twelve columns large span for the 's' breakpoint.
+///       ('m' to 'xl', 6, 'default') // A six columns large span for breakpoints 'm' and 'l'.
+///       (from 'xl', 4, 'default') // A four columns large span for greater breakpoints.
+///     );
+///   }
+
+@mixin elsass-group($config: null) {
+
+  @if $config {
+    $elsass-config: map-merge($elsass-config, ('group': true)) !global;
+
+    @each $media in $config {
+      @include elsass($media...);
+    }
+  }
+
+  // Wraps each breakpoint related rules in a dedicated media-query.
+  @each $bpt-min, $to-map in $elsass-css {
+    @each $bpt-max, $bpt-css in $to-map {
+      @include _elsass-media($bpt-min, $bpt-max) {
+        @if type-of($bpt-css) == map {
+          #{nth(map-keys($bpt-css), 1)}: nth(map-values($bpt-css), 1);
+        } @else if type-of($bpt-css) == list {
+          @each $prop in $bpt-css {
+            #{nth(map-keys($prop), 1)}: nth(map-values($prop), 1);
+          }
+        }
+      }
+    }
+  }
+
+  // Reset.
+  $elsass-css: null !global;
+  $elsass-config: $elsass-config-reset !global;
 }

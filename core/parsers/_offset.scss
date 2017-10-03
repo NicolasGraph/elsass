@@ -1,10 +1,24 @@
-// 2.5 _elsass-parse-offset
-// ---------------------
-/// Returns a map of needed flex related
-/// CSS properties and their values.
-/// @access  Private
-/// @param {Map | List} $offset;
-/// @return {Map | false} Map of offset value(s) per side | false.
+// Copyright (c) 2016-2017 Nicolas Morand (https://twitter.com/NicolasGraph)
+
+// Distributed under the MIT licence (https://opensource.org/licenses/MIT).
+// ------------------------------------------------------------------------
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// 1. _elsass-parse-offset
+// -----------------------
+/// Validates the $offset mixin argument value.
+///
+/// @param {Number | String | List | Map} $gutter -
+///   As defined through a mixin.
+///
+/// @return {Error | Map}
+
 @function _elsass-parse-offset($offset: null) {
   $out: false;
 

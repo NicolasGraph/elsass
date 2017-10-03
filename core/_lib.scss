@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nicolas Morand (https://twitter.com/NicolasGraph)
+// Copyright (c) 2016-2017 Nicolas Morand (https://twitter.com/NicolasGraph)
 
 // Distributed under the MIT licence (https://opensource.org/licenses/MIT).
 // ------------------------------------------------------------------------
@@ -28,12 +28,16 @@
 /// Get an `$elsass-global` value and fallback
 /// to an `$elsass-responsive` breakpoint related one
 /// if `$bpt` is defined.
+///
 /// @param {String} $setting -
 ///   `$elsass-global` key or `$elsass-responsive` breakpoint related key.
+///
 /// @param {String} $bpt -
 ///   Used to fallback to the right breakpoint settings
 ///   in `$elsass-responsive` if needed.
+///
 /// @return {<value>} `$elsass-global` or `$elsass-responsive` key value.
+
 @function _elsass-setting($setting, $bpt: null) {
   $out: null;
 
@@ -49,9 +53,13 @@
 // 3.5 _elsass-responsive
 // ----------------------
 /// Get an `$elsass-responsive` key value.
+///
 /// @param {String} $bpt
+///
 /// @param {String} $key
+///
 /// @return {<value>} `$elsass-responsive` breakpoint related key value.
+
 @function _elsass-responsive($bpt, $key: null) {  
   @return _elsass-map-get($elsass-responsive, $bpt, $key);
 }
@@ -59,9 +67,12 @@
 // 3.4 _elsass-config
 // ------------------
 /// Get an `$elsass-config` value.
+///
 /// @param {String} $key -
 ///   `elsass-config` key.
+///
 /// @return {<value>} `$elsass-config` key related value.
+
 @function _elsass-config($key) {  
   @return map-get($elsass-config, $key);
 }
@@ -69,11 +80,16 @@
 // 3.3 _elsass-map-get
 // -------------------
 /// Get a map key/subkey value.
+///
 /// @param {Map} $map
+///
 /// @param {String} $key
+///
 /// @param {String} $subkey -
 ///   `$key` key if `$key` value is a map. 
+///
 /// @return {<value>} `$map` breakpoint related key/subkey value.
+
 @function _elsass-map-get($map, $key, $subkey: null) {
   $out: false;
 
@@ -94,13 +110,17 @@
 // 3.7 _elsass-map-merge
 // ---------------------
 /// Merge maps/maps keys.
+///
 /// @param {Map|List} $map1 -
 ///   Map or list of a map and one of
 ///   its key which value is also a map.
+///
 /// @param {Map|List} $map2
 ///   Map or list of a map and one of
 ///   its key which value is also a map.
+///
 /// @return {Map} Merged map.
+
 @function _elsass-map-merge($map1, $map2) {
 
   @if type-of($map1) == list and length($map1) == 2 {
@@ -117,11 +137,15 @@
 // 2.9 _elsass-list-remove
 // -----------------------
 /// Remove from list.
+///
 /// @param {List} $list
 ///   List from which the value need to be removed.
+///
 /// @param {Value} $value
 ///   Value to remove from the list.
+///
 /// @return {List}
+
 @function _elsass-list-remove($list, $value) {
   $result: ();
 
@@ -137,12 +161,16 @@
 // 3.8 _elsass-error
 // ---------------------
 /// Throws an error message.
+///
 /// @param {string} $error -
 ///   Main error message.
+///
 /// @param {string} $clue
 ///   About where something went wrong.
+///
 /// @param {string} $fix
 ///   About how to fix.
+
 @function _elsass-error($error, $clue: null, $fix: null) {
 
   @error '#{$error} #{$clue}
@@ -154,13 +182,18 @@
 // --------------------
 /// Get a list of breakpoints
 /// explicitly and implicitly set.
+///
 /// @param {Breakpoint} $from;
+///
 /// @param {Breakpoint} $to;
+///
 /// @return {List | false} Breakpoints list | false;
+///
 /// @example scss -
 ///   _elsass-bpts-set('s', 'l')
 ///   // Assuming valid bpts are 's', 'm', 'l' and 'xl';
 ///   // 's' 'm' 'l'
+
 @function _elsass-bpts-set($from: null, $to: null) {
   $out: false;
   $i-from: if($from, index($ELSASS-BPTS, $from), 1);
@@ -176,21 +209,20 @@
   @return $out;
 }
 
-
-
-
-
-
-
 // 2.6 _elsass-gutter-css
 // ----------------------
 /// Returns a map of needed flex related
 /// CSS properties and their values.
+///
 /// @param {Breakpoint | Ratio | Lentgth} $gutter
 ///   Breakpoint related gutter ratio(s) or CSS value(s);
+///
 /// @param {Ratio} $offset;
+///
 /// @param {Bool} $offset-next;
+///
 /// @return {Map | false} Map of side values | false.
+
 @function _elsass-gutter-css(
   $gutter : null,
   $silent : null,
@@ -235,11 +267,17 @@
 // 2.7 _elsass-gutter-short
 // ------------------------
 /// Returns a padding/margin shorthand value if possible.
+///
 /// @param {Number} $top - Top gutter length.
+///
 /// @param {Number} $right - Right gutter length.
+///
 /// @param {Number} $bottom - Bottom gutter length.
+///
 /// @param {Number} $left - Left gutter length.
+///
 /// @return {Number | false} Shorthand value | false.
+
 @function _elsass-gutter-short(
   $top   : null,
   $right : null,
@@ -259,17 +297,22 @@
 // ---------------------
 /// Merge map of CSS stored per media-queries related
 /// breakpoints in a way to optimize the outpout.
+///
 /// @param {Map} $out
 ///   Map of CSS stored per media-queries relative breakpoints;
+///
 /// @param {Map} $map
 ///   Map of the following breapoint CSS;
+///
 /// @return {Map} Map of CSS per media-queries.
+///
 /// @example scss -
 ///   $out: (s: (m: (width: 25%, margin: 10px)));
 ///   $bpt-map: (m: (l: (width: 25%, margin: 15px)));
 ///   elsass-merge($out, $bpt-map);
 ///   // (s: (m: (margin: 10px), l: (width: 25%)),
 ///   //  m: (l: (margin: 15px)));
+
 @function _elsass-merge-bpt($out, $bpt-map) {
   $new-css: ();
 
